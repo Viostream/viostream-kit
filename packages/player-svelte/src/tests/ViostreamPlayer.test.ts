@@ -3,8 +3,8 @@ import { render, cleanup } from '@testing-library/svelte';
 import ViostreamPlayer from '$lib/ViostreamPlayer.svelte';
 
 // Mock the core module so we control when/how $viostream resolves
-vi.mock('viostream-player-core', async (importOriginal) => {
-	const actual = await importOriginal<typeof import('viostream-player-core')>();
+vi.mock('@viostream/viostream-player-core', async (importOriginal) => {
+	const actual = await importOriginal<typeof import('@viostream/viostream-player-core')>();
 	return {
 		...actual,
 		loadViostream: vi.fn(),
@@ -12,8 +12,8 @@ vi.mock('viostream-player-core', async (importOriginal) => {
 	};
 });
 
-import { loadViostream, wrapRawPlayer } from 'viostream-player-core';
-import type { RawViostreamPlayerInstance, ViostreamEventHandler, ViostreamGlobal } from 'viostream-player-core';
+import { loadViostream, wrapRawPlayer } from '@viostream/viostream-player-core';
+import type { RawViostreamPlayerInstance, ViostreamEventHandler, ViostreamGlobal } from '@viostream/viostream-player-core';
 
 const mockedLoadViostream = vi.mocked(loadViostream);
 const mockedWrapRawPlayer = vi.mocked(wrapRawPlayer);

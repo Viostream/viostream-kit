@@ -8,8 +8,8 @@ application using framework-native wrappers.
 
 | Package | Version | Framework | Description |
 |---------|---------|-----------|-------------|
-| [`viostream-player-core`](./packages/player-core) | 0.1.0 | None (vanilla TS) | Framework-agnostic core: types, script loader, player wrapper |
-| [`viostream-player-svelte`](./packages/player-svelte) | 0.1.0 | Svelte 5 | `<ViostreamPlayer>` component and `createViostreamPlayer()` headless API |
+| [`@viostream/viostream-player-core`](./packages/player-core) | 0.1.0 | None (vanilla TS) | Framework-agnostic core: types, script loader, player wrapper |
+| [`@viostream/viostream-player-svelte`](./packages/player-svelte) | 0.1.0 | Svelte 5 | `<ViostreamPlayer>` component and `createViostreamPlayer()` headless API |
 
 > More framework wrappers (React, Vue, etc.) are planned for the `packages/`
 > directory. All wrappers build on `player-core`.

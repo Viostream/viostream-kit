@@ -1,0 +1,18 @@
+{
+  "release-type": "node",
+  "bump-minor-pre-major": true,
+  "bump-patch-for-minor-pre-major": true,
+  "packages": {
+    "packages/player-core": {
+      "component": "player-core"
+    },
+    "packages/player-svelte": {
+      "component": "player-svelte"
+    }
+  },
+  "plugins": [
+    {
+      "type": "node-workspace"
+    }
+  ]
+}
