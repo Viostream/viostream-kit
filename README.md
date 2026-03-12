@@ -6,18 +6,18 @@ application using framework-native wrappers.
 
 ## Packages
 
-| Package | Version | Framework | Description |
-|---------|---------|-----------|-------------|
-| [`@viostream/viostream-player-core`](./packages/viostream-player-core) | 0.1.0 | None (vanilla TS) | Framework-agnostic core: types, script loader, player wrapper |
-| [`@viostream/viostream-player-svelte`](./packages/viostream-player-svelte) | 0.1.0 | Svelte 5 | `<ViostreamPlayer>` component and `createViostreamPlayer()` headless API |
+| Package                                                                    | Version | Framework         | Description                                                              |
+| -------------------------------------------------------------------------- | ------- | ----------------- | ------------------------------------------------------------------------ |
+| [`@viostream/viostream-player-core`](./packages/viostream-player-core)     | 0.1.0   | None (vanilla TS) | Framework-agnostic core: types, script loader, player wrapper            |
+| [`@viostream/viostream-player-svelte`](./packages/viostream-player-svelte) | 0.1.0   | Svelte 5          | `<ViostreamPlayer>` component and `createViostreamPlayer()` headless API |
 
 > More framework wrappers (React, Vue, etc.) are planned for the `packages/`
 > directory. All wrappers build on `player-core`.
 
 ## Examples
 
-| App | Path | Framework | Description |
-|-----|------|-----------|-------------|
+| App              | Path                                   | Framework            | Description                          |
+| ---------------- | -------------------------------------- | -------------------- | ------------------------------------ |
 | `example-svelte` | [`examples/svelte`](./examples/svelte) | Svelte 5 / SvelteKit | Interactive demo for `player-svelte` |
 
 Examples are standalone apps that live in `examples/` and depend on the
@@ -73,6 +73,12 @@ package, and `player-svelte` must be packaged before example apps can run.
   full commit convention including the `Branch:` footer requirement.
 - Run `npm test` and `npm run check` inside the relevant package before
   submitting changes.
+
+## Releases
+
+Releases are managed by [Release Please](https://github.com/googleapis/release-please).
+When a PR is merged, a release PR will be created. When the release PR is merged,
+new packages will be published to npm with the updated version.
 
 ## License
 
