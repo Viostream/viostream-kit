@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/Viostream/viostream-kit/compare/player-core-v0.1.1...player-core-v0.1.2) (2026-03-12)
+
+
+### Features
+
+* add React SDK for Viostream video player ([6581cfa](https://github.com/Viostream/viostream-kit/commit/6581cfaacc037ebc603aa590cc3c08f482d85ce8))
+
 ## [0.1.1](https://github.com/Viostream/viostream-kit/compare/player-core-v0.1.0...player-core-v0.1.1) (2026-03-12)
 
 
