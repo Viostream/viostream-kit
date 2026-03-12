@@ -1,5 +1,7 @@
 # Changelog
 
+## [0.1.2](https://github.com/Viostream/viostream-kit/compare/player-svelte-v0.1.0...player-svelte-v0.1.2) (2026-03-12)
+
 ## [0.1.1](https://github.com/Viostream/viostream-kit/compare/player-svelte-v0.1.0...player-svelte-v0.1.1) (2026-03-12)
 
 
