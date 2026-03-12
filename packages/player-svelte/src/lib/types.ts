@@ -2,7 +2,7 @@
  * Viostream Player SDK — Svelte-specific type definitions
  *
  * Core types (ViostreamPlayer, ViostreamEmbedOptions, etc.) are re-exported from
- * `viostream-player-core`. This file defines only the Svelte component props.
+ * `@viostream/viostream-player-core`. This file defines only the Svelte component props.
  */
 
 import type {
@@ -12,7 +12,7 @@ import type {
   ViostreamVolumeChangeData,
   ViostreamErrorData,
   ViostreamProgressData,
-} from 'viostream-player-core';
+} from '@viostream/viostream-player-core';
 
 // ---------------------------------------------------------------------------
 // Component props (for <ViostreamPlayer />)

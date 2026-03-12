@@ -1,12 +1,12 @@
 /**
- * viostream-player-svelte
+ * @viostream/viostream-player-svelte
  *
  * Svelte 5 SDK for the Viostream video player.
  *
  * @example Component usage
  * ```svelte
  * <script lang="ts">
- *   import { ViostreamPlayer } from 'viostream-player-svelte';
+ *   import { ViostreamPlayer } from '@viostream/viostream-player-svelte';
  * </script>
  *
  * <ViostreamPlayer
@@ -19,7 +19,7 @@
  *
  * @example Headless / programmatic usage
  * ```ts
- * import { createViostreamPlayer } from 'viostream-player-svelte';
+ * import { createViostreamPlayer } from '@viostream/viostream-player-svelte';
  *
  * const player = await createViostreamPlayer({
  *   accountKey: 'vc-100100100',
@@ -41,7 +41,7 @@ export {
   createViostreamPlayer,
   wrapRawPlayer,
   loadViostream,
-} from 'viostream-player-core';
+} from '@viostream/viostream-player-core';
 
 export type {
   CreateViostreamPlayerOptions,
@@ -58,7 +58,7 @@ export type {
   ViostreamPlayer as ViostreamPlayerInstance,
   RawViostreamPlayerInstance,
   ViostreamGlobal,
-} from 'viostream-player-core';
+} from '@viostream/viostream-player-core';
 
 // Svelte-specific types
 export type {

@@ -1,0 +1,55 @@
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+name: release-please
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/checkout@v4
+        if: ${{ steps.release.outputs.releases_created }}
+
+      - uses: actions/setup-node@v4
+        if: ${{ steps.release.outputs.releases_created }}
+        with:
+          node-version: 22
+          registry-url: 'https://registry.npmjs.org'
+
+      - run: npm ci
+        if: ${{ steps.release.outputs.releases_created }}
+
+      - name: Build player-core
+        if: ${{ steps.release.outputs.releases_created }}
+        run: npm run build
+        working-directory: packages/player-core
+
+      - name: Publish player-core
+        if: ${{ steps.release.outputs['packages/player-core--release_created'] }}
+        run: npm publish
+        working-directory: packages/player-core
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Build player-svelte
+        if: ${{ steps.release.outputs.releases_created }}
+        run: npm run build
+        working-directory: packages/player-svelte
+
+      - name: Publish player-svelte
+        if: ${{ steps.release.outputs['packages/player-svelte--release_created'] }}
+        run: npm publish
+        working-directory: packages/player-svelte
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

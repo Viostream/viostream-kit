@@ -1,11 +1,11 @@
 /**
- * viostream-player-core
+ * @viostream/viostream-player-core
  *
  * Framework-agnostic core for the Viostream player SDK.
  *
  * @example Headless / programmatic usage
  * ```ts
- * import { createViostreamPlayer } from 'viostream-player-core';
+ * import { createViostreamPlayer } from '@viostream/viostream-player-core';
  *
  * const player = await createViostreamPlayer({
  *   accountKey: 'vc-100100100',

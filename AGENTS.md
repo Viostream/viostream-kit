@@ -16,8 +16,8 @@
 
 | Package | Path | Framework | Description |
 |---------|------|-----------|-------------|
-| `viostream-player-core` | `packages/player-core` | None (vanilla TS) | Framework-agnostic core: types, script loader, player wrapper |
-| `viostream-player-svelte` | `packages/player-svelte` | Svelte 5 | `<ViostreamPlayer>` component (depends on `player-core`) |
+| `@viostream/viostream-player-core` | `packages/player-core` | None (vanilla TS) | Framework-agnostic core: types, script loader, player wrapper |
+| `@viostream/viostream-player-svelte` | `packages/player-svelte` | Svelte 5 | `<ViostreamPlayer>` component (depends on `player-core`) |
 
 ### Examples
 

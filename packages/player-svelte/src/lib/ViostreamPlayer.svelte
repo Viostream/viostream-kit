@@ -6,8 +6,8 @@
   Usage:
   ```svelte
   <script lang="ts">
-    import { ViostreamPlayer } from 'viostream-player-svelte';
-    import type { ViostreamPlayer as ViostreamPlayerType } from 'viostream-player-svelte';
+    import { ViostreamPlayer } from '@viostream/viostream-player-svelte';
+    import type { ViostreamPlayer as ViostreamPlayerType } from '@viostream/viostream-player-svelte';
 
     let player: ViostreamPlayerType | undefined = $state();
   </script>
@@ -25,13 +25,13 @@
 -->
 <script lang="ts">
 	import { onMount, type Snippet } from 'svelte';
-	import { loadViostream, wrapRawPlayer } from 'viostream-player-core';
+	import { loadViostream, wrapRawPlayer } from '@viostream/viostream-player-core';
 	import type {
 		ViostreamEmbedOptions,
 		ViostreamPlayer,
 		RawViostreamPlayerInstance,
 		ViostreamEventHandler,
-	} from 'viostream-player-core';
+	} from '@viostream/viostream-player-core';
 	import type { ViostreamPlayerProps } from './types.js';
 
 	let {

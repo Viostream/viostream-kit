@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { ViostreamPlayer } from "viostream-player-svelte";
-	import type { ViostreamPlayerInstance, ViostreamTimeUpdateData } from "viostream-player-svelte";
+	import { ViostreamPlayer } from "@viostream/viostream-player-svelte";
+	import type { ViostreamPlayerInstance, ViostreamTimeUpdateData } from "@viostream/viostream-player-svelte";
 
 	let player: ViostreamPlayerInstance | undefined = $state();
 	let currentTime = $state(0);
