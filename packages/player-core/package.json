@@ -1,0 +1,39 @@
+{
+  "name": "viostream-player-core",
+  "version": "0.1.0",
+  "description": "Framework-agnostic core for the Viostream player SDK — script loader, player wrapper, and TypeScript types",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.test.*",
+    "!dist/**/*.spec.*"
+  ],
+  "devDependencies": {
+    "jsdom": "^28.1.0",
+    "typescript": "^5.7.0",
+    "vite": "^6.0.0",
+    "vitest": "^4.0.18"
+  },
+  "keywords": [
+    "viostream",
+    "video",
+    "player",
+    "embed",
+    "sdk"
+  ]
+}

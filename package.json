@@ -1,0 +1,10 @@
+{
+  "name": "viostream-kit",
+  "private": true,
+  "description": "Multi-package SDK for the Viostream video platform",
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
+  "license": "MIT"
+}

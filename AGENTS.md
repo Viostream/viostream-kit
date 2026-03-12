@@ -1,155 +1,211 @@
 # AGENTS.md — viostream-kit
 
-> This file provides instructions for AI coding agents operating in this repository.
-> Sections marked **[TODO]** need to be filled in once the corresponding tooling is set up.
+> Instructions for AI coding agents operating in this repository.
 
 ## Project Overview
 
 - **Repository:** Viostream/viostream-kit
+- **Purpose:** Multi-package SDK for the Viostream SaaS video platform. Provides
+  player API wrappers for various front-end technologies.
 - **License:** MIT
-- **Language:** [TODO] (not yet configured)
-- **Framework:** [TODO] (not yet configured)
-- **Package manager:** [TODO] (not yet configured)
+- **Language:** TypeScript (strict mode)
+- **Package manager:** npm with workspaces
+- **Monorepo layout:** `packages/` and `examples/` directories with npm workspaces.
+
+### Packages
+
+| Package | Path | Framework | Description |
+|---------|------|-----------|-------------|
+| `viostream-player-core` | `packages/player-core` | None (vanilla TS) | Framework-agnostic core: types, script loader, player wrapper |
+| `viostream-player-svelte` | `packages/player-svelte` | Svelte 5 | `<ViostreamPlayer>` component (depends on `player-core`) |
+
+### Examples
+
+| App | Path | Framework | Description |
+|-----|------|-----------|-------------|
+| `example-svelte` | `examples/svelte` | Svelte 5 / SvelteKit | Demo app for `player-svelte` |
 
 ## Build Commands
 
-> **[TODO]** Fill these in once a build system is configured (e.g. package.json scripts).
-
 ```shell
-# Install dependencies
-# [TODO] e.g. npm install / pnpm install / yarn
+npm install                 # install all workspace dependencies from root
 
-# Build the project
-# [TODO] e.g. npm run build
+# packages/player-core
+cd packages/player-core
+npm run build               # tsc — compile to dist/
+npm run check               # tsc --noEmit (type checking only)
 
-# Development server
-# [TODO] e.g. npm run dev
+# packages/player-svelte
+cd packages/player-svelte
+npm run build               # svelte-kit sync && svelte-package && publint
+npm run package             # same as build (library packaging)
+npm run check               # svelte-kit sync && svelte-check (type checking)
+
+# examples/svelte
+cd examples/svelte
+npm run dev                 # SvelteKit dev server (demo page)
+npm run build               # vite build (production build)
 ```
 
-## Lint and Format
-
-> **[TODO]** Fill these in once linting/formatting tools are added.
-
-```shell
-# Lint all files
-# [TODO] e.g. npm run lint
-
-# Auto-fix lint issues
-# [TODO] e.g. npm run lint -- --fix
-
-# Format code
-# [TODO] e.g. npm run format
-```
+**Build order:** `player-core` must be built before `player-svelte` can
+package, and `player-svelte` must be packaged before `examples/svelte` can run.
 
 ## Test Commands
 
-> **[TODO]** Fill these in once a test framework is configured.
+Test runner: **Vitest** (jsdom environment).
 
 ```shell
-# Run all tests
-# [TODO] e.g. npm test
+# packages/player-core
+cd packages/player-core
+npm test                                        # run all tests once
+npx vitest run src/tests/player.test.ts         # run a single test file
+npx vitest run -t "delegates play"              # run tests matching a pattern
+npx vitest                                      # watch mode
 
-# Run a single test file
-# [TODO] e.g. npm test -- path/to/file.test.ts
-
-# Run tests matching a pattern
-# [TODO] e.g. npm test -- -t "pattern"
-
-# Run tests in watch mode
-# [TODO] e.g. npm test -- --watch
+# packages/player-svelte (uses @testing-library/svelte)
+cd packages/player-svelte
+npm test                                        # run all tests once
+npx vitest run src/tests/ViostreamPlayer.test.ts      # run a single test file
+npx vitest                                      # watch mode
 ```
 
 **When fixing a bug or adding a feature, always run the relevant single test file
 rather than the full suite to get fast feedback.**
 
-## Code Style Guidelines
+## Lint and Format
 
-> **[TODO]** Update these once the project establishes conventions.
-> The guidelines below are reasonable defaults — replace with actual project rules.
+> No linter or formatter is configured yet. When one is added, update this section.
+
+## Environment Variables
+
+The SDK reads environment variables via `import.meta.env` at runtime. Vite
+statically replaces these at build time in consuming applications.
+
+| Variable | Context | Description |
+|----------|---------|-------------|
+| `PUBLIC_VIOSTREAM_HOST` | SvelteKit apps | Override the Viostream API hostname (e.g. `dev.viostream.com`) |
+| `VITE_VIOSTREAM_HOST` | Plain Vite apps | Override the Viostream API hostname (e.g. `dev.viostream.com`) |
+
+- `PUBLIC_VIOSTREAM_HOST` takes precedence over `VITE_VIOSTREAM_HOST`.
+- When neither is set, the SDK defaults to `play.viostream.com`.
+- See `.env.example` at the repo root for a template.
+- The host override is resolved internally by the loader — it is **not** exposed
+  as a prop or function parameter in the public API.
+- Type declarations for these variables live in `packages/player-core/src/env.d.ts`.
+
+## Code Style Guidelines
 
 ### Imports
 
-- Use ES module syntax (`import`/`export`), not CommonJS (`require`).
-- Group imports in this order, separated by blank lines:
-  1. Node/built-in modules
-  2. External dependencies (third-party packages)
-  3. Internal/project modules
-  4. Relative imports (siblings, parents)
-- Prefer named exports over default exports.
+- ES modules only (`import`/`export`). No CommonJS.
+- Group imports: (1) node built-ins, (2) external packages, (3) internal `$lib`
+  aliases, (4) relative imports. Separate groups with a blank line.
+- Prefer named exports. The barrel file is `src/index.ts` (core) or
+  `src/lib/index.ts` (svelte).
+- Use `.js` extensions in import paths (required by ESM).
 
 ### Formatting
 
-- [TODO] Specify formatter (Prettier, Biome, etc.) and config location.
-- Use consistent indentation (2 spaces recommended for JS/TS projects).
-- Trailing commas in multi-line structures.
+- 2-space indentation.
+- Single quotes for strings.
 - Semicolons at end of statements.
-- Single quotes for strings (unless the project configures otherwise).
+- Trailing commas in multi-line structures.
 
-### TypeScript / Types
+### TypeScript
 
-- [TODO] Specify tsconfig location and strictness level.
-- Prefer `interface` for object shapes, `type` for unions/intersections/utility types.
-- Avoid `any` — use `unknown` and narrow with type guards when the type is uncertain.
+- `strict: true` in tsconfig. Never weaken it.
+- Prefer `interface` for object shapes; `type` for unions and utility types.
+- Avoid `any` — use `unknown` with type guards.
 - Use explicit return types on exported functions.
-- Prefer `readonly` for properties that should not be mutated.
+- Callback-based vendor APIs are wrapped with promise-based getters
+  (see `promisifyGet` pattern in `player-core/src/player.ts`).
+
+### Svelte
+
+- Svelte 5 runes API: use `$props()`, `$state()`, `$effect()`.
+- Do not use legacy Svelte 4 syntax (`export let`, `$:`, `on:event`).
+- Component files use PascalCase (`ViostreamPlayer.svelte`).
+- Use Svelte 5 snippets (`{#snippet}`) for slot-like patterns (loading/error).
 
 ### Naming Conventions
 
-- **Files:** kebab-case (`my-component.ts`, `user-service.ts`).
-- **Variables/functions:** camelCase (`getUserById`, `isActive`).
-- **Classes/interfaces/types:** PascalCase (`UserService`, `ApiResponse`).
-- **Constants:** UPPER_SNAKE_CASE for true constants (`MAX_RETRIES`, `API_BASE_URL`).
-- **Booleans:** Prefix with `is`, `has`, `should`, `can` (`isLoading`, `hasPermission`).
-- **Private members:** Prefer TypeScript `private` keyword over `_` prefix.
+- **Files:** kebab-case for TS (`player.ts`, `loader.ts`), PascalCase for
+  Svelte components (`ViostreamPlayer.svelte`).
+- **Variables/functions:** camelCase (`createViostreamPlayer`, `wrapRawPlayer`).
+- **Types/interfaces:** PascalCase with `Viostream` prefix (`ViostreamPlayer`,
+  `ViostreamEmbedOptions`, `ViostreamPlayerEventMap`).
+- **Constants:** UPPER_SNAKE_CASE (`LOAD_TIMEOUT_MS`, `EVENT_MAP`).
+- **Booleans:** prefix with `is`, `has`, `should` (`isLoading`, `isDestroyed`).
 
 ### Error Handling
 
-- Never silently swallow errors — always log or rethrow.
-- Use typed/custom error classes for domain-specific errors.
-- Prefer early returns and guard clauses over deeply nested conditionals.
-- In async code, always handle promise rejections (try/catch or .catch()).
+- Never silently swallow errors — log or rethrow.
+- Wrap external API failures with descriptive error messages
+  (see `loadViostream` timeout/error handling in `loader.ts`).
+- Prefer early returns and guard clauses.
+- In async code, always handle promise rejections with try/catch.
+- After `destroy()`, getters reject with a clear "Player is destroyed" error.
 
-### Comments and Documentation
+### Tests
 
-- Write self-documenting code; use comments to explain *why*, not *what*.
-- Use JSDoc/TSDoc for public API functions and exported types.
-- Remove commented-out code — use version control history instead.
+- Tests live in `src/tests/` alongside the source.
+- Core mocks are in `player-core/src/tests/mocks.ts` — reuse
+  `createMockRawPlayer()` and `createMockViostreamGlobal()`.
+- Svelte setup file: `player-svelte/src/tests/setup.ts` (jest-dom matchers).
+- Component tests use `@testing-library/svelte` (`render`, `screen`).
+- Test files are named `<module>.test.ts`.
 
 ## Project Structure
 
-> **[TODO]** Fill in once the project structure is established.
-
 ```
 viostream-kit/
-  LICENSE
-  AGENTS.md
-  # [TODO] Add directory layout here, e.g.:
-  # src/           — source code
-  # tests/         — test files
-  # docs/          — documentation
-  # scripts/       — build/utility scripts
+  package.json              — npm workspaces root
+  AGENTS.md                 — this file
+  README.md                 — project overview
+  LICENSE                   — MIT
+  .env.example              — environment variable template
+  packages/
+    player-core/            — framework-agnostic core
+      src/
+        index.ts            — barrel exports
+        types.ts            — all shared TypeScript types/interfaces
+        player.ts           — createViostreamPlayer() + wrapRawPlayer()
+        loader.ts           — loadViostream() script loader
+        env.d.ts            — import.meta.env type declarations
+        tests/              — vitest tests + mocks
+      dist/                 — compiled output (gitignored)
+      package.json
+      tsconfig.json
+      vite.config.ts
+    player-svelte/          — Svelte 5 wrapper (library only, depends on player-core)
+      src/
+        app.html            — minimal SvelteKit shell (required by svelte-kit sync)
+        lib/
+          index.ts          — barrel: re-exports core + ViostreamPlayer component
+          types.ts          — Svelte-specific props (ViostreamPlayerProps)
+          ViostreamPlayer.svelte  — component
+        tests/              — component tests
+      dist/                 — built package output (gitignored)
+      package.json
+      tsconfig.json
+      svelte.config.js
+      vite.config.ts
+  examples/
+    svelte/                 — SvelteKit demo app for player-svelte
+      src/
+        routes/
+          +page.svelte      — comprehensive demo page
+        app.html            — SvelteKit HTML shell
+        app.d.ts            — SvelteKit type declarations
+      package.json
+      svelte.config.js
+      vite.config.ts
+      tsconfig.json
 ```
-
-## CI/CD
-
-> **[TODO]** Fill in once CI pipelines are configured (e.g. GitHub Actions).
-
-```
-# [TODO] e.g. .github/workflows/ci.yml
-# Describe what the CI pipeline does: lint, test, build, deploy, etc.
-```
-
-## Environment and Prerequisites
-
-> **[TODO]** Fill in required tool versions.
-
-- **Node.js:** [TODO] (specify minimum version)
-- **Package manager:** [TODO] (npm/pnpm/yarn + version)
-- **Other tools:** [TODO]
 
 ## Commit Convention
 
-All commits **must** follow the [Conventional Commits](https://www.conventionalcommits.org/) specification.
+All commits **must** follow [Conventional Commits](https://www.conventionalcommits.org/).
 Always include the current branch name in the commit footer using a `Branch:` token.
 
 ### Format
@@ -170,52 +226,51 @@ Branch: <branch-name>
 | `fix`      | A bug fix                                      |
 | `docs`     | Documentation-only changes                     |
 | `style`    | Formatting, missing semicolons, etc. (no logic)|
-| `refactor` | Code change that neither fixes a bug nor adds a feature |
+| `refactor` | Code change that neither fixes nor adds        |
 | `perf`     | Performance improvement                        |
 | `test`     | Adding or updating tests                       |
-| `build`    | Changes to build system or dependencies        |
-| `ci`       | Changes to CI configuration                    |
-| `chore`    | Other changes that don't modify src or tests   |
+| `build`    | Build system or dependency changes             |
+| `ci`       | CI configuration changes                       |
+| `chore`    | Other changes (not src or tests)               |
 | `revert`   | Reverts a previous commit                      |
 
 ### Rules
 
-- Use **imperative mood** in the description (e.g. "add feature", not "added feature").
-- Keep the first line under **72 characters**.
-- Add a blank line between the description and the body/footer.
-- Use the body to explain *what* and *why*, not *how*.
-- Breaking changes must include `BREAKING CHANGE:` in the footer or `!` after the type/scope.
-- The `Branch:` footer is **required** on every commit. Determine the branch
-  name by running `git branch --show-current` before committing.
+- Imperative mood in description ("add feature", not "added feature").
+- First line under **72 characters**.
+- Body explains *what* and *why*, not *how*.
+- Breaking changes: `BREAKING CHANGE:` in footer or `!` after type/scope.
+- `Branch:` footer is **required**. Run `git branch --show-current` first.
 
 ### Examples
 
 ```
-feat(auth): add OAuth2 login flow
+feat(player-svelte): add volume slider support
 
-Implement Google and GitHub OAuth2 providers with token refresh support.
-
-BREAKING CHANGE: removed legacy session-based auth endpoints
-Branch: feature/oauth2-login
+Branch: feature/volume-slider
 ```
 
 ```
-fix: prevent crash when config file is missing
+fix(player-core): prevent crash when config file is missing
 
 Branch: fix/missing-config
 ```
 
 ## Agent-Specific Notes
 
-- Always run lint and tests before considering a task complete.
+- Run tests (`npm test`) before considering any task complete.
+- Run type checking (`npm run check`) after modifying TypeScript or Svelte files.
+- Build `player-core` before running `player-svelte` tests or dev server.
 - Prefer editing existing files over creating new ones.
-- When adding dependencies, use the project's configured package manager.
-- Do not commit `.env` files or secrets.
-- Follow existing patterns in the codebase — consistency is more important
-  than personal preference.
-- When unsure about a convention, check nearby files for precedent.
-- **Always** use Conventional Commits with a `Branch:` footer (see above).
+- Do not commit `.env` files, secrets, `node_modules/`, `dist/`, or `.svelte-kit/`.
+- Use the project's package manager (`npm`) — do not switch to yarn or pnpm.
+- Follow existing patterns — consistency over personal preference.
+- Use the `Viostream` prefix for all public types and interfaces.
+- Framework-agnostic code (types, loader, player wrapper) belongs in `player-core`.
+- Framework-specific code (components, props) belongs in the relevant wrapper package.
+- When adding a new framework wrapper, mirror the structure of `packages/player-svelte`.
+- **Always** use Conventional Commits with a `Branch:` footer.
 
 ---
 
-*Last updated: 2026-03-11. Update this file as the project evolves.*
+*Last updated: 2026-03-12. Update this file as the project evolves.*

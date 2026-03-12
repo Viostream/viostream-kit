@@ -1,0 +1,58 @@
+{
+  "name": "viostream-player-svelte",
+  "version": "0.1.0",
+  "description": "Svelte 5 SDK for the Viostream video player — embed, control, and listen to player events",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "package": "svelte-kit sync && svelte-package && publint",
+    "build": "npm run package",
+    "prepublishOnly": "npm run package",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "svelte": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.test.*",
+    "!dist/**/*.spec.*"
+  ],
+  "dependencies": {
+    "viostream-player-core": "^0.1.0"
+  },
+  "peerDependencies": {
+    "svelte": "^5.0.0"
+  },
+  "devDependencies": {
+    "@sveltejs/kit": "^2.16.0",
+    "@sveltejs/package": "^2.3.0",
+    "@sveltejs/vite-plugin-svelte": "^5.0.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/svelte": "^5.3.1",
+    "jsdom": "^28.1.0",
+    "publint": "^0.3.0",
+    "svelte": "^5.0.0",
+    "svelte-check": "^4.0.0",
+    "typescript": "^5.7.0",
+    "vite": "^6.0.0",
+    "vitest": "^4.0.18"
+  },
+  "keywords": [
+    "svelte",
+    "svelte5",
+    "viostream",
+    "video",
+    "player",
+    "embed",
+    "sdk"
+  ]
+}
