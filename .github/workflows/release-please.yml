@@ -53,3 +53,15 @@ jobs:
         working-directory: packages/viostream-player-svelte
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Build player-react
+        if: ${{ steps.release.outputs.releases_created }}
+        run: npm run build
+        working-directory: packages/viostream-player-react
+
+      - name: Publish player-react
+        if: ${{ steps.release.outputs['packages/viostream-player-react--release_created'] }}
+        run: npm publish
+        working-directory: packages/viostream-player-react
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

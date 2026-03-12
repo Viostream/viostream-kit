@@ -6,19 +6,20 @@ application using framework-native wrappers.
 
 ## Packages
 
-| Package                                                                    | Version | Framework         | Description                                                              |
-| -------------------------------------------------------------------------- | ------- | ----------------- | ------------------------------------------------------------------------ |
-| [`@viostream/viostream-player-core`](./packages/viostream-player-core)     | 0.1.0   | None (vanilla TS) | Framework-agnostic core: types, script loader, player wrapper            |
-| [`@viostream/viostream-player-svelte`](./packages/viostream-player-svelte) | 0.1.0   | Svelte 5          | `<ViostreamPlayer>` component and `createViostreamPlayer()` headless API |
+| Package | Version | Framework | Description |
+| ------- | ------- | --------- | ----------- |
+| [`@viostream/viostream-player-core`](./packages/viostream-player-core) | <a href="https://www.npmjs.com/package/@viostream/viostream-player-core"><img src="https://img.shields.io/npm/v/@viostream/viostream-player-core.svg?sanitize=true" alt="Version"></a> | None (vanilla TS) | Framework-agnostic core: types, script loader, player wrapper |
+| [`@viostream/viostream-player-svelte`](./packages/viostream-player-svelte) | <a href="https://www.npmjs.com/package/@viostream/viostream-player-svelte"><img src="https://img.shields.io/npm/v/@viostream/viostream-player-svelte.svg?sanitize=true" alt="Version"></a> | Svelte 5 | `<ViostreamPlayer>` component and `createViostreamPlayer()` headless API |
+| [`@viostream/viostream-player-react`](./packages/viostream-player-react) | <a href="https://www.npmjs.com/package/@viostream/viostream-player-react"><img src="https://img.shields.io/npm/v/@viostream/viostream-player-react.svg?sanitize=true" alt="Version"></a> | React 18+ | `<ViostreamPlayer>` component and `createViostreamPlayer()` headless API |
 
-> More framework wrappers (React, Vue, etc.) are planned for the `packages/`
-> directory. All wrappers build on `player-core`.
+All framework wrappers build on `player-core`.
 
 ## Examples
 
-| App              | Path                                   | Framework            | Description                          |
-| ---------------- | -------------------------------------- | -------------------- | ------------------------------------ |
+| App | Path | Framework | Description |
+| --- | ---- | --------- | ----------- |
 | `example-svelte` | [`examples/svelte`](./examples/svelte) | Svelte 5 / SvelteKit | Interactive demo for `player-svelte` |
+| `example-react` | [`examples/react`](./examples/react) | React 18 / Vite | Interactive demo for `player-react` |
 
 Examples are standalone apps that live in `examples/` and depend on the
 corresponding SDK package via npm workspaces. When a new framework wrapper is
@@ -44,8 +45,17 @@ cd packages/viostream-player-svelte
 npm run build
 npm test
 
+# Build the React library
+cd packages/viostream-player-react
+npm run build
+npm test
+
 # Run the Svelte example app
 cd examples/svelte
+npm run dev
+
+# Run the React example app
+cd examples/react
 npm run dev
 ```
 
@@ -57,14 +67,17 @@ viostream-kit/
   packages/
     player-core/        — framework-agnostic core (types, loader, wrapper)
     player-svelte/      — Svelte 5 player SDK (library only, depends on player-core)
+    player-react/       — React 18+ player SDK (library only, depends on player-core)
   examples/
     svelte/             — SvelteKit demo app for player-svelte
+    react/              — Vite + React demo app for player-react
   AGENTS.md             — guidelines for AI coding agents
   LICENSE               — MIT
 ```
 
-**Build order:** `player-core` must be built before `player-svelte` can
-package, and `player-svelte` must be packaged before example apps can run.
+**Build order:** `player-core` must be built before `player-svelte` or
+`player-react` can package, and the wrapper packages must be packaged before
+their example apps can run.
 
 ## Contributing
 

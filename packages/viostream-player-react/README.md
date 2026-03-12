@@ -1,40 +1,42 @@
-# viostream-player-svelte
+# viostream-player-react
 
-<a href="https://www.npmjs.com/package/@viostream/viostream-player-svelte"><img src="https://img.shields.io/npm/v/@viostream/viostream-player-svelte.svg?sanitize=true" alt="npm version"></a>
-<a href="https://www.npmjs.com/package/@viostream/viostream-player-svelte"><img src="https://img.shields.io/npm/l/@viostream/viostream-player-svelte.svg?sanitize=true" alt="License"></a>
-<a href="https://npmcharts.com/compare/@viostream/viostream-player-svelte?interval=30"><img src="https://img.shields.io/npm/dm/@viostream/viostream-player-svelte.svg?sanitize=true" alt="Downloads"></a>
+<a href="https://www.npmjs.com/package/@viostream/viostream-player-react"><img src="https://img.shields.io/npm/v/@viostream/viostream-player-react.svg?sanitize=true" alt="npm version"></a>
+<a href="https://www.npmjs.com/package/@viostream/viostream-player-react"><img src="https://img.shields.io/npm/l/@viostream/viostream-player-react.svg?sanitize=true" alt="License"></a>
+<a href="https://npmcharts.com/compare/@viostream/viostream-player-react?interval=30"><img src="https://img.shields.io/npm/dm/@viostream/viostream-player-react.svg?sanitize=true" alt="Downloads"></a>
 
-Svelte 5 SDK for the [Viostream](https://www.viostream.com) video player. Embed, control, and listen to player events with full TypeScript support.
+React 18+ SDK for the [Viostream](https://www.viostream.com) video player. Embed, control, and listen to player events with full TypeScript support.
 
 ## Requirements
 
-- Svelte 5
+- React 18 or 19
 - A Viostream account key (found on the **Settings > General** page in Viostream)
 
 ## Installation
 
 ```bash
-npm install viostream-player-svelte
+npm install @viostream/viostream-player-react
 ```
 
 ## Quick Start
 
 ### Component
 
-Drop a `<ViostreamPlayer>` into any Svelte component. The SDK loads the Viostream script automatically.
+Drop a `<ViostreamPlayer>` into any React component. The SDK loads the Viostream script automatically.
 
-```svelte
-<script lang="ts">
-  import { ViostreamPlayer } from 'viostream-player-svelte';
-</script>
+```tsx
+import { ViostreamPlayer } from '@viostream/viostream-player-react';
 
-<ViostreamPlayer
-  accountKey="vc-100100100"
-  publicKey="nhedxonrxsyfee"
-  displayTitle={true}
-  sharing={true}
-  onplay={() => console.log('playing')}
-/>
+function App() {
+  return (
+    <ViostreamPlayer
+      accountKey="vc-100100100"
+      publicKey="nhedxonrxsyfee"
+      displayTitle={true}
+      sharing={true}
+      onPlay={() => console.log('playing')}
+    />
+  );
+}
 ```
 
 ### Headless / Programmatic
@@ -42,7 +44,7 @@ Drop a `<ViostreamPlayer>` into any Svelte component. The SDK loads the Viostrea
 Use `createViostreamPlayer` when you need full control without a component:
 
 ```ts
-import { createViostreamPlayer } from 'viostream-player-svelte';
+import { createViostreamPlayer } from '@viostream/viostream-player-react';
 
 const player = await createViostreamPlayer({
   accountKey: 'vc-100100100',
@@ -89,65 +91,66 @@ All embed options are optional and passed directly to the Viostream embed API.
 
 | Prop | Signature | Fires when |
 |---|---|---|
-| `onplay` | `() => void` | Playback starts or resumes. |
-| `onpause` | `() => void` | Playback is paused. |
-| `onended` | `() => void` | Media finishes playing. |
-| `ontimeupdate` | `(data: ViostreamTimeUpdateData) => void` | Current time changes. `data.seconds`, `data.duration`. |
-| `onvolumechange` | `(data: ViostreamVolumeChangeData) => void` | Volume changes. `data.volume`. |
-| `onerror` | `(data: ViostreamErrorData) => void` | An error occurs. `data.code`, `data.message`. |
-| `onprogress` | `(data: ViostreamProgressData) => void` | Buffering progress. `data.percent`. |
-| `onready` | `() => void` | Player is ready. |
-| `onseeked` | `() => void` | Seek operation completes. |
-| `onloaded` | `() => void` | Metadata has loaded. |
+| `onPlay` | `() => void` | Playback starts or resumes. |
+| `onPause` | `() => void` | Playback is paused. |
+| `onEnded` | `() => void` | Media finishes playing. |
+| `onTimeUpdate` | `(data: ViostreamTimeUpdateData) => void` | Current time changes. `data.seconds`, `data.duration`. |
+| `onVolumeChange` | `(data: ViostreamVolumeChangeData) => void` | Volume changes. `data.volume`. |
+| `onError` | `(data: ViostreamErrorData) => void` | An error occurs. `data.code`, `data.message`. |
+| `onProgress` | `(data: ViostreamProgressData) => void` | Buffering progress. `data.percent`. |
+| `onReady` | `() => void` | Player is ready. |
+| `onSeeked` | `() => void` | Seek operation completes. |
+| `onLoaded` | `() => void` | Metadata has loaded. |
 
 #### Other Props
 
 | Prop | Type | Description |
 |---|---|---|
-| `class` | `string` | CSS class applied to the outer wrapper `<div>`. |
-| `onplayerready` | `(player: ViostreamPlayerInstance) => void` | Callback providing the player instance for programmatic control. |
-| `loading` | `Snippet` | Optional Svelte 5 snippet rendered while the player is loading. |
-| `error` | `Snippet<[string]>` | Optional snippet rendered on error. Receives the error message as an argument. |
+| `className` | `string` | CSS class applied to the outer wrapper `<div>`. |
+| `onPlayerReady` | `(player: ViostreamPlayerInstance) => void` | Callback providing the player instance for programmatic control. |
+| `renderLoading` | `() => ReactNode` | Render prop for a custom loading indicator. |
+| `renderError` | `(message: string) => ReactNode` | Render prop for a custom error display. Receives the error message. |
 
 ### Getting the Player Instance
 
-Use `onplayerready` to get a reference to the player for programmatic control:
+Use `onPlayerReady` to get a reference to the player for programmatic control:
 
-```svelte
-<script lang="ts">
-  import { ViostreamPlayer } from 'viostream-player-svelte';
-  import type { ViostreamPlayerInstance } from 'viostream-player-svelte';
+```tsx
+import { useState } from 'react';
+import { ViostreamPlayer } from '@viostream/viostream-player-react';
+import type { ViostreamPlayerInstance } from '@viostream/viostream-player-react';
 
-  let player: ViostreamPlayerInstance | undefined = $state();
-</script>
+function App() {
+  const [player, setPlayer] = useState<ViostreamPlayerInstance>();
 
-<ViostreamPlayer
-  accountKey="vc-100100100"
-  publicKey="nhedxonrxsyfee"
-  onplayerready={(p) => (player = p)}
-/>
+  return (
+    <>
+      <ViostreamPlayer
+        accountKey="vc-100100100"
+        publicKey="nhedxonrxsyfee"
+        onPlayerReady={(p) => setPlayer(p)}
+      />
 
-<button onclick={() => player?.play()}>Play</button>
-<button onclick={() => player?.pause()}>Pause</button>
+      <button onClick={() => player?.play()}>Play</button>
+      <button onClick={() => player?.pause()}>Pause</button>
+    </>
+  );
+}
 ```
 
 ### Custom Loading and Error States
 
-Use Svelte 5 snippets to replace the default loading/error UI:
+Use render props to replace the default loading/error UI:
 
-```svelte
+```tsx
 <ViostreamPlayer
   accountKey="vc-100100100"
   publicKey="nhedxonrxsyfee"
->
-  {#snippet loading()}
-    <p>Loading video...</p>
-  {/snippet}
-
-  {#snippet error(message)}
-    <div class="my-error">Something went wrong: {message}</div>
-  {/snippet}
-</ViostreamPlayer>
+  renderLoading={() => <p>Loading video...</p>}
+  renderError={(message) => (
+    <div className="my-error">Something went wrong: {message}</div>
+  )}
+/>
 ```
 
 ### Cleanup
@@ -158,11 +161,11 @@ The player is destroyed automatically when the component unmounts. All event lis
 
 ## `createViostreamPlayer()`
 
-For use outside of Svelte components or when you need full lifecycle control.
+For use outside of React components or when you need full lifecycle control.
 
 ```ts
-import { createViostreamPlayer } from 'viostream-player-svelte';
-import type { CreateViostreamPlayerOptions } from 'viostream-player-svelte';
+import { createViostreamPlayer } from '@viostream/viostream-player-react';
+import type { CreateViostreamPlayerOptions } from '@viostream/viostream-player-react';
 
 const player = await createViostreamPlayer({
   accountKey: 'vc-100100100',
@@ -189,7 +192,7 @@ const player = await createViostreamPlayer({
 
 ## Player Instance API
 
-Both the component (via `onplayerready`) and `createViostreamPlayer()` provide a `ViostreamPlayerInstance` with the following methods.
+Both the component (via `onPlayerReady`) and `createViostreamPlayer()` provide a `ViostreamPlayerInstance` with the following methods.
 
 ### Playback Controls
 
@@ -211,7 +214,7 @@ player.reload({ key: 'value' }); // reload with new settings
 All getters return promises. The SDK converts the underlying callback-based API to `async`/`await`.
 
 ```ts
-const volume    = await player.getVolume();          // number (0–1)
+const volume    = await player.getVolume();          // number (0-1)
 const loop      = await player.getLoop();            // boolean
 const time      = await player.getCurrentTime();     // number (seconds)
 const paused    = await player.getPaused();          // boolean
@@ -324,7 +327,7 @@ if (raw) {
 The SDK loads the Viostream API script automatically. If you need manual control over loading (e.g. preloading), you can use `loadViostream` directly:
 
 ```ts
-import { loadViostream } from 'viostream-player-svelte';
+import { loadViostream } from '@viostream/viostream-player-react';
 
 const api = await loadViostream('vc-100100100');
 // api.embed(...) is now available
@@ -343,10 +346,11 @@ The loader:
 Every export is fully typed. Import types alongside runtime exports:
 
 ```ts
-import { ViostreamPlayer, createViostreamPlayer } from 'viostream-player-svelte';
+import { ViostreamPlayer, createViostreamPlayer } from '@viostream/viostream-player-react';
 import type {
   ViostreamPlayerInstance,
   ViostreamPlayerProps,
+  ViostreamPlayerEventProps,
   ViostreamEmbedOptions,
   ViostreamTimeUpdateData,
   ViostreamVolumeChangeData,
@@ -360,7 +364,7 @@ import type {
   CreateViostreamPlayerOptions,
   RawViostreamPlayerInstance,
   ViostreamGlobal
-} from 'viostream-player-svelte';
+} from '@viostream/viostream-player-react';
 ```
 
 ---
@@ -369,66 +373,81 @@ import type {
 
 A complete example showing the component with custom controls, event logging, and async getters:
 
-```svelte
-<script lang="ts">
-  import { ViostreamPlayer } from 'viostream-player-svelte';
-  import type { ViostreamPlayerInstance, ViostreamTimeUpdateData } from 'viostream-player-svelte';
+```tsx
+import { useState, useCallback } from 'react';
+import { ViostreamPlayer } from '@viostream/viostream-player-react';
+import type {
+  ViostreamPlayerInstance,
+  ViostreamTimeUpdateData,
+} from '@viostream/viostream-player-react';
 
-  let player: ViostreamPlayerInstance | undefined = $state();
-  let currentTime = $state(0);
-  let duration = $state(0);
-  let paused = $state(true);
-  let log: string[] = $state([]);
+function App() {
+  const [player, setPlayer] = useState<ViostreamPlayerInstance>();
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [paused, setPaused] = useState(true);
+  const [log, setLog] = useState<string[]>([]);
 
-  function handleReady(p: ViostreamPlayerInstance) {
-    player = p;
-    p.getDuration().then((d) => (duration = d));
-  }
+  const addLog = useCallback((msg: string) => {
+    setLog((prev) => [msg, ...prev.slice(0, 49)]);
+  }, []);
 
-  function handleTimeUpdate(data: ViostreamTimeUpdateData) {
-    currentTime = data.seconds;
-    duration = data.duration;
-  }
+  const handleReady = useCallback(
+    (p: ViostreamPlayerInstance) => {
+      setPlayer(p);
+      p.getDuration().then((d) => setDuration(d));
+    },
+    [],
+  );
+
+  const handleTimeUpdate = useCallback((data: ViostreamTimeUpdateData) => {
+    setCurrentTime(data.seconds);
+    setDuration(data.duration);
+  }, []);
 
   function format(s: number): string {
     return `${Math.floor(s / 60)}:${Math.floor(s % 60).toString().padStart(2, '0')}`;
   }
-</script>
 
-<ViostreamPlayer
-  accountKey="vc-100100100"
-  publicKey="nhedxonrxsyfee"
-  displayTitle={true}
-  sharing={true}
-  speedSelector={true}
-  hlsQualitySelector={true}
-  onplay={() => { paused = false; log = ['play', ...log]; }}
-  onpause={() => { paused = true; log = ['pause', ...log]; }}
-  onended={() => { log = ['ended', ...log]; }}
-  ontimeupdate={handleTimeUpdate}
-  onplayerready={handleReady}
-/>
+  return (
+    <>
+      <ViostreamPlayer
+        accountKey="vc-100100100"
+        publicKey="nhedxonrxsyfee"
+        displayTitle={true}
+        sharing={true}
+        speedSelector={true}
+        hlsQualitySelector={true}
+        onPlay={() => { setPaused(false); addLog('play'); }}
+        onPause={() => { setPaused(true); addLog('pause'); }}
+        onEnded={() => addLog('ended')}
+        onTimeUpdate={handleTimeUpdate}
+        onPlayerReady={handleReady}
+      />
 
-<div>
-  <button onclick={() => paused ? player?.play() : player?.pause()}>
-    {paused ? 'Play' : 'Pause'}
-  </button>
-  <button onclick={() => player?.setCurrentTime(0)}>Restart</button>
-  <span>{format(currentTime)} / {format(duration)}</span>
-</div>
+      <div>
+        <button onClick={() => paused ? player?.play() : player?.pause()}>
+          {paused ? 'Play' : 'Pause'}
+        </button>
+        <button onClick={() => player?.setCurrentTime(0)}>Restart</button>
+        <span>{format(currentTime)} / {format(duration)}</span>
+      </div>
 
-<div>
-  <button onclick={async () => {
-    const vol = await player?.getVolume();
-    log = [`volume: ${vol}`, ...log];
-  }}>Get Volume</button>
-  <button onclick={async () => {
-    const tracks = await player?.getTracks();
-    log = [`tracks: ${JSON.stringify(tracks)}`, ...log];
-  }}>Get Tracks</button>
-</div>
+      <div>
+        <button onClick={async () => {
+          const vol = await player?.getVolume();
+          addLog(`volume: ${vol}`);
+        }}>Get Volume</button>
+        <button onClick={async () => {
+          const tracks = await player?.getTracks();
+          addLog(`tracks: ${JSON.stringify(tracks)}`);
+        }}>Get Tracks</button>
+      </div>
 
-<pre>{log.join('\n')}</pre>
+      <pre>{log.join('\n')}</pre>
+    </>
+  );
+}
 ```
 
 ---
@@ -439,8 +458,8 @@ A complete example showing the component with custom controls, event logging, an
 # Install dependencies
 npm install
 
-# Start the dev server (serves the demo page)
-npm run dev
+# Build (compile TypeScript to dist/)
+npm run build
 
 # Type-check
 npm run check
@@ -450,9 +469,6 @@ npm run test
 
 # Run tests in watch mode
 npm run test:watch
-
-# Build the library for publishing
-npm run package
 ```
 
 ## License

@@ -1,0 +1,5 @@
+.log-scroll {
+  max-height: 200px;
+  overflow-y: auto;
+  line-height: 1.6;
+}
