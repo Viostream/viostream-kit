@@ -16,8 +16,8 @@
 
 | Package | Path | Framework | Description |
 |---------|------|-----------|-------------|
-| `@viostream/viostream-player-core` | `packages/player-core` | None (vanilla TS) | Framework-agnostic core: types, script loader, player wrapper |
-| `@viostream/viostream-player-svelte` | `packages/player-svelte` | Svelte 5 | `<ViostreamPlayer>` component (depends on `player-core`) |
+| `@viostream/viostream-player-core` | `packages/viostream-player-core` | None (vanilla TS) | Framework-agnostic core: types, script loader, player wrapper |
+| `@viostream/viostream-player-svelte` | `packages/viostream-player-svelte` | Svelte 5 | `<ViostreamPlayer>` component (depends on `player-core`) |
 
 ### Examples
 
@@ -30,13 +30,13 @@
 ```shell
 npm install                 # install all workspace dependencies from root
 
-# packages/player-core
-cd packages/player-core
+# packages/viostream-player-core
+cd packages/viostream-player-core
 npm run build               # tsc — compile to dist/
 npm run check               # tsc --noEmit (type checking only)
 
-# packages/player-svelte
-cd packages/player-svelte
+# packages/viostream-player-svelte
+cd packages/viostream-player-svelte
 npm run build               # svelte-kit sync && svelte-package && publint
 npm run package             # same as build (library packaging)
 npm run check               # svelte-kit sync && svelte-check (type checking)
@@ -55,15 +55,15 @@ package, and `player-svelte` must be packaged before `examples/svelte` can run.
 Test runner: **Vitest** (jsdom environment).
 
 ```shell
-# packages/player-core
-cd packages/player-core
+# packages/viostream-player-core
+cd packages/viostream-player-core
 npm test                                        # run all tests once
 npx vitest run src/tests/player.test.ts         # run a single test file
 npx vitest run -t "delegates play"              # run tests matching a pattern
 npx vitest                                      # watch mode
 
-# packages/player-svelte (uses @testing-library/svelte)
-cd packages/player-svelte
+# packages/viostream-player-svelte (uses @testing-library/svelte)
+cd packages/viostream-player-svelte
 npm test                                        # run all tests once
 npx vitest run src/tests/ViostreamPlayer.test.ts      # run a single test file
 npx vitest                                      # watch mode
@@ -91,7 +91,7 @@ statically replaces these at build time in consuming applications.
 - See `.env.example` at the repo root for a template.
 - The host override is resolved internally by the loader — it is **not** exposed
   as a prop or function parameter in the public API.
-- Type declarations for these variables live in `packages/player-core/src/env.d.ts`.
+- Type declarations for these variables live in `packages/viostream-player-core/src/env.d.ts`.
 
 ## Code Style Guidelines
 
@@ -268,7 +268,7 @@ Branch: fix/missing-config
 - Use the `Viostream` prefix for all public types and interfaces.
 - Framework-agnostic code (types, loader, player wrapper) belongs in `player-core`.
 - Framework-specific code (components, props) belongs in the relevant wrapper package.
-- When adding a new framework wrapper, mirror the structure of `packages/player-svelte`.
+- When adding a new framework wrapper, mirror the structure of `packages/viostream-player-svelte`.
 - **Always** use Conventional Commits with a `Branch:` footer.
 
 ---

@@ -33,23 +33,23 @@ jobs:
       - name: Build player-core
         if: ${{ steps.release.outputs.releases_created }}
         run: npm run build
-        working-directory: packages/player-core
+        working-directory: packages/viostream-player-core
 
       - name: Publish player-core
-        if: ${{ steps.release.outputs['packages/player-core--release_created'] }}
+        if: ${{ steps.release.outputs['packages/viostream-player-core--release_created'] }}
         run: npm publish
-        working-directory: packages/player-core
+        working-directory: packages/viostream-player-core
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Build player-svelte
         if: ${{ steps.release.outputs.releases_created }}
         run: npm run build
-        working-directory: packages/player-svelte
+        working-directory: packages/viostream-player-svelte
 
       - name: Publish player-svelte
-        if: ${{ steps.release.outputs['packages/player-svelte--release_created'] }}
+        if: ${{ steps.release.outputs['packages/viostream-player-svelte--release_created'] }}
         run: npm publish
-        working-directory: packages/player-svelte
+        working-directory: packages/viostream-player-svelte
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
