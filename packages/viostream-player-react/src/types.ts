@@ -1,10 +1,11 @@
 /**
- * Viostream Player SDK — Svelte-specific type definitions
+ * Viostream Player SDK — React-specific type definitions
  *
  * Core types (ViostreamPlayer, ViostreamEmbedOptions, etc.) are re-exported from
- * `@viostream/viostream-player-core`. This file defines only the Svelte component props.
+ * `@viostream/viostream-player-core`. This file defines only the React component props.
  */
 
+import type { ReactNode } from 'react';
 import type {
   ViostreamEmbedOptions,
   ViostreamPlayer,
@@ -20,16 +21,16 @@ import type {
 
 /** Callback props for player events on the `<ViostreamPlayer>` component. */
 export interface ViostreamPlayerEventProps {
-  onplay?: () => void;
-  onpause?: () => void;
-  onended?: () => void;
-  ontimeupdate?: (data: ViostreamTimeUpdateData) => void;
-  onvolumechange?: (data: ViostreamVolumeChangeData) => void;
-  onerror?: (data: ViostreamErrorData) => void;
-  onprogress?: (data: ViostreamProgressData) => void;
-  onready?: () => void;
-  onseeked?: () => void;
-  onloaded?: () => void;
+  onPlay?: () => void;
+  onPause?: () => void;
+  onEnded?: () => void;
+  onTimeUpdate?: (data: ViostreamTimeUpdateData) => void;
+  onVolumeChange?: (data: ViostreamVolumeChangeData) => void;
+  onError?: (data: ViostreamErrorData) => void;
+  onProgress?: (data: ViostreamProgressData) => void;
+  onReady?: () => void;
+  onSeeked?: () => void;
+  onLoaded?: () => void;
 }
 
 /** Props accepted by the `<ViostreamPlayer>` component. */
@@ -41,9 +42,17 @@ export interface ViostreamPlayerProps extends ViostreamEmbedOptions, ViostreamPl
   /**
    * Optional CSS class applied to the outer wrapper `<div>`.
    */
-  class?: string;
+  className?: string;
   /**
    * Callback fired once the player is ready, providing the `ViostreamPlayer` instance.
    */
-  onplayerready?: (player: ViostreamPlayer) => void;
+  onPlayerReady?: (player: ViostreamPlayer) => void;
+  /**
+   * Render prop for a custom loading indicator. Shown while the player is loading.
+   */
+  renderLoading?: () => ReactNode;
+  /**
+   * Render prop for a custom error display. Receives the error message string.
+   */
+  renderError?: (message: string) => ReactNode;
 }

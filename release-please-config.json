@@ -8,6 +8,9 @@
     },
     "packages/viostream-player-svelte": {
       "component": "player-svelte"
+    },
+    "packages/viostream-player-react": {
+      "component": "player-react"
     }
   },
   "plugins": [

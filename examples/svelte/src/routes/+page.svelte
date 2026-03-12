@@ -1,6 +1,12 @@
 <script lang="ts">
 	import { ViostreamPlayer } from "@viostream/viostream-player-svelte";
-	import type { ViostreamPlayerInstance, ViostreamTimeUpdateData } from "@viostream/viostream-player-svelte";
+	import type {
+		ViostreamPlayerInstance,
+		ViostreamTimeUpdateData,
+	} from "@viostream/viostream-player-svelte";
+
+	let accountKey = $state("vc-100100100");
+	let publicKey = $state("nhedxonrxsyfee");
 
 	let player: ViostreamPlayerInstance | undefined = $state();
 	let currentTime = $state(0);
@@ -9,6 +15,8 @@
 	let isMuted = $state(false);
 	let volume = $state(1);
 	let log: string[] = $state([]);
+
+	let percent = $derived(duration > 0 ? (currentTime / duration) * 100 : 0);
 
 	function addLog(msg: string) {
 		const ts = new Date().toLocaleTimeString();
@@ -66,127 +74,216 @@
 	<title>Viostream Svelte SDK — Demo</title>
 </svelte:head>
 
-<main
-	style="max-width: 900px; margin: 0 auto; padding: 2rem; font-family: system-ui, sans-serif;"
->
-	<h1>Viostream Svelte SDK Demo</h1>
-	<p>
-		This page demonstrates the <code>&lt;ViostreamPlayer&gt;</code> component and event
-		handling.
+<main class="container py-4" style="max-width: 900px;">
+	<h1 class="mb-2">Viostream Svelte SDK Demo</h1>
+	<p class="lead text-body-secondary mb-4">
+		This page demonstrates the <code>&lt;ViostreamPlayer&gt;</code> component
+		and event handling.
 	</p>
 
-	<div style="margin: 1.5rem 0;">
-		<ViostreamPlayer
-			accountKey="vc-100100100"
-			publicKey="nhedxonrxsyfee"
-			displayTitle={true}
-			sharing={true}
-			speedSelector={true}
-			hlsQualitySelector={true}
-			onplay={() => {
-				isPaused = false;
-				addLog("Event: play");
-			}}
-			onpause={() => {
-				isPaused = true;
-				addLog("Event: pause");
-			}}
-			onended={() => addLog("Event: ended")}
-			ontimeupdate={handleTimeUpdate}
-			onvolumechange={(d) => {
-				volume = d.volume;
-				addLog(`Event: volumechange → ${d.volume}`);
-			}}
-			onseeked={() => addLog("Event: seeked")}
-			onplayerready={handlePlayerReady}
-		/>
+	<!-- Configuration -->
+	<div class="card mb-4">
+		<div class="card-header">
+			<h5 class="mb-0">Configuration</h5>
+		</div>
+		<div class="card-body">
+			<div class="row g-3">
+				<div class="col-sm-6">
+					<label class="form-label fw-semibold" for="account-key"
+						>Account Key</label
+					>
+					<input
+						id="account-key"
+						type="text"
+						class="form-control font-monospace"
+						bind:value={accountKey}
+						placeholder="vc-100100100"
+					/>
+				</div>
+				<div class="col-sm-6">
+					<label class="form-label fw-semibold" for="public-key"
+						>Public Key</label
+					>
+					<input
+						id="public-key"
+						type="text"
+						class="form-control font-monospace"
+						bind:value={publicKey}
+						placeholder="nhedxonrxsyfee"
+					/>
+				</div>
+			</div>
+		</div>
 	</div>
 
-	<!-- Custom controls -->
-	<section
-		style="margin: 1.5rem 0; padding: 1rem; border: 1px solid #ddd; border-radius: 8px;"
-	>
-		<h2 style="margin-top: 0;">Custom Controls</h2>
-
-		<div
-			style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;"
-		>
-			<button onclick={togglePlay}>
-				{isPaused ? "Play" : "Pause"}
-			</button>
-			<button onclick={toggleMute}>
-				{isMuted ? "Unmute" : "Mute"}
-			</button>
-			<button onclick={() => seek(0)}> Restart </button>
-			<button onclick={() => seek(Math.max(0, currentTime - 10))}>
-				-10s
-			</button>
-			<button onclick={() => seek(currentTime + 10)}> +10s </button>
+	<!-- Player -->
+	{#key `${accountKey}:${publicKey}`}
+		<div class="mb-4">
+			<ViostreamPlayer
+				{accountKey}
+				{publicKey}
+				displayTitle={true}
+				sharing={true}
+				speedSelector={true}
+				hlsQualitySelector={true}
+				onplay={() => {
+					isPaused = false;
+					addLog("Event: play");
+				}}
+				onpause={() => {
+					isPaused = true;
+					addLog("Event: pause");
+				}}
+				onended={() => addLog("Event: ended")}
+				ontimeupdate={handleTimeUpdate}
+				onvolumechange={(d) => {
+					volume = d.volume;
+					addLog(`Event: volumechange → ${d.volume}`);
+				}}
+				onseeked={() => addLog("Event: seeked")}
+				onplayerready={handlePlayerReady}
+			/>
 		</div>
+	{/key}
 
-		<p style="margin-top: 0.75rem; font-variant-numeric: tabular-nums;">
-			{formatTime(currentTime)} / {formatTime(duration)}
-		</p>
-	</section>
-
-	<!-- Event log -->
-	<section
-		style="margin: 1.5rem 0; padding: 1rem; border: 1px solid #ddd; border-radius: 8px;"
-	>
-		<h2 style="margin-top: 0;">Event Log</h2>
-		<div
-			style="max-height: 200px; overflow-y: auto; font-family: monospace; font-size: 0.85rem; line-height: 1.6;"
-		>
-			{#each log as entry}
-				<div>{entry}</div>
-			{/each}
-			{#if log.length === 0}
-				<div style="color: #999;">Waiting for events...</div>
-			{/if}
+	<!-- Custom Controls -->
+	<div class="card mb-4">
+		<div class="card-header">
+			<h5 class="mb-0">Custom Controls</h5>
 		</div>
-	</section>
+		<div class="card-body">
+			<div class="d-flex flex-wrap gap-2 align-items-center">
+				<div
+					class="btn-group"
+					role="group"
+					aria-label="Playback controls"
+				>
+					<button class="btn btn-outline-light" onclick={togglePlay}>
+						<i
+							class={isPaused
+								? "bi bi-play-fill"
+								: "bi bi-pause-fill"}
+						></i>
+						{isPaused ? "Play" : "Pause"}
+					</button>
+					<button class="btn btn-outline-light" onclick={toggleMute}>
+						<i
+							class={isMuted
+								? "bi bi-volume-mute-fill"
+								: "bi bi-volume-up-fill"}
+						></i>
+						{isMuted ? "Unmute" : "Mute"}
+					</button>
+				</div>
 
-	<!-- Programmatic API example -->
-	<section
-		style="margin: 1.5rem 0; padding: 1rem; border: 1px solid #ddd; border-radius: 8px;"
-	>
-		<h2 style="margin-top: 0;">Promise-based Getters</h2>
-		<div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-			<button
-				onclick={async () => {
-					if (!player) return;
-					const t = await player.getCurrentTime();
-					addLog(`getCurrentTime() → ${t.toFixed(2)}s`);
-				}}>Get Current Time</button
-			>
-			<button
-				onclick={async () => {
-					if (!player) return;
-					const d = await player.getDuration();
-					addLog(`getDuration() → ${d.toFixed(2)}s`);
-				}}>Get Duration</button
-			>
-			<button
-				onclick={async () => {
-					if (!player) return;
-					const v = await player.getVolume();
-					addLog(`getVolume() → ${v}`);
-				}}>Get Volume</button
-			>
-			<button
-				onclick={async () => {
-					if (!player) return;
-					const r = await player.getAspectRatio();
-					addLog(`getAspectRatio() → ${r}`);
-				}}>Get Aspect Ratio</button
-			>
-			<button
-				onclick={async () => {
-					if (!player) return;
-					const tracks = await player.getTracks();
-					addLog(`getTracks() → ${JSON.stringify(tracks)}`);
-				}}>Get Tracks</button
-			>
+				<div class="btn-group" role="group" aria-label="Seek controls">
+					<button
+						class="btn btn-outline-light"
+						onclick={() => seek(0)}
+					>
+						<i class="bi bi-skip-start-fill"></i> Restart
+					</button>
+					<button
+						class="btn btn-outline-light"
+						onclick={() => seek(Math.max(0, currentTime - 10))}
+					>
+						<i class="bi bi-skip-backward-fill"></i> -10s
+					</button>
+					<button
+						class="btn btn-outline-light"
+						onclick={() => seek(currentTime + 10)}
+					>
+						<i class="bi bi-skip-forward-fill"></i> +10s
+					</button>
+				</div>
+			</div>
+
+			<div class="d-flex align-items-center gap-3 mt-3">
+				<div class="progress flex-grow-1" style="height: 8px;">
+					<div
+						class="progress-bar"
+						role="progressbar"
+						style="width: {percent}%"
+						aria-valuenow={currentTime}
+						aria-valuemin={0}
+						aria-valuemax={duration}
+					></div>
+				</div>
+				<span class="badge text-bg-light font-monospace">
+					{formatTime(currentTime)} / {formatTime(duration)}
+				</span>
+			</div>
 		</div>
-	</section>
+	</div>
+
+	<!-- Event Log -->
+	<div class="card mb-4">
+		<div class="card-header">
+			<h5 class="mb-0">Event Log</h5>
+		</div>
+		<div class="card-body">
+			<div
+				class="font-monospace small"
+				style="max-height: 200px; overflow-y: auto; line-height: 1.6;"
+			>
+				{#each log as entry}
+					<div>{entry}</div>
+				{/each}
+				{#if log.length === 0}
+					<div class="text-body-secondary">Waiting for events...</div>
+				{/if}
+			</div>
+		</div>
+	</div>
+
+	<!-- Promise-based Getters -->
+	<div class="card mb-4">
+		<div class="card-header">
+			<h5 class="mb-0">Promise-based Getters</h5>
+		</div>
+		<div class="card-body">
+			<div class="d-flex flex-wrap gap-2">
+				<button
+					class="btn btn-outline-info btn-sm"
+					onclick={async () => {
+						if (!player) return;
+						const t = await player.getCurrentTime();
+						addLog(`getCurrentTime() → ${t.toFixed(2)}s`);
+					}}>Get Current Time</button
+				>
+				<button
+					class="btn btn-outline-info btn-sm"
+					onclick={async () => {
+						if (!player) return;
+						const d = await player.getDuration();
+						addLog(`getDuration() → ${d.toFixed(2)}s`);
+					}}>Get Duration</button
+				>
+				<button
+					class="btn btn-outline-info btn-sm"
+					onclick={async () => {
+						if (!player) return;
+						const v = await player.getVolume();
+						addLog(`getVolume() → ${v}`);
+					}}>Get Volume</button
+				>
+				<button
+					class="btn btn-outline-info btn-sm"
+					onclick={async () => {
+						if (!player) return;
+						const r = await player.getAspectRatio();
+						addLog(`getAspectRatio() → ${r}`);
+					}}>Get Aspect Ratio</button
+				>
+				<button
+					class="btn btn-outline-info btn-sm"
+					onclick={async () => {
+						if (!player) return;
+						const tracks = await player.getTracks();
+						addLog(`getTracks() → ${JSON.stringify(tracks)}`);
+					}}>Get Tracks</button
+				>
+			</div>
+		</div>
+	</div>
 </main>

@@ -1,25 +1,27 @@
 /**
- * @viostream/viostream-player-svelte
+ * @viostream/viostream-player-react
  *
- * Svelte 5 SDK for the Viostream video player.
+ * React 18+ SDK for the Viostream video player.
  *
  * @example Component usage
- * ```svelte
- * <script lang="ts">
- *   import { ViostreamPlayer } from '@viostream/viostream-player-svelte';
- * </script>
+ * ```tsx
+ * import { ViostreamPlayer } from '@viostream/viostream-player-react';
  *
- * <ViostreamPlayer
- *   accountKey="vc-100100100"
- *   publicKey="nhedxonrxsyfee"
- *   displayTitle={true}
- *   onplay={() => console.log('playing')}
- * />
+ * function App() {
+ *   return (
+ *     <ViostreamPlayer
+ *       accountKey="vc-100100100"
+ *       publicKey="nhedxonrxsyfee"
+ *       displayTitle={true}
+ *       onPlay={() => console.log('playing')}
+ *     />
+ *   );
+ * }
  * ```
  *
  * @example Headless / programmatic usage
  * ```ts
- * import { createViostreamPlayer } from '@viostream/viostream-player-svelte';
+ * import { createViostreamPlayer } from '@viostream/viostream-player-react';
  *
  * const player = await createViostreamPlayer({
  *   accountKey: 'vc-100100100',
@@ -34,7 +36,7 @@
  */
 
 // Component
-export { default as ViostreamPlayer } from './ViostreamPlayer.svelte';
+export { ViostreamPlayer } from './ViostreamPlayer.js';
 
 // Re-export everything from core so consumers can import from this package
 export {
@@ -60,7 +62,7 @@ export type {
   ViostreamGlobal,
 } from '@viostream/viostream-player-core';
 
-// Svelte-specific types
+// React-specific types
 export type {
   ViostreamPlayerProps,
   ViostreamPlayerEventProps,
