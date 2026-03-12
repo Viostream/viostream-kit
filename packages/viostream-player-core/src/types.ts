@@ -13,8 +13,8 @@
 export interface ViostreamEmbedOptions {
   /** Display chapter markers. */
   chapters?: boolean;
-  /** Chapter display style: `'dropdown'`, `'progressbar'`, or `'horizontal'`. */
-  chapterDisplayType?: 'dropdown' | 'progressbar' | 'horizontal';
+  /** Chapter display style: progressbar only. */
+  chapterDisplayType?: 'progressbar';
   /** Seek to a named chapter before playback begins. */
   chapterSlug?: string;
   /** Show the video title overlay. */
