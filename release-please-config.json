@@ -3,10 +3,10 @@
   "bump-minor-pre-major": true,
   "bump-patch-for-minor-pre-major": true,
   "packages": {
-    "packages/player-core": {
+    "packages/viostream-player-core": {
       "component": "player-core"
     },
-    "packages/player-svelte": {
+    "packages/viostream-player-svelte": {
       "component": "player-svelte"
     }
   },
