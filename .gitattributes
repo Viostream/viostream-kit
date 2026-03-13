@@ -9,6 +9,7 @@
 *.jsx text
 *.json text
 *.svelte text
+*.vue text
 *.html text
 *.css text
 *.md text

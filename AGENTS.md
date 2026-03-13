@@ -18,12 +18,16 @@
 |---------|------|-----------|-------------|
 | `@viostream/viostream-player-core` | `packages/viostream-player-core` | None (vanilla TS) | Framework-agnostic core: types, script loader, player wrapper |
 | `@viostream/viostream-player-svelte` | `packages/viostream-player-svelte` | Svelte 5 | `<ViostreamPlayer>` component (depends on `player-core`) |
+| `@viostream/viostream-player-react` | `packages/viostream-player-react` | React 18+ | `<ViostreamPlayer>` component (depends on `player-core`) |
+| `@viostream/viostream-player-vue` | `packages/viostream-player-vue` | Vue 3 | `<ViostreamPlayer>` component (depends on `player-core`) |
 
 ### Examples
 
 | App | Path | Framework | Description |
 |-----|------|-----------|-------------|
 | `example-svelte` | `examples/svelte` | Svelte 5 / SvelteKit | Demo app for `player-svelte` |
+| `example-react` | `examples/react` | React 18 / Vite | Demo app for `player-react` |
+| `example-vue` | `examples/vue` | Vue 3 / Vite | Demo app for `player-vue` |
 
 ## Build Commands
 
@@ -41,14 +45,35 @@ npm run build               # svelte-kit sync && svelte-package && publint
 npm run package             # same as build (library packaging)
 npm run check               # svelte-kit sync && svelte-check (type checking)
 
+# packages/viostream-player-react
+cd packages/viostream-player-react
+npm run build               # tsc — compile to dist/
+npm run check               # tsc --noEmit (type checking only)
+
+# packages/viostream-player-vue
+cd packages/viostream-player-vue
+npm run build               # vue-tsc -b && vite build
+npm run check               # vue-tsc --noEmit (type checking only)
+
 # examples/svelte
 cd examples/svelte
 npm run dev                 # SvelteKit dev server (demo page)
 npm run build               # vite build (production build)
+
+# examples/react
+cd examples/react
+npm run dev                 # Vite dev server (demo page)
+npm run build               # vite build (production build)
+
+# examples/vue
+cd examples/vue
+npm run dev                 # Vite dev server (demo page)
+npm run build               # vite build (production build)
 ```
 
-**Build order:** `player-core` must be built before `player-svelte` can
-package, and `player-svelte` must be packaged before `examples/svelte` can run.
+**Build order:** `player-core` must be built before `player-svelte`, `player-react`,
+or `player-vue` can package, and wrapper packages must be packaged before their
+example apps can run.
 
 ## Test Commands
 
@@ -64,6 +89,18 @@ npx vitest                                      # watch mode
 
 # packages/viostream-player-svelte (uses @testing-library/svelte)
 cd packages/viostream-player-svelte
+npm test                                        # run all tests once
+npx vitest run src/tests/ViostreamPlayer.test.ts      # run a single test file
+npx vitest                                      # watch mode
+
+# packages/viostream-player-react (uses @testing-library/react)
+cd packages/viostream-player-react
+npm test                                        # run all tests once
+npx vitest run src/tests/ViostreamPlayer.test.tsx     # run a single test file
+npx vitest                                      # watch mode
+
+# packages/viostream-player-vue (uses @testing-library/vue)
+cd packages/viostream-player-vue
 npm test                                        # run all tests once
 npx vitest run src/tests/ViostreamPlayer.test.ts      # run a single test file
 npx vitest                                      # watch mode
@@ -190,6 +227,26 @@ viostream-kit/
       tsconfig.json
       svelte.config.js
       vite.config.ts
+    player-react/           — React 18+ wrapper (library only, depends on player-core)
+      src/
+        index.ts            — barrel: re-exports core + ViostreamPlayer component
+        types.ts            — React-specific props (ViostreamPlayerProps)
+        ViostreamPlayer.tsx — component
+        tests/              — component tests
+      dist/                 — compiled output (gitignored)
+      package.json
+      tsconfig.json
+      vite.config.ts
+    player-vue/             — Vue 3 wrapper (library only, depends on player-core)
+      src/
+        index.ts            — barrel: re-exports core + ViostreamPlayer component
+        types.ts            — Vue-specific props (ViostreamPlayerProps)
+        ViostreamPlayer.vue — component
+        tests/              — component tests
+      dist/                 — built package output (gitignored)
+      package.json
+      tsconfig.json
+      vite.config.ts
   examples/
     svelte/                 — SvelteKit demo app for player-svelte
       src/
@@ -199,6 +256,22 @@ viostream-kit/
         app.d.ts            — SvelteKit type declarations
       package.json
       svelte.config.js
+      vite.config.ts
+      tsconfig.json
+    react/                  — Vite + React demo app for player-react
+      src/
+        App.tsx             — comprehensive demo page
+        main.tsx            — app entry point
+      index.html            — HTML shell with Bootstrap dark theme
+      package.json
+      vite.config.ts
+      tsconfig.json
+    vue/                    — Vite + Vue demo app for player-vue
+      src/
+        App.vue             — comprehensive demo page
+        main.ts             — app entry point
+      index.html            — HTML shell with Bootstrap dark theme
+      package.json
       vite.config.ts
       tsconfig.json
 ```

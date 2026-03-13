@@ -1,5 +1,6 @@
 {
   "packages/viostream-player-core": "0.1.2",
   "packages/viostream-player-svelte": "0.1.3",
-  "packages/viostream-player-react": "0.1.1"
+  "packages/viostream-player-react": "0.1.1",
+  "packages/viostream-player-vue": "0.1.0"
 }
