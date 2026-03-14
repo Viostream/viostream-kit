@@ -69,22 +69,6 @@ const player = await createViostreamPlayer({
 
 ---
 
-## `wrapRawPlayer()`
-
-Lower-level factory that wraps a raw callback-based player instance (returned by `$viostream.embed()`) with the typed, promise-based SDK interface. Used internally by `createViostreamPlayer()` and by framework wrappers.
-
-```ts
-import { loadViostream, wrapRawPlayer } from '@viostream/viostream-player-core';
-
-const api = await loadViostream('vc-100100100');
-const raw = api.embed('nhedxonrxsyfee', 'my-video-div', { displayTitle: true });
-const player = wrapRawPlayer(raw, 'my-video-div');
-
-player.play();
-```
-
----
-
 ## Embed Options
 
 All embed options are optional and passed to the Viostream embed API.
@@ -112,7 +96,7 @@ All embed options are optional and passed to the Viostream embed API.
 
 ## Player Instance API
 
-The `ViostreamPlayer` interface returned by `createViostreamPlayer()` and `wrapRawPlayer()` provides the following methods.
+The `ViostreamPlayer` interface returned by `createViostreamPlayer()` provides the following methods.
 
 ### Playback Controls
 
@@ -198,18 +182,6 @@ After calling `destroy()`:
 - All event listeners are removed.
 - The player iframe is removed from the DOM.
 - Getter calls will reject with `"Player has been destroyed"`.
-- `player.raw` returns `undefined`.
-
-### Raw Escape Hatch
-
-If you need direct access to the underlying Viostream player instance:
-
-```ts
-const raw = player.raw; // RawViostreamPlayerInstance | undefined
-if (raw) {
-  raw.getVolume((vol) => console.log(vol)); // callback-based original API
-}
-```
 
 ---
 
@@ -250,7 +222,6 @@ Every export is fully typed. Import types alongside runtime exports:
 ```ts
 import {
   createViostreamPlayer,
-  wrapRawPlayer,
   loadViostream,
 } from '@viostream/viostream-player-core';
 
@@ -264,8 +235,6 @@ import type {
   ViostreamPlayerEventMap,
   ViostreamEventHandler,
   CreateViostreamPlayerOptions,
-  RawViostreamPlayerInstance,
-  ViostreamGlobal,
 } from '@viostream/viostream-player-core';
 ```
 

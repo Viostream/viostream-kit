@@ -20,8 +20,11 @@
  */
 
 // Headless API
-export { createViostreamPlayer, wrapRawPlayer } from './player.js';
+export { createViostreamPlayer } from './player.js';
 export type { CreateViostreamPlayerOptions } from './player.js';
+
+// Internal — used by framework wrapper packages (not part of the consumer-facing API)
+export { wrapRawPlayer } from './player.js';
 
 // Script loader
 export { loadViostream } from './loader.js';
@@ -36,6 +39,10 @@ export type {
   ViostreamPlayerEventMap,
   ViostreamEventHandler,
   ViostreamPlayer,
+} from './types.js';
+
+// Internal types — used by framework wrapper packages and tests
+export type {
   RawViostreamPlayerInstance,
   ViostreamGlobal,
 } from './types.js';

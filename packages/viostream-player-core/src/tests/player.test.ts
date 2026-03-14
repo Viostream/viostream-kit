@@ -266,10 +266,10 @@ describe('wrapRawPlayer', () => {
 
     it('sets raw to undefined after destroy', () => {
       const player = wrapRawPlayer(mockRaw, TARGET_ID);
-      expect(player.raw).toBe(mockRaw);
 
       player.destroy();
-      expect(player.raw).toBeUndefined();
+      // Player should be in destroyed state — getters reject
+      expect(player.getVolume()).rejects.toThrow('Player has been destroyed');
     });
 
     it('getters reject after destroy', async () => {
@@ -291,7 +291,6 @@ describe('wrapRawPlayer', () => {
       player.destroy();
       // Should not throw
       player.destroy();
-      expect(player.raw).toBeUndefined();
     });
 
     it('destroy gracefully handles missing container element', () => {
@@ -299,23 +298,6 @@ describe('wrapRawPlayer', () => {
       const player = wrapRawPlayer(mockRaw, 'nonexistent-id');
       // Should not throw
       player.destroy();
-      expect(player.raw).toBeUndefined();
-    });
-  });
-
-  // -----------------------------------------------------------------------
-  // raw escape hatch
-  // -----------------------------------------------------------------------
-  describe('raw property', () => {
-    it('exposes the raw player instance', () => {
-      const player = wrapRawPlayer(mockRaw, TARGET_ID);
-      expect(player.raw).toBe(mockRaw);
-    });
-
-    it('returns undefined after destroy', () => {
-      const player = wrapRawPlayer(mockRaw, TARGET_ID);
-      player.destroy();
-      expect(player.raw).toBeUndefined();
     });
   });
 });

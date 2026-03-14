@@ -376,6 +376,27 @@ Branch: fix/missing-config
 |----------|--------|--------|
 | `chapterDisplayType` | `ViostreamEmbedOptions` | Not part of the canonical PlayerSettings type |
 
+### Removed Properties
+
+| Property | Was In | Reason |
+|----------|--------|--------|
+| `.raw` | `ViostreamPlayer` interface | Consumers should not access the raw player instance |
+
+### Internal-Only Exports (Not Re-exported from Wrapper Packages)
+
+The following are exported from `@viostream/viostream-player-core` for internal
+use by the wrapper packages, but must **never** be re-exported from the wrapper
+package barrel files (`player-svelte`, `player-react`, `player-vue`):
+
+| Export | Purpose |
+|--------|---------|
+| `wrapRawPlayer` | Used internally by wrapper components to wrap raw instances |
+| `RawViostreamPlayerInstance` | Type used internally by wrapper components |
+| `ViostreamGlobal` | Type used internally by loader code |
+
+Consumers of wrapper packages should only interact with the `ViostreamPlayer`
+interface returned via the `onPlayerReady` callback.
+
 ## Canonical PlayerSettings / ViostreamEmbedOptions
 
 `ViostreamEmbedOptions` (in `player-core/src/types.ts`) **must** stay aligned with

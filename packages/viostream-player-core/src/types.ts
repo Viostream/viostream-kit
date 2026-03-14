@@ -222,9 +222,6 @@ export interface ViostreamPlayer {
   // -- Lifecycle ----------------------------------------------------------
   /** Remove the player from the DOM and clean up all listeners. */
   destroy(): void;
-
-  /** The underlying raw player instance (escape hatch). */
-  readonly raw: RawViostreamPlayerInstance | undefined;
 }
 
 // ---------------------------------------------------------------------------

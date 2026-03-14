@@ -39,7 +39,6 @@ export { default as ViostreamPlayer } from './ViostreamPlayer.svelte';
 // Re-export everything from core so consumers can import from this package
 export {
   createViostreamPlayer,
-  wrapRawPlayer,
   loadViostream,
 } from '@viostream/viostream-player-core';
 
@@ -53,8 +52,6 @@ export type {
   ViostreamPlayerEventMap,
   ViostreamEventHandler,
   ViostreamPlayer as ViostreamPlayerInstance,
-  RawViostreamPlayerInstance,
-  ViostreamGlobal,
 } from '@viostream/viostream-player-core';
 
 // Svelte-specific types

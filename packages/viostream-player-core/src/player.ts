@@ -210,10 +210,6 @@ export function wrapRawPlayer(raw: RawViostreamPlayerInstance, targetId: string)
         container.innerHTML = '';
       }
     },
-
-    get raw() {
-      return destroyed ? undefined : raw;
-    },
   };
 
   return player;

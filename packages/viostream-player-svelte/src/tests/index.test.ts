@@ -15,12 +15,6 @@ describe('index.ts barrel exports', () => {
     expect(typeof mod.createViostreamPlayer).toBe('function');
   });
 
-  it('exports wrapRawPlayer function from core', async () => {
-    const mod = await import('$lib/index.js');
-    expect(mod.wrapRawPlayer).toBeDefined();
-    expect(typeof mod.wrapRawPlayer).toBe('function');
-  });
-
   it('exports loadViostream function from core', async () => {
     const mod = await import('$lib/index.js');
     expect(mod.loadViostream).toBeDefined();

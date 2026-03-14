@@ -290,19 +290,6 @@ After calling `destroy()`:
 - All event listeners are removed.
 - The player iframe is removed from the DOM.
 - Getter calls will reject with `"Player has been destroyed"`.
-- `player.raw` returns `undefined`.
-
-### Raw Escape Hatch
-
-If you need direct access to the underlying Viostream player instance:
-
-```ts
-const raw = player.raw; // RawViostreamPlayerInstance | undefined
-if (raw) {
-  raw.getVolume((vol) => console.log(vol)); // callback-based original API
-}
-```
-
 ---
 
 ## Script Loader
@@ -342,8 +329,6 @@ import type {
   ViostreamPlayerEventMap,
   ViostreamEventHandler,
   CreateViostreamPlayerOptions,
-  RawViostreamPlayerInstance,
-  ViostreamGlobal
 } from '@viostream/viostream-player-vue';
 ```
 

@@ -41,7 +41,6 @@ export { ViostreamPlayer } from './ViostreamPlayer.js';
 // Re-export everything from core so consumers can import from this package
 export {
   createViostreamPlayer,
-  wrapRawPlayer,
   loadViostream,
 } from '@viostream/viostream-player-core';
 
@@ -55,8 +54,6 @@ export type {
   ViostreamPlayerEventMap,
   ViostreamEventHandler,
   ViostreamPlayer as ViostreamPlayerInstance,
-  RawViostreamPlayerInstance,
-  ViostreamGlobal,
 } from '@viostream/viostream-player-core';
 
 // React-specific types
