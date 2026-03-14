@@ -76,16 +76,20 @@ All embed options are optional and passed directly to the Viostream embed API.
 | Prop | Type | Description |
 |---|---|---|
 | `chapters` | `boolean` | Display chapter markers. |
-| `chapter-display-type` | `'dropdown' \| 'progressbar' \| 'horizontal'` | Chapter display style. |
 | `chapter-slug` | `string` | Seek to a named chapter before playback. |
 | `display-title` | `boolean` | Show the video title overlay. |
 | `hls-quality-selector` | `boolean` | Show the HLS quality selector. |
 | `player-key` | `string` | Override the player theme to use. |
 | `sharing` | `boolean` | Show sharing controls. |
+| `skin-active` | `string` | Custom skin active colour (e.g. `'#ff0000'`). Requires `skinCustom: true`. |
+| `skin-background` | `string` | Custom skin background colour (e.g. `'#000000'`). Requires `skinCustom: true`. |
+| `skin-custom` | `boolean` | Enable a custom skin via the API. Default: `false`. |
+| `skin-inactive` | `string` | Custom skin inactive colour (e.g. `'#cccccc'`). Requires `skinCustom: true`. |
 | `speed-selector` | `boolean` | Show playback speed selector. |
 | `start-end-timespan` | `string` | Play a specific section (e.g. `'10,30'`). |
 | `start-time` | `string` | Seek to a time (seconds) before playback. |
 | `transcript-download` | `boolean` | Allow transcript download. |
+| `use-settings-menu` | `boolean` | Enable the settings menu on the control bar. Default: `false`. |
 
 #### Events
 
@@ -228,36 +232,7 @@ const paused    = await player.getPaused();          // boolean
 const duration  = await player.getDuration();        // number (seconds)
 const muted     = await player.getMuted();           // boolean
 const ratio     = await player.getAspectRatio();     // number
-const liveTime  = await player.getLiveCurrentTime(); // number (seconds)
 const height    = await player.getHeight();          // number (pixels)
-const tracks    = await player.getTracks();          // ViostreamTrack[]
-```
-
-### Track Management
-
-```ts
-const tracks = await player.getTracks();
-player.setTrack(tracks[0]);   // pass a ViostreamTrack object
-player.setTrack('en');        // or a track id string
-```
-
-### Cue Management
-
-```ts
-player.cueAdd({ startTime: 10, text: 'Introduction' });
-
-player.cueUpdate(
-  { startTime: 10, text: 'Introduction' },
-  { text: 'Updated Introduction' }
-);
-
-player.cueDelete('cue-id');
-```
-
-### Automatic Speech Recognition (ASR)
-
-```ts
-player.asrAdd(cueArray, 'asr-track-id');
 ```
 
 ### Events
@@ -365,9 +340,6 @@ import type {
   ViostreamProgressData,
   ViostreamPlayerEventMap,
   ViostreamEventHandler,
-  ViostreamCue,
-  ViostreamCueFieldUpdate,
-  ViostreamTrack,
   CreateViostreamPlayerOptions,
   RawViostreamPlayerInstance,
   ViostreamGlobal
@@ -442,10 +414,6 @@ function format(s: number): string {
       const vol = await player?.getVolume();
       addLog(`volume: ${vol}`);
     }">Get Volume</button>
-    <button @click="async () => {
-      const tracks = await player?.getTracks();
-      addLog(`tracks: ${JSON.stringify(tracks)}`);
-    }">Get Tracks</button>
   </div>
 
   <pre>{{ log.join('\n') }}</pre>

@@ -87,71 +87,6 @@ describe('wrapRawPlayer', () => {
   });
 
   // -----------------------------------------------------------------------
-  // Track management
-  // -----------------------------------------------------------------------
-  describe('track management', () => {
-    it('setTrack() delegates to raw.setTrack()', () => {
-      const player = wrapRawPlayer(mockRaw, TARGET_ID);
-      const track = { id: 'en', label: 'English' };
-      player.setTrack(track);
-      expect(mockRaw.setTrack).toHaveBeenCalledWith(track);
-    });
-
-    it('setTrack() accepts a string id', () => {
-      const player = wrapRawPlayer(mockRaw, TARGET_ID);
-      player.setTrack('en');
-      expect(mockRaw.setTrack).toHaveBeenCalledWith('en');
-    });
-
-    it('getTracks() returns a promise that resolves with tracks', async () => {
-      const mockTracks = [{ id: 'en', label: 'English' }, { id: 'fr', label: 'French' }];
-      mockRaw._getterValues.getTracks = mockTracks;
-
-      const player = wrapRawPlayer(mockRaw, TARGET_ID);
-      const tracks = await player.getTracks();
-      expect(tracks).toEqual(mockTracks);
-    });
-  });
-
-  // -----------------------------------------------------------------------
-  // Cue management
-  // -----------------------------------------------------------------------
-  describe('cue management', () => {
-    it('cueAdd() delegates to raw.cueAdd()', () => {
-      const player = wrapRawPlayer(mockRaw, TARGET_ID);
-      const cue = { startTime: 10, text: 'Hello' };
-      player.cueAdd(cue);
-      expect(mockRaw.cueAdd).toHaveBeenCalledWith(cue);
-    });
-
-    it('cueUpdate() delegates to raw.cueUpdate()', () => {
-      const player = wrapRawPlayer(mockRaw, TARGET_ID);
-      const cue = { startTime: 10, text: 'Hello' };
-      const field = { text: 'Updated' };
-      player.cueUpdate(cue, field);
-      expect(mockRaw.cueUpdate).toHaveBeenCalledWith(cue, field);
-    });
-
-    it('cueDelete() delegates to raw.cueDelete()', () => {
-      const player = wrapRawPlayer(mockRaw, TARGET_ID);
-      player.cueDelete('cue-1');
-      expect(mockRaw.cueDelete).toHaveBeenCalledWith('cue-1');
-    });
-  });
-
-  // -----------------------------------------------------------------------
-  // ASR
-  // -----------------------------------------------------------------------
-  describe('ASR', () => {
-    it('asrAdd() delegates to raw.asrAdd()', () => {
-      const player = wrapRawPlayer(mockRaw, TARGET_ID);
-      const cues = [{ text: 'hello' }];
-      player.asrAdd(cues, 'asr-1');
-      expect(mockRaw.asrAdd).toHaveBeenCalledWith(cues, 'asr-1');
-    });
-  });
-
-  // -----------------------------------------------------------------------
   // Promise-based getters
   // -----------------------------------------------------------------------
   describe('promise-based getters', () => {
@@ -195,12 +130,6 @@ describe('wrapRawPlayer', () => {
       mockRaw._getterValues.getAspectRatio = 1.7778;
       const player = wrapRawPlayer(mockRaw, TARGET_ID);
       await expect(player.getAspectRatio()).resolves.toBe(1.7778);
-    });
-
-    it('getLiveCurrentTime() resolves with live current time', async () => {
-      mockRaw._getterValues.getLiveCurrentTime = 99.9;
-      const player = wrapRawPlayer(mockRaw, TARGET_ID);
-      await expect(player.getLiveCurrentTime()).resolves.toBe(99.9);
     });
 
     it('getHeight() resolves with height', async () => {
@@ -354,9 +283,7 @@ describe('wrapRawPlayer', () => {
       await expect(player.getMuted()).rejects.toThrow('Player has been destroyed');
       await expect(player.getLoop()).rejects.toThrow('Player has been destroyed');
       await expect(player.getAspectRatio()).rejects.toThrow('Player has been destroyed');
-      await expect(player.getLiveCurrentTime()).rejects.toThrow('Player has been destroyed');
       await expect(player.getHeight()).rejects.toThrow('Player has been destroyed');
-      await expect(player.getTracks()).rejects.toThrow('Player has been destroyed');
     });
 
     it('calling destroy() twice is safe (idempotent)', () => {

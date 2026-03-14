@@ -9,13 +9,10 @@
 import { loadViostream } from './loader.js';
 import type {
   RawViostreamPlayerInstance,
-  ViostreamCue,
-  ViostreamCueFieldUpdate,
   ViostreamEmbedOptions,
   ViostreamEventHandler,
   ViostreamPlayer,
   ViostreamPlayerEventMap,
-  ViostreamTrack,
 } from './types.js';
 
 // ---------------------------------------------------------------------------
@@ -130,30 +127,6 @@ export function wrapRawPlayer(raw: RawViostreamPlayerInstance, targetId: string)
       raw.reload(options);
     },
 
-    // -- Track management -------------------------------------------------
-    setTrack(track: ViostreamTrack | string) {
-      raw.setTrack(track);
-    },
-    getTracks() {
-      return promisifyGet<ViostreamTrack[]>(raw.getTracks.bind(raw));
-    },
-
-    // -- Cue management ---------------------------------------------------
-    cueAdd(cue: ViostreamCue) {
-      raw.cueAdd(cue);
-    },
-    cueUpdate(cue: ViostreamCue, field: ViostreamCueFieldUpdate) {
-      raw.cueUpdate(cue, field);
-    },
-    cueDelete(cue: ViostreamCue | string) {
-      raw.cueDelete(cue);
-    },
-
-    // -- ASR --------------------------------------------------------------
-    asrAdd(cues: unknown[], id: string) {
-      raw.asrAdd(cues, id);
-    },
-
     // -- Promise-based getters --------------------------------------------
     getVolume() {
       return promisifyGet<number>(raw.getVolume.bind(raw));
@@ -175,9 +148,6 @@ export function wrapRawPlayer(raw: RawViostreamPlayerInstance, targetId: string)
     },
     getAspectRatio() {
       return promisifyGet<number>(raw.getAspectRatio.bind(raw));
-    },
-    getLiveCurrentTime() {
-      return promisifyGet<number>(raw.getLiveCurrentTime.bind(raw));
     },
     getHeight() {
       return promisifyGet<number>(raw.getHeight.bind(raw));

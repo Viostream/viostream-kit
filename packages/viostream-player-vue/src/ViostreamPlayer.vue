@@ -30,31 +30,39 @@ const props = withDefaults(defineProps<{
 
   // Embed options
   chapters?: boolean;
-  chapterDisplayType?: 'progressbar';
   chapterSlug?: string;
   displayTitle?: boolean;
   hlsQualitySelector?: boolean;
   playerKey?: string;
   sharing?: boolean;
+  skinActive?: string;
+  skinBackground?: string;
+  skinCustom?: boolean;
+  skinInactive?: string;
   speedSelector?: boolean;
   startEndTimespan?: string;
   startTime?: string;
   transcriptDownload?: boolean;
+  useSettingsMenu?: boolean;
 
   // Styling
   class?: string;
 }>(), {
   chapters: undefined,
-  chapterDisplayType: undefined,
   chapterSlug: undefined,
   displayTitle: undefined,
   hlsQualitySelector: undefined,
   playerKey: undefined,
   sharing: undefined,
+  skinActive: undefined,
+  skinBackground: undefined,
+  skinCustom: undefined,
+  skinInactive: undefined,
   speedSelector: undefined,
   startEndTimespan: undefined,
   startTime: undefined,
   transcriptDownload: undefined,
+  useSettingsMenu: undefined,
   class: undefined,
 });
 
@@ -105,16 +113,20 @@ const unsubscribers: Array<() => void> = [];
 function buildEmbedOptions(): ViostreamEmbedOptions {
   const opts: ViostreamEmbedOptions = {};
   if (props.chapters !== undefined) opts.chapters = props.chapters;
-  if (props.chapterDisplayType !== undefined) opts.chapterDisplayType = props.chapterDisplayType;
   if (props.chapterSlug !== undefined) opts.chapterSlug = props.chapterSlug;
   if (props.displayTitle !== undefined) opts.displayTitle = props.displayTitle;
   if (props.hlsQualitySelector !== undefined) opts.hlsQualitySelector = props.hlsQualitySelector;
   if (props.playerKey !== undefined) opts.playerKey = props.playerKey;
   if (props.sharing !== undefined) opts.sharing = props.sharing;
+  if (props.skinActive !== undefined) opts.skinActive = props.skinActive;
+  if (props.skinBackground !== undefined) opts.skinBackground = props.skinBackground;
+  if (props.skinCustom !== undefined) opts.skinCustom = props.skinCustom;
+  if (props.skinInactive !== undefined) opts.skinInactive = props.skinInactive;
   if (props.speedSelector !== undefined) opts.speedSelector = props.speedSelector;
   if (props.startEndTimespan !== undefined) opts.startEndTimespan = props.startEndTimespan;
   if (props.startTime !== undefined) opts.startTime = props.startTime;
   if (props.transcriptDownload !== undefined) opts.transcriptDownload = props.transcriptDownload;
+  if (props.useSettingsMenu !== undefined) opts.useSettingsMenu = props.useSettingsMenu;
   return opts;
 }
 

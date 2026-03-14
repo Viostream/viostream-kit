@@ -257,16 +257,6 @@ export function App() {
             >
               Get Aspect Ratio
             </button>
-            <button
-              className="btn btn-outline-info btn-sm"
-              onClick={async () => {
-                if (!player) return;
-                const tracks = await player.getTracks();
-                addLog(`getTracks() → ${JSON.stringify(tracks)}`);
-              }}
-            >
-              Get Tracks
-            </button>
           </div>
         </div>
       </div>

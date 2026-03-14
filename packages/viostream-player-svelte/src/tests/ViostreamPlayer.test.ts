@@ -38,15 +38,8 @@ function createMockRawPlayer(): RawViostreamPlayerInstance {
 		getDuration: vi.fn((cb: (v: number) => void) => cb(120)),
 		getMuted: vi.fn((cb: (v: boolean) => void) => cb(false)),
 		getAspectRatio: vi.fn((cb: (v: number) => void) => cb(1.7778)),
-		getLiveCurrentTime: vi.fn((cb: (v: number) => void) => cb(0)),
 		getHeight: vi.fn((cb: (v: number) => void) => cb(360)),
 		reload: vi.fn(),
-		getTracks: vi.fn((cb: (v: never[]) => void) => cb([])),
-		setTrack: vi.fn(),
-		cueAdd: vi.fn(),
-		cueUpdate: vi.fn(),
-		cueDelete: vi.fn(),
-		asrAdd: vi.fn(),
 		on: vi.fn(),
 	};
 }
@@ -158,7 +151,6 @@ describe('ViostreamPlayer component', () => {
 					speedSelector: true,
 					hlsQualitySelector: false,
 					chapters: true,
-					chapterDisplayType: 'horizontal' as const,
 					chapterSlug: 'chapter-2',
 					startTime: '30',
 					transcriptDownload: true
@@ -176,7 +168,6 @@ describe('ViostreamPlayer component', () => {
 				speedSelector: true,
 				hlsQualitySelector: false,
 				chapters: true,
-				chapterDisplayType: 'horizontal',
 				chapterSlug: 'chapter-2',
 				startTime: '30',
 				transcriptDownload: true
