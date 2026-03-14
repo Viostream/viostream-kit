@@ -77,18 +77,19 @@ All embed options are optional and passed directly to the Viostream embed API.
 |---|---|---|
 | `chapters` | `boolean` | Display chapter markers. |
 | `chapter-slug` | `string` | Seek to a named chapter before playback. |
-| `display-title` | `boolean` | Show the video title overlay. |
-| `hls-quality-selector` | `boolean` | Show the HLS quality selector. |
+| `display-title` | `boolean` | Show the video title overlay. Default: `false`. |
+| `hls-quality-selector` | `boolean` | Show the HLS quality selector. Default: `true`. |
 | `player-key` | `string` | Override the player theme to use. |
-| `sharing` | `boolean` | Show sharing controls. |
+| `player-style` | `'video' \| 'audio' \| 'audio-poster'` | The player rendering style. Default: `'video'`. |
+| `sharing` | `boolean` | Show sharing controls. Default: `false`. |
 | `skin-active` | `string` | Custom skin active colour (e.g. `'#ff0000'`). Requires `skinCustom: true`. |
 | `skin-background` | `string` | Custom skin background colour (e.g. `'#000000'`). Requires `skinCustom: true`. |
 | `skin-custom` | `boolean` | Enable a custom skin via the API. Default: `false`. |
 | `skin-inactive` | `string` | Custom skin inactive colour (e.g. `'#cccccc'`). Requires `skinCustom: true`. |
-| `speed-selector` | `boolean` | Show playback speed selector. |
+| `speed-selector` | `boolean` | Show playback speed selector. Default: `true`. |
 | `start-end-timespan` | `string` | Play a specific section (e.g. `'10,30'`). |
 | `start-time` | `string` | Seek to a time (seconds) before playback. |
-| `transcript-download` | `boolean` | Allow transcript download. |
+| `transcript-download` | `boolean` | Allow transcript download. Default: `false`. |
 | `use-settings-menu` | `boolean` | Enable the settings menu on the control bar. Default: `false`. |
 
 #### Events

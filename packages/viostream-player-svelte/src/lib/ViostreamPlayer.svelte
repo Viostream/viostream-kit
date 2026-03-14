@@ -45,6 +45,7 @@
 		displayTitle,
 		hlsQualitySelector,
 		playerKey,
+		playerStyle,
 		sharing,
 		skinActive,
 		skinBackground,
@@ -102,6 +103,7 @@
 		if (displayTitle !== undefined) opts.displayTitle = displayTitle;
 		if (hlsQualitySelector !== undefined) opts.hlsQualitySelector = hlsQualitySelector;
 		if (playerKey !== undefined) opts.playerKey = playerKey;
+		if (playerStyle !== undefined) opts.playerStyle = playerStyle;
 		if (sharing !== undefined) opts.sharing = sharing;
 		if (skinActive !== undefined) opts.skinActive = skinActive;
 		if (skinBackground !== undefined) opts.skinBackground = skinBackground;

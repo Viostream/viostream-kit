@@ -59,6 +59,7 @@ export function ViostreamPlayer({
   displayTitle,
   hlsQualitySelector,
   playerKey,
+  playerStyle,
   sharing,
   skinActive,
   skinBackground,
@@ -126,6 +127,7 @@ export function ViostreamPlayer({
   if (displayTitle !== undefined) embedOpts.displayTitle = displayTitle;
   if (hlsQualitySelector !== undefined) embedOpts.hlsQualitySelector = hlsQualitySelector;
   if (playerKey !== undefined) embedOpts.playerKey = playerKey;
+  if (playerStyle !== undefined) embedOpts.playerStyle = playerStyle;
   if (sharing !== undefined) embedOpts.sharing = sharing;
   if (skinActive !== undefined) embedOpts.skinActive = skinActive;
   if (skinBackground !== undefined) embedOpts.skinBackground = skinBackground;

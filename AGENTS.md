@@ -386,18 +386,19 @@ following are the **only** user-facing embed option properties:
 |----------|------|-------------|
 | `chapters` | `boolean` | Show chapters. Default: `true`. |
 | `chapterSlug` | `string` | Seek to a named chapter before playback begins. |
-| `displayTitle` | `boolean` | Show the video title overlay. |
-| `hlsQualitySelector` | `boolean` | Show the HLS quality selector control. |
+| `displayTitle` | `boolean` | Show the video title overlay. Default: `false`. |
+| `hlsQualitySelector` | `boolean` | Show the HLS quality selector control. Default: `true`. |
 | `playerKey` | `string` | Override the player theme/key to use. |
-| `sharing` | `boolean` | Show the sharing control. Default: `true`. |
+| `playerStyle` | `'video' \| 'audio' \| 'audio-poster'` | The player rendering style. Default: `video`. |
+| `sharing` | `boolean` | Show the sharing control. Default: `false`. |
 | `skinActive` | `string` | Custom skin active colour (e.g. `#000`). Requires `skinCustom: true`. |
 | `skinBackground` | `string` | Custom skin background colour (e.g. `#000`). Requires `skinCustom: true`. |
 | `skinCustom` | `boolean` | Enable a custom skin via the API. Default: `false`. |
 | `skinInactive` | `string` | Custom skin inactive colour (e.g. `#000`). Requires `skinCustom: true`. |
-| `speedSelector` | `boolean` | Show the playback speed selector. |
+| `speedSelector` | `boolean` | Show the playback speed selector. Default: `true`. |
 | `startEndTimespan` | `string` | Play only a specific section of the video (e.g. `'10,30'`). |
 | `startTime` | `string` | Seek to a specific time (in seconds) before playback begins. |
-| `transcriptDownload` | `boolean` | Allow transcript download. |
+| `transcriptDownload` | `boolean` | Allow transcript download. Default: `false`. |
 | `useSettingsMenu` | `boolean` | Enable the settings menu on the control bar. Default: `false`. |
 
 Internal-only API properties (`documentLocation`, `dynamicSizing`, `apiEmbed`)

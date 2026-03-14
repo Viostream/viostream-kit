@@ -34,6 +34,7 @@ const props = withDefaults(defineProps<{
   displayTitle?: boolean;
   hlsQualitySelector?: boolean;
   playerKey?: string;
+  playerStyle?: 'video' | 'audio' | 'audio-poster';
   sharing?: boolean;
   skinActive?: string;
   skinBackground?: string;
@@ -53,6 +54,7 @@ const props = withDefaults(defineProps<{
   displayTitle: undefined,
   hlsQualitySelector: undefined,
   playerKey: undefined,
+  playerStyle: undefined,
   sharing: undefined,
   skinActive: undefined,
   skinBackground: undefined,
@@ -117,6 +119,7 @@ function buildEmbedOptions(): ViostreamEmbedOptions {
   if (props.displayTitle !== undefined) opts.displayTitle = props.displayTitle;
   if (props.hlsQualitySelector !== undefined) opts.hlsQualitySelector = props.hlsQualitySelector;
   if (props.playerKey !== undefined) opts.playerKey = props.playerKey;
+  if (props.playerStyle !== undefined) opts.playerStyle = props.playerStyle;
   if (props.sharing !== undefined) opts.sharing = props.sharing;
   if (props.skinActive !== undefined) opts.skinActive = props.skinActive;
   if (props.skinBackground !== undefined) opts.skinBackground = props.skinBackground;

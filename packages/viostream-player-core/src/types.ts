@@ -21,13 +21,15 @@ export interface ViostreamEmbedOptions {
   chapters?: boolean;
   /** Seek to a named chapter before playback begins. */
   chapterSlug?: string;
-  /** Show the video title overlay. */
+  /** Show the video title overlay. Default: `false`. */
   displayTitle?: boolean;
-  /** Show the HLS quality selector control. */
+  /** Show the HLS quality selector control. Default: `true`. */
   hlsQualitySelector?: boolean;
   /** Override the player theme/key to use. */
   playerKey?: string;
-  /** Show the sharing control. Default: `true`. */
+  /** The player rendering style. Default: `'video'`. */
+  playerStyle?: 'video' | 'audio' | 'audio-poster';
+  /** Show the sharing control. Default: `false`. */
   sharing?: boolean;
   /** Custom skin active colour (e.g. `'#ff0000'`). Requires `skinCustom: true`. */
   skinActive?: string;
@@ -37,13 +39,13 @@ export interface ViostreamEmbedOptions {
   skinCustom?: boolean;
   /** Custom skin inactive colour (e.g. `'#cccccc'`). Requires `skinCustom: true`. */
   skinInactive?: string;
-  /** Show the playback speed selector. */
+  /** Show the playback speed selector. Default: `true`. */
   speedSelector?: boolean;
   /** Play only a specific section of the video (e.g. `'10,30'`). */
   startEndTimespan?: string;
   /** Seek to a specific time (in seconds) before playback begins. */
   startTime?: string;
-  /** Allow transcript download. */
+  /** Allow transcript download. Default: `false`. */
   transcriptDownload?: boolean;
   /** Enable the settings menu on the control bar. Default: `false`. */
   useSettingsMenu?: boolean;
