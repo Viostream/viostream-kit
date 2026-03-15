@@ -8,6 +8,9 @@ build/
 # SvelteKit
 .svelte-kit/
 
+# Angular
+.angular/
+
 # Environment
 .env
 .env.*

@@ -14,6 +14,9 @@
     },
     "packages/viostream-player-vue": {
       "component": "player-vue"
+    },
+    "packages/viostream-player-angular": {
+      "component": "player-angular"
     }
   },
   "plugins": [

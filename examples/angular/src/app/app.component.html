@@ -1,0 +1,151 @@
+<main class="container py-4" style="max-width: 900px;">
+  <h1 class="mb-2">Viostream Angular SDK Demo</h1>
+  <p class="lead text-body-secondary mb-4">
+    This page demonstrates the <code>&lt;viostream-player&gt;</code> component and event
+    handling.
+  </p>
+
+  <!-- Configuration -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Configuration</h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-sm-6">
+          <label class="form-label fw-semibold" for="account-key">Account Key</label>
+          <input
+            id="account-key"
+            type="text"
+            class="form-control font-monospace"
+            [(ngModel)]="accountKey"
+            placeholder="vc-100100100"
+          />
+        </div>
+        <div class="col-sm-6">
+          <label class="form-label fw-semibold" for="public-key">Public Key</label>
+          <input
+            id="public-key"
+            type="text"
+            class="form-control font-monospace"
+            [(ngModel)]="publicKey"
+            placeholder="nhedxonrxsyfee"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Player -->
+  <div class="mb-4">
+    @if (playerKey) {
+      <viostream-player
+        [accountKey]="accountKey"
+        [publicKey]="publicKey"
+        [displayTitle]="true"
+        [sharing]="true"
+        [speedSelector]="true"
+        [hlsQualitySelector]="true"
+        (play)="onPlay()"
+        (pause)="onPause()"
+        (ended)="onEnded()"
+        (timeUpdate)="onTimeUpdate($event)"
+        (volumeChange)="onVolumeChange($event)"
+        (seeked)="onSeeked()"
+        (playerReady)="onPlayerReady($event)"
+      />
+    }
+  </div>
+
+  <!-- Custom Controls -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Custom Controls</h5>
+    </div>
+    <div class="card-body">
+      <div class="d-flex flex-wrap gap-2 align-items-center">
+        <div class="btn-group" role="group" aria-label="Playback controls">
+          <button class="btn btn-outline-light" (click)="togglePlay()">
+            <i [class]="isPaused ? 'bi bi-play-fill' : 'bi bi-pause-fill'"></i>
+            {{ isPaused ? 'Play' : 'Pause' }}
+          </button>
+          <button class="btn btn-outline-light" (click)="toggleMute()">
+            <i [class]="isMuted ? 'bi bi-volume-mute-fill' : 'bi bi-volume-up-fill'"></i>
+            {{ isMuted ? 'Unmute' : 'Mute' }}
+          </button>
+        </div>
+
+        <div class="btn-group" role="group" aria-label="Seek controls">
+          <button class="btn btn-outline-light" (click)="seek(0)">
+            <i class="bi bi-skip-start-fill"></i> Restart
+          </button>
+          <button class="btn btn-outline-light" (click)="seekBack()">
+            <i class="bi bi-skip-backward-fill"></i> -10s
+          </button>
+          <button class="btn btn-outline-light" (click)="seekForward()">
+            <i class="bi bi-skip-forward-fill"></i> +10s
+          </button>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center gap-3 mt-3">
+        <div class="progress flex-grow-1" style="height: 8px;">
+          <div
+            class="progress-bar"
+            role="progressbar"
+            [style.width.%]="percent"
+            [attr.aria-valuenow]="currentTime"
+            aria-valuemin="0"
+            [attr.aria-valuemax]="duration"
+          ></div>
+        </div>
+        <span class="badge text-bg-light font-monospace">
+          {{ formatTime(currentTime) }} / {{ formatTime(duration) }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Event Log -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Event Log</h5>
+    </div>
+    <div class="card-body">
+      <div class="font-monospace small log-scroll">
+        @for (entry of log; track $index) {
+          <div>{{ entry }}</div>
+        }
+        @if (log.length === 0) {
+          <div class="text-body-secondary">Waiting for events...</div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Promise-based Getters -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Promise-based Getters</h5>
+    </div>
+    <div class="card-body">
+      <div class="d-flex flex-wrap gap-2">
+        <button class="btn btn-outline-info btn-sm" (click)="getCurrentTime()">
+          Get Current Time
+        </button>
+        <button class="btn btn-outline-info btn-sm" (click)="getDuration()">
+          Get Duration
+        </button>
+        <button class="btn btn-outline-info btn-sm" (click)="getVolume()">
+          Get Volume
+        </button>
+        <button class="btn btn-outline-info btn-sm" (click)="getAspectRatio()">
+          Get Aspect Ratio
+        </button>
+        <button class="btn btn-outline-info btn-sm" (click)="getTracks()">
+          Get Tracks
+        </button>
+      </div>
+    </div>
+  </div>
+</main>
