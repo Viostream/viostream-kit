@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-core:
+    name: Build core
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+        working-directory: packages/viostream-player-core
+      - uses: actions/upload-artifact@v4
+        with:
+          name: core-dist
+          path: packages/viostream-player-core/dist
+          retention-days: 1
+
+  test:
+    name: Test ${{ matrix.package }}
+    needs: build-core
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - package: player-core
+            dir: packages/viostream-player-core
+          - package: player-svelte
+            dir: packages/viostream-player-svelte
+          - package: player-react
+            dir: packages/viostream-player-react
+          - package: player-vue
+            dir: packages/viostream-player-vue
+          - package: player-angular
+            dir: packages/viostream-player-angular
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: core-dist
+          path: packages/viostream-player-core/dist
+      - name: Type check
+        run: npm run check
+        working-directory: ${{ matrix.dir }}
+      - name: Tests
+        run: npm test
+        working-directory: ${{ matrix.dir }}
