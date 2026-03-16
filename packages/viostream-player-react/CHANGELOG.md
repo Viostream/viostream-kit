@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.2](https://github.com/Viostream/viostream-kit/compare/player-react-v0.2.1...player-react-v0.2.2) (2026-03-16)
+
+
+### Bug Fixes
+
+* **player-react:** wait for container DOM element before embedding on hard refresh ([50c1cfc](https://github.com/Viostream/viostream-kit/commit/50c1cfca65d76c08db4b8a63043512eded9771d2))
+* **player-react:** wait for container DOM element before embedding on… ([3e1d4b7](https://github.com/Viostream/viostream-kit/commit/3e1d4b7bef046ca1e2ef9530356afba7f442289b))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @viostream/viostream-player-core bumped from ^0.2.1 to ^0.2.2
+
 ## [0.2.1](https://github.com/Viostream/viostream-kit/compare/player-react-v0.2.0...player-react-v0.2.1) (2026-03-16)
 
 

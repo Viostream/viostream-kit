@@ -1,5 +1,7 @@
 # Changelog
 
+## [0.2.2](https://github.com/Viostream/viostream-kit/compare/player-core-v0.2.1...player-core-v0.2.2) (2026-03-16)
+
 ## [0.2.1](https://github.com/Viostream/viostream-kit/compare/player-core-v0.2.0...player-core-v0.2.1) (2026-03-16)
 
 
