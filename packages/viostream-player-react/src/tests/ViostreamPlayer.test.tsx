@@ -340,4 +340,80 @@ describe('ViostreamPlayer component', () => {
       expect(destroySpy).toHaveBeenCalledOnce();
     });
   });
+
+  // -----------------------------------------------------------------------
+  // DOM readiness (hard-refresh race condition)
+  // -----------------------------------------------------------------------
+  describe('DOM readiness', () => {
+    it('waits for container element before calling api.embed when DOM is not yet available', async () => {
+      // Simulate the hard-refresh scenario where loadViostream resolves
+      // synchronously from cache, but the container element is not yet
+      // in the DOM. The component should defer via requestAnimationFrame
+      // and successfully embed once the DOM is ready.
+
+      const originalGetElementById = document.getElementById.bind(document);
+      let callCount = 0;
+
+      // First call to getElementById for our container returns null (simulating
+      // the race condition), subsequent calls return the real element.
+      const getByIdSpy = vi.spyOn(document, 'getElementById').mockImplementation((id: string) => {
+        const el = originalGetElementById(id);
+        if (id.startsWith('viostream-player-') && callCount === 0) {
+          callCount++;
+          return null;
+        }
+        return el;
+      });
+
+      const onPlayerReady = vi.fn();
+
+      render(
+        <ViostreamPlayer
+          accountKey="vc-test"
+          publicKey="pk-test"
+          onPlayerReady={onPlayerReady}
+        />
+      );
+
+      await vi.waitFor(() => {
+        expect(onPlayerReady).toHaveBeenCalledOnce();
+      });
+
+      // Verify embed was still called successfully
+      expect(mockGlobal.embed).toHaveBeenCalledOnce();
+
+      getByIdSpy.mockRestore();
+    });
+
+    it('does not call api.embed if destroyed during rAF wait', async () => {
+      const originalGetElementById = document.getElementById.bind(document);
+
+      // Always return null for the container to force the rAF path
+      const getByIdSpy = vi.spyOn(document, 'getElementById').mockImplementation((id: string) => {
+        if (id.startsWith('viostream-player-')) {
+          return null;
+        }
+        return originalGetElementById(id);
+      });
+
+      const { unmount } = render(
+        <ViostreamPlayer
+          accountKey="vc-test"
+          publicKey="pk-test"
+        />
+      );
+
+      // Unmount immediately — the component should abort during the rAF wait
+      unmount();
+
+      // Give time for any pending rAF callbacks to fire
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+      await vi.waitFor(() => {});
+
+      // embed should never have been called because we destroyed before it could run
+      expect(mockGlobal.embed).not.toHaveBeenCalled();
+
+      getByIdSpy.mockRestore();
+    });
+  });
 });
