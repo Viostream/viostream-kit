@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.2.0](https://github.com/Viostream/viostream-kit/compare/player-svelte-v0.1.3...player-svelte-v0.2.0) (2026-03-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* .raw property removed from ViostreamPlayer; wrapRawPlayer, RawViostreamPlayerInstance, and ViostreamGlobal are no longer exported from wrapper packages.
+* **player-core:** getLiveCurrentTime(), getTracks(), setTrack(), cueAdd(), cueUpdate(), cueDelete(), asrAdd() and their associated types have been removed from the public API. The chapterDisplayType embed option has also been removed.
+
+### Features
+
+* **player-core:** add playerStyle embed option and correct default value docs ([e819115](https://github.com/Viostream/viostream-kit/commit/e8191154185fa29828ef2db0c1f40348f8ce9362))
+
+
+### Code Refactoring
+
+* **player-core:** remove deprecated API endpoints and align embed options with PlayerSettings ([fd8d21f](https://github.com/Viostream/viostream-kit/commit/fd8d21fa4e2f5069bbf823d7dc2c3b30d7f9365d))
+* remove .raw property and restrict internal exports from wrapper packages ([7a5f736](https://github.com/Viostream/viostream-kit/commit/7a5f7361516a0d027f5e9df44e117946a7938693))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @viostream/viostream-player-core bumped from ^0.1.2 to ^0.2.0
+
 ## [0.1.3](https://github.com/Viostream/viostream-kit/compare/player-svelte-v0.1.2...player-svelte-v0.1.3) (2026-03-12)
 
 
