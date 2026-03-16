@@ -49,7 +49,6 @@ export { ViostreamPlayerComponent } from './viostream-player.component';
 // Re-export everything from core so consumers can import from this package
 export {
   createViostreamPlayer,
-  wrapRawPlayer,
   loadViostream,
 } from '@viostream/viostream-player-core';
 
@@ -62,12 +61,7 @@ export type {
   ViostreamProgressData,
   ViostreamPlayerEventMap,
   ViostreamEventHandler,
-  ViostreamCue,
-  ViostreamCueFieldUpdate,
-  ViostreamTrack,
   ViostreamPlayer as ViostreamPlayerInstance,
-  RawViostreamPlayerInstance,
-  ViostreamGlobal,
 } from '@viostream/viostream-player-core';
 
 // Angular-specific types
