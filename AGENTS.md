@@ -396,6 +396,88 @@ Branch: fix/missing-config
 - When adding a new framework wrapper, mirror the structure of `packages/viostream-player-svelte`.
 - **Always** use Conventional Commits with a `Branch:` footer.
 
+## Deprecated / Removed APIs
+
+> **Do NOT re-add any of the following.** They were removed because the
+> underlying Viostream Player API has deprecated them. They will be removed
+> from the API in a future version and must not be exposed in any SDK package.
+
+### Removed Player Methods
+
+| Method | Was In | Reason |
+|--------|--------|--------|
+| `getLiveCurrentTime()` | `ViostreamPlayer`, `RawViostreamPlayerInstance` | Deprecated API endpoint |
+| `getTracks()` | `ViostreamPlayer`, `RawViostreamPlayerInstance` | Deprecated API endpoint |
+| `setTrack()` | `ViostreamPlayer`, `RawViostreamPlayerInstance` | Deprecated API endpoint |
+| `cueAdd()` | `ViostreamPlayer`, `RawViostreamPlayerInstance` | Deprecated API endpoint |
+| `cueUpdate()` | `ViostreamPlayer`, `RawViostreamPlayerInstance` | Deprecated API endpoint |
+| `cueDelete()` | `ViostreamPlayer`, `RawViostreamPlayerInstance` | Deprecated API endpoint |
+| `asrAdd()` | `ViostreamPlayer`, `RawViostreamPlayerInstance` | Deprecated API endpoint |
+
+### Removed Types
+
+| Type | Was In | Reason |
+|------|--------|--------|
+| `ViostreamCue` | `player-core/src/types.ts` | Only used by removed cue methods |
+| `ViostreamCueFieldUpdate` | `player-core/src/types.ts` | Only used by removed cue methods |
+| `ViostreamTrack` | `player-core/src/types.ts` | Only used by removed track methods |
+
+### Removed Embed Options
+
+| Property | Was In | Reason |
+|----------|--------|--------|
+| `chapterDisplayType` | `ViostreamEmbedOptions` | Not part of the canonical PlayerSettings type |
+
+### Removed Properties
+
+| Property | Was In | Reason |
+|----------|--------|--------|
+| `.raw` | `ViostreamPlayer` interface | Consumers should not access the raw player instance |
+
+### Internal-Only Exports (Not Re-exported from Wrapper Packages)
+
+The following are exported from `@viostream/viostream-player-core` for internal
+use by the wrapper packages, but must **never** be re-exported from the wrapper
+package barrel files (`player-svelte`, `player-react`, `player-vue`):
+
+| Export | Purpose |
+|--------|---------|
+| `wrapRawPlayer` | Used internally by wrapper components to wrap raw instances |
+| `RawViostreamPlayerInstance` | Type used internally by wrapper components |
+| `ViostreamGlobal` | Type used internally by loader code |
+
+Consumers of wrapper packages should only interact with the `ViostreamPlayer`
+interface returned via the `onPlayerReady` callback.
+
+## Canonical PlayerSettings / ViostreamEmbedOptions
+
+`ViostreamEmbedOptions` (in `player-core/src/types.ts`) **must** stay aligned with
+the canonical `PlayerSettings` type defined by the Viostream Player API. The
+following are the **only** user-facing embed option properties:
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `chapters` | `boolean` | Show chapters. Default: `true`. |
+| `chapterSlug` | `string` | Seek to a named chapter before playback begins. |
+| `displayTitle` | `boolean` | Show the video title overlay. Default: `false`. |
+| `hlsQualitySelector` | `boolean` | Show the HLS quality selector control. Default: `true`. |
+| `playerKey` | `string` | Override the player theme/key to use. |
+| `playerStyle` | `'video' \| 'audio' \| 'audio-poster'` | The player rendering style. Default: `video`. |
+| `sharing` | `boolean` | Show the sharing control. Default: `false`. |
+| `skinActive` | `string` | Custom skin active colour (e.g. `#000`). Requires `skinCustom: true`. |
+| `skinBackground` | `string` | Custom skin background colour (e.g. `#000`). Requires `skinCustom: true`. |
+| `skinCustom` | `boolean` | Enable a custom skin via the API. Default: `false`. |
+| `skinInactive` | `string` | Custom skin inactive colour (e.g. `#000`). Requires `skinCustom: true`. |
+| `speedSelector` | `boolean` | Show the playback speed selector. Default: `true`. |
+| `startEndTimespan` | `string` | Play only a specific section of the video (e.g. `'10,30'`). |
+| `startTime` | `string` | Seek to a specific time (in seconds) before playback begins. |
+| `transcriptDownload` | `boolean` | Allow transcript download. Default: `false`. |
+| `useSettingsMenu` | `boolean` | Enable the settings menu on the control bar. Default: `false`. |
+
+Internal-only API properties (`documentLocation`, `dynamicSizing`, `apiEmbed`)
+are set automatically by the API script and must **never** be exposed as
+user-facing options in `ViostreamEmbedOptions`.
+
 ---
 
-*Last updated: 2026-03-13. Update this file as the project evolves.*
+*Last updated: 2026-03-14. Update this file as the project evolves.*

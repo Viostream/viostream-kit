@@ -74,16 +74,21 @@ All embed options are optional and passed directly to the Viostream embed API.
 | Prop | Type | Description |
 |---|---|---|
 | `chapters` | `boolean` | Display chapter markers. |
-| `chapterDisplayType` | `'dropdown' \| 'progressbar' \| 'horizontal'` | Chapter display style. |
 | `chapterSlug` | `string` | Seek to a named chapter before playback. |
-| `displayTitle` | `boolean` | Show the video title overlay. |
-| `hlsQualitySelector` | `boolean` | Show the HLS quality selector. |
+| `displayTitle` | `boolean` | Show the video title overlay. Default: `false`. |
+| `hlsQualitySelector` | `boolean` | Show the HLS quality selector. Default: `true`. |
 | `playerKey` | `string` | Override the player theme to use. |
-| `sharing` | `boolean` | Show sharing controls. |
-| `speedSelector` | `boolean` | Show playback speed selector. |
+| `playerStyle` | `'video' \| 'audio' \| 'audio-poster'` | The player rendering style. Default: `'video'`. |
+| `sharing` | `boolean` | Show sharing controls. Default: `false`. |
+| `skinActive` | `string` | Custom skin active colour (e.g. `'#ff0000'`). Requires `skinCustom: true`. |
+| `skinBackground` | `string` | Custom skin background colour (e.g. `'#000000'`). Requires `skinCustom: true`. |
+| `skinCustom` | `boolean` | Enable a custom skin via the API. Default: `false`. |
+| `skinInactive` | `string` | Custom skin inactive colour (e.g. `'#cccccc'`). Requires `skinCustom: true`. |
+| `speedSelector` | `boolean` | Show playback speed selector. Default: `true`. |
 | `startEndTimespan` | `string` | Play a specific section (e.g. `'10,30'`). |
 | `startTime` | `string` | Seek to a time (seconds) before playback. |
-| `transcriptDownload` | `boolean` | Allow transcript download. |
+| `transcriptDownload` | `boolean` | Allow transcript download. Default: `false`. |
+| `useSettingsMenu` | `boolean` | Enable the settings menu on the control bar. Default: `false`. |
 
 #### Event Callbacks
 
@@ -218,36 +223,7 @@ const paused    = await player.getPaused();          // boolean
 const duration  = await player.getDuration();        // number (seconds)
 const muted     = await player.getMuted();           // boolean
 const ratio     = await player.getAspectRatio();     // number
-const liveTime  = await player.getLiveCurrentTime(); // number (seconds)
 const height    = await player.getHeight();          // number (pixels)
-const tracks    = await player.getTracks();          // ViostreamTrack[]
-```
-
-### Track Management
-
-```ts
-const tracks = await player.getTracks();
-player.setTrack(tracks[0]);   // pass a ViostreamTrack object
-player.setTrack('en');        // or a track id string
-```
-
-### Cue Management
-
-```ts
-player.cueAdd({ startTime: 10, text: 'Introduction' });
-
-player.cueUpdate(
-  { startTime: 10, text: 'Introduction' },
-  { text: 'Updated Introduction' }
-);
-
-player.cueDelete('cue-id');
-```
-
-### Automatic Speech Recognition (ASR)
-
-```ts
-player.asrAdd(cueArray, 'asr-track-id');
 ```
 
 ### Events
@@ -304,19 +280,6 @@ After calling `destroy()`:
 - All event listeners are removed.
 - The player iframe is removed from the DOM.
 - Getter calls will reject with `"Player has been destroyed"`.
-- `player.raw` returns `undefined`.
-
-### Raw Escape Hatch
-
-If you need direct access to the underlying Viostream player instance:
-
-```ts
-const raw = player.raw; // RawViostreamPlayerInstance | undefined
-if (raw) {
-  raw.getVolume((vol) => console.log(vol)); // callback-based original API
-}
-```
-
 ---
 
 ## Script Loader
@@ -354,12 +317,7 @@ import type {
   ViostreamProgressData,
   ViostreamPlayerEventMap,
   ViostreamEventHandler,
-  ViostreamCue,
-  ViostreamCueFieldUpdate,
-  ViostreamTrack,
   CreateViostreamPlayerOptions,
-  RawViostreamPlayerInstance,
-  ViostreamGlobal
 } from 'viostream-player-svelte';
 ```
 
@@ -422,10 +380,6 @@ A complete example showing the component with custom controls, event logging, an
     const vol = await player?.getVolume();
     log = [`volume: ${vol}`, ...log];
   }}>Get Volume</button>
-  <button onclick={async () => {
-    const tracks = await player?.getTracks();
-    log = [`tracks: ${JSON.stringify(tracks)}`, ...log];
-  }}>Get Tracks</button>
 </div>
 
 <pre>{log.join('\n')}</pre>

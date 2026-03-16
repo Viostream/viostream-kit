@@ -9,30 +9,46 @@
 // Embed options
 // ---------------------------------------------------------------------------
 
-/** Options passed to `$viostream.embed()` and framework wrapper components. */
+/**
+ * Options passed to `$viostream.embed()` and framework wrapper components.
+ *
+ * Mirrors the canonical `PlayerSettings` type defined by the Viostream
+ * Player API, **excluding** internal-only fields (`documentLocation`,
+ * `dynamicSizing`, `apiEmbed`) that the API sets automatically.
+ */
 export interface ViostreamEmbedOptions {
-  /** Display chapter markers. */
+  /** Display chapter markers. Default: `true`. */
   chapters?: boolean;
-  /** Chapter display style: progressbar only. */
-  chapterDisplayType?: 'progressbar';
   /** Seek to a named chapter before playback begins. */
   chapterSlug?: string;
-  /** Show the video title overlay. */
+  /** Show the video title overlay. Default: `false`. */
   displayTitle?: boolean;
-  /** Show the HLS quality selector control. */
+  /** Show the HLS quality selector control. Default: `true`. */
   hlsQualitySelector?: boolean;
   /** Override the player theme/key to use. */
   playerKey?: string;
-  /** Show the sharing control. */
+  /** The player rendering style. Default: `'video'`. */
+  playerStyle?: 'video' | 'audio' | 'audio-poster';
+  /** Show the sharing control. Default: `false`. */
   sharing?: boolean;
-  /** Show the playback speed selector. */
+  /** Custom skin active colour (e.g. `'#ff0000'`). Requires `skinCustom: true`. */
+  skinActive?: string;
+  /** Custom skin background colour (e.g. `'#000000'`). Requires `skinCustom: true`. */
+  skinBackground?: string;
+  /** Enable a custom skin via the API. Default: `false`. */
+  skinCustom?: boolean;
+  /** Custom skin inactive colour (e.g. `'#cccccc'`). Requires `skinCustom: true`. */
+  skinInactive?: string;
+  /** Show the playback speed selector. Default: `true`. */
   speedSelector?: boolean;
   /** Play only a specific section of the video (e.g. `'10,30'`). */
   startEndTimespan?: string;
   /** Seek to a specific time (in seconds) before playback begins. */
   startTime?: string;
-  /** Allow transcript download. */
+  /** Allow transcript download. Default: `false`. */
   transcriptDownload?: boolean;
+  /** Enable the settings menu on the control bar. Default: `false`. */
+  useSettingsMenu?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -96,33 +112,6 @@ export interface ViostreamPlayerEventMap {
 export type ViostreamEventHandler<T = unknown> = (data: T) => void;
 
 // ---------------------------------------------------------------------------
-// Cue / Track helpers
-// ---------------------------------------------------------------------------
-
-/** A cue point that can be added to the player timeline. */
-export interface ViostreamCue {
-  id?: string;
-  startTime: number;
-  endTime?: number;
-  text?: string;
-  [key: string]: unknown;
-}
-
-/** A field-level update to apply to an existing cue. */
-export interface ViostreamCueFieldUpdate {
-  [field: string]: unknown;
-}
-
-/** A track object returned by `getTracks()`. */
-export interface ViostreamTrack {
-  id: string;
-  label?: string;
-  kind?: string;
-  language?: string;
-  [key: string]: unknown;
-}
-
-// ---------------------------------------------------------------------------
 // Raw $viostream global (internal)
 // ---------------------------------------------------------------------------
 
@@ -146,15 +135,8 @@ export interface RawViostreamPlayerInstance {
   getDuration(cb: (duration: number) => void): void;
   getMuted(cb: (muted: boolean) => void): void;
   getAspectRatio(cb: (ratio: number) => void): void;
-  getLiveCurrentTime(cb: (seconds: number) => void): void;
   getHeight(cb: (height: number) => void): void;
   reload(options?: Record<string, unknown>): void;
-  getTracks(cb: (tracks: ViostreamTrack[]) => void): void;
-  setTrack(track: ViostreamTrack | string): void;
-  cueAdd(cue: ViostreamCue): void;
-  cueUpdate(cue: ViostreamCue, field: ViostreamCueFieldUpdate): void;
-  cueDelete(cue: ViostreamCue | string): void;
-  asrAdd(cues: unknown[], id: string): void;
   on(event: string, handler: ViostreamEventHandler): void;
 }
 
@@ -199,24 +181,6 @@ export interface ViostreamPlayer {
   /** Reload the player, optionally with new settings. */
   reload(options?: Record<string, unknown>): void;
 
-  // -- Track management ---------------------------------------------------
-  /** Set the active track (audio/subtitle). */
-  setTrack(track: ViostreamTrack | string): void;
-  /** Get the list of available tracks. */
-  getTracks(): Promise<ViostreamTrack[]>;
-
-  // -- Cue management -----------------------------------------------------
-  /** Add a cue point. */
-  cueAdd(cue: ViostreamCue): void;
-  /** Update a cue point field. */
-  cueUpdate(cue: ViostreamCue, field: ViostreamCueFieldUpdate): void;
-  /** Delete a cue point. */
-  cueDelete(cue: ViostreamCue | string): void;
-
-  // -- ASR ----------------------------------------------------------------
-  /** Add automatic speech recognition data. */
-  asrAdd(cues: unknown[], id: string): void;
-
   // -- Getters (promise-based) --------------------------------------------
   /** Get the current volume (0–1). */
   getVolume(): Promise<number>;
@@ -232,8 +196,6 @@ export interface ViostreamPlayer {
   getMuted(): Promise<boolean>;
   /** Get the video aspect ratio. */
   getAspectRatio(): Promise<number>;
-  /** Get the live-stream current time. */
-  getLiveCurrentTime(): Promise<number>;
   /** Get the computed player height. */
   getHeight(): Promise<number>;
 
@@ -260,9 +222,6 @@ export interface ViostreamPlayer {
   // -- Lifecycle ----------------------------------------------------------
   /** Remove the player from the DOM and clean up all listeners. */
   destroy(): void;
-
-  /** The underlying raw player instance (escape hatch). */
-  readonly raw: RawViostreamPlayerInstance | undefined;
 }
 
 // ---------------------------------------------------------------------------

@@ -55,16 +55,21 @@ export function ViostreamPlayer({
 
   // Embed options
   chapters,
-  chapterDisplayType,
   chapterSlug,
   displayTitle,
   hlsQualitySelector,
   playerKey,
+  playerStyle,
   sharing,
+  skinActive,
+  skinBackground,
+  skinCustom,
+  skinInactive,
   speedSelector,
   startEndTimespan,
   startTime,
   transcriptDownload,
+  useSettingsMenu,
 
   // Event callbacks
   onPlay,
@@ -118,16 +123,21 @@ export function ViostreamPlayer({
   const embedOptsRef = useRef<ViostreamEmbedOptions>({});
   const embedOpts: ViostreamEmbedOptions = {};
   if (chapters !== undefined) embedOpts.chapters = chapters;
-  if (chapterDisplayType !== undefined) embedOpts.chapterDisplayType = chapterDisplayType;
   if (chapterSlug !== undefined) embedOpts.chapterSlug = chapterSlug;
   if (displayTitle !== undefined) embedOpts.displayTitle = displayTitle;
   if (hlsQualitySelector !== undefined) embedOpts.hlsQualitySelector = hlsQualitySelector;
   if (playerKey !== undefined) embedOpts.playerKey = playerKey;
+  if (playerStyle !== undefined) embedOpts.playerStyle = playerStyle;
   if (sharing !== undefined) embedOpts.sharing = sharing;
+  if (skinActive !== undefined) embedOpts.skinActive = skinActive;
+  if (skinBackground !== undefined) embedOpts.skinBackground = skinBackground;
+  if (skinCustom !== undefined) embedOpts.skinCustom = skinCustom;
+  if (skinInactive !== undefined) embedOpts.skinInactive = skinInactive;
   if (speedSelector !== undefined) embedOpts.speedSelector = speedSelector;
   if (startEndTimespan !== undefined) embedOpts.startEndTimespan = startEndTimespan;
   if (startTime !== undefined) embedOpts.startTime = startTime;
   if (transcriptDownload !== undefined) embedOpts.transcriptDownload = transcriptDownload;
+  if (useSettingsMenu !== undefined) embedOpts.useSettingsMenu = useSettingsMenu;
   embedOptsRef.current = embedOpts;
 
   // -----------------------------------------------------------------------

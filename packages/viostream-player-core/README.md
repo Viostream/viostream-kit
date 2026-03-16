@@ -69,22 +69,6 @@ const player = await createViostreamPlayer({
 
 ---
 
-## `wrapRawPlayer()`
-
-Lower-level factory that wraps a raw callback-based player instance (returned by `$viostream.embed()`) with the typed, promise-based SDK interface. Used internally by `createViostreamPlayer()` and by framework wrappers.
-
-```ts
-import { loadViostream, wrapRawPlayer } from '@viostream/viostream-player-core';
-
-const api = await loadViostream('vc-100100100');
-const raw = api.embed('nhedxonrxsyfee', 'my-video-div', { displayTitle: true });
-const player = wrapRawPlayer(raw, 'my-video-div');
-
-player.play();
-```
-
----
-
 ## Embed Options
 
 All embed options are optional and passed to the Viostream embed API.
@@ -92,22 +76,27 @@ All embed options are optional and passed to the Viostream embed API.
 | Option | Type | Description |
 |---|---|---|
 | `chapters` | `boolean` | Display chapter markers. |
-| `chapterDisplayType` | `'progressbar'` | Chapter display style. |
 | `chapterSlug` | `string` | Seek to a named chapter before playback. |
-| `displayTitle` | `boolean` | Show the video title overlay. |
-| `hlsQualitySelector` | `boolean` | Show the HLS quality selector. |
+| `displayTitle` | `boolean` | Show the video title overlay. Default: `false`. |
+| `hlsQualitySelector` | `boolean` | Show the HLS quality selector. Default: `true`. |
 | `playerKey` | `string` | Override the player theme to use. |
-| `sharing` | `boolean` | Show sharing controls. |
-| `speedSelector` | `boolean` | Show playback speed selector. |
+| `playerStyle` | `'video' \| 'audio' \| 'audio-poster'` | The player rendering style. Default: `'video'`. |
+| `sharing` | `boolean` | Show sharing controls. Default: `false`. |
+| `skinActive` | `string` | Custom skin active colour (e.g. `'#ff0000'`). Requires `skinCustom: true`. |
+| `skinBackground` | `string` | Custom skin background colour (e.g. `'#000000'`). Requires `skinCustom: true`. |
+| `skinCustom` | `boolean` | Enable a custom skin via the API. Default: `false`. |
+| `skinInactive` | `string` | Custom skin inactive colour (e.g. `'#cccccc'`). Requires `skinCustom: true`. |
+| `speedSelector` | `boolean` | Show playback speed selector. Default: `true`. |
 | `startEndTimespan` | `string` | Play a specific section (e.g. `'10,30'`). |
 | `startTime` | `string` | Seek to a time (seconds) before playback. |
-| `transcriptDownload` | `boolean` | Allow transcript download. |
+| `transcriptDownload` | `boolean` | Allow transcript download. Default: `false`. |
+| `useSettingsMenu` | `boolean` | Enable the settings menu on the control bar. Default: `false`. |
 
 ---
 
 ## Player Instance API
 
-The `ViostreamPlayer` interface returned by `createViostreamPlayer()` and `wrapRawPlayer()` provides the following methods.
+The `ViostreamPlayer` interface returned by `createViostreamPlayer()` provides the following methods.
 
 ### Playback Controls
 
@@ -136,36 +125,7 @@ const paused    = await player.getPaused();          // boolean
 const duration  = await player.getDuration();        // number (seconds)
 const muted     = await player.getMuted();           // boolean
 const ratio     = await player.getAspectRatio();     // number
-const liveTime  = await player.getLiveCurrentTime(); // number (seconds)
 const height    = await player.getHeight();          // number (pixels)
-const tracks    = await player.getTracks();          // ViostreamTrack[]
-```
-
-### Track Management
-
-```ts
-const tracks = await player.getTracks();
-player.setTrack(tracks[0]);   // pass a ViostreamTrack object
-player.setTrack('en');        // or a track id string
-```
-
-### Cue Management
-
-```ts
-player.cueAdd({ startTime: 10, text: 'Introduction' });
-
-player.cueUpdate(
-  { startTime: 10, text: 'Introduction' },
-  { text: 'Updated Introduction' }
-);
-
-player.cueDelete('cue-id');
-```
-
-### Automatic Speech Recognition (ASR)
-
-```ts
-player.asrAdd(cueArray, 'asr-track-id');
 ```
 
 ### Events
@@ -222,18 +182,6 @@ After calling `destroy()`:
 - All event listeners are removed.
 - The player iframe is removed from the DOM.
 - Getter calls will reject with `"Player has been destroyed"`.
-- `player.raw` returns `undefined`.
-
-### Raw Escape Hatch
-
-If you need direct access to the underlying Viostream player instance:
-
-```ts
-const raw = player.raw; // RawViostreamPlayerInstance | undefined
-if (raw) {
-  raw.getVolume((vol) => console.log(vol)); // callback-based original API
-}
-```
 
 ---
 
@@ -274,7 +222,6 @@ Every export is fully typed. Import types alongside runtime exports:
 ```ts
 import {
   createViostreamPlayer,
-  wrapRawPlayer,
   loadViostream,
 } from '@viostream/viostream-player-core';
 
@@ -287,12 +234,7 @@ import type {
   ViostreamProgressData,
   ViostreamPlayerEventMap,
   ViostreamEventHandler,
-  ViostreamCue,
-  ViostreamCueFieldUpdate,
-  ViostreamTrack,
   CreateViostreamPlayerOptions,
-  RawViostreamPlayerInstance,
-  ViostreamGlobal,
 } from '@viostream/viostream-player-core';
 ```
 

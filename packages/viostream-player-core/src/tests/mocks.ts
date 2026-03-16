@@ -29,9 +29,7 @@ export function createMockRawPlayer(overrides: Partial<RawViostreamPlayerInstanc
     getDuration: 120,
     getMuted: false,
     getAspectRatio: 1.7778,
-    getLiveCurrentTime: 0,
     getHeight: 360,
-    getTracks: [],
   };
 
   function makeGetter(name: string) {
@@ -55,15 +53,8 @@ export function createMockRawPlayer(overrides: Partial<RawViostreamPlayerInstanc
     getDuration: makeGetter('getDuration'),
     getMuted: makeGetter('getMuted'),
     getAspectRatio: makeGetter('getAspectRatio'),
-    getLiveCurrentTime: makeGetter('getLiveCurrentTime'),
     getHeight: makeGetter('getHeight'),
     reload: vi.fn(),
-    getTracks: makeGetter('getTracks'),
-    setTrack: vi.fn(),
-    cueAdd: vi.fn(),
-    cueUpdate: vi.fn(),
-    cueDelete: vi.fn(),
-    asrAdd: vi.fn(),
     on: vi.fn((event: string, handler: ViostreamEventHandler) => {
       if (!handlers.has(event)) {
         handlers.set(event, []);

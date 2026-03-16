@@ -241,16 +241,6 @@ function formatTime(s: number): string {
           >
             Get Aspect Ratio
           </button>
-          <button
-            class="btn btn-outline-info btn-sm"
-            @click="async () => {
-              if (!player) return;
-              const tracks = await player.getTracks();
-              addLog(`getTracks() → ${JSON.stringify(tracks)}`);
-            }"
-          >
-            Get Tracks
-          </button>
         </div>
       </div>
     </div>

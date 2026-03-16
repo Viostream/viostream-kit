@@ -273,15 +273,7 @@
 						if (!player) return;
 						const r = await player.getAspectRatio();
 						addLog(`getAspectRatio() → ${r}`);
-					}}>Get Aspect Ratio</button
-				>
-				<button
-					class="btn btn-outline-info btn-sm"
-					onclick={async () => {
-						if (!player) return;
-						const tracks = await player.getTracks();
-						addLog(`getTracks() → ${JSON.stringify(tracks)}`);
-					}}>Get Tracks</button
+					}}				>Get Aspect Ratio</button
 				>
 			</div>
 		</div>
