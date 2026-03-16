@@ -77,3 +77,15 @@ jobs:
         working-directory: packages/viostream-player-vue
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Build player-angular
+        if: ${{ steps.release.outputs.releases_created }}
+        run: npm run build
+        working-directory: packages/viostream-player-angular
+
+      - name: Publish player-angular
+        if: ${{ steps.release.outputs['packages/viostream-player-angular--release_created'] }}
+        run: npm publish --access public
+        working-directory: packages/viostream-player-angular/dist
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
