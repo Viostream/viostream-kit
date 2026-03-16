@@ -152,6 +152,16 @@ export function ViostreamPlayer({
 
         if (destroyed) return;
 
+        // Ensure the container element is in the DOM before embedding.
+        // When loadViostream resolves from cache (synchronous Promise.resolve),
+        // the microtask can run before the browser has attached the rendered
+        // DOM node. A single requestAnimationFrame tick guarantees the
+        // container is available.
+        if (!document.getElementById(containerId.current)) {
+          await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+          if (destroyed) return;
+        }
+
         const raw: RawViostreamPlayerInstance = api.embed(
           publicKey,
           containerId.current,
