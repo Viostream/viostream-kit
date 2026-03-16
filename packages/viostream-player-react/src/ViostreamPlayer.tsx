@@ -24,7 +24,7 @@
  * ```
  */
 
-import { useEffect, useId, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { loadViostream, wrapRawPlayer } from '@viostream/viostream-player-core';
 import type {
   ViostreamEmbedOptions,
@@ -102,6 +102,15 @@ export function ViostreamPlayer({
   const [errorMsg, setErrorMsg] = useState<string | undefined>();
   const playerRef = useRef<ViostreamPlayerType | undefined>(undefined);
 
+  // Track whether the container <div> has been attached to the DOM.
+  // The ref callback fires during commit — setting this state defers
+  // the init effect until React has flushed the DOM, guaranteeing the
+  // container is available for the Viostream embed API.
+  const [containerReady, setContainerReady] = useState(false);
+  const containerRefCallback = useCallback((el: HTMLDivElement | null) => {
+    setContainerReady(el !== null);
+  }, []);
+
   // Keep latest callback refs to avoid re-running the init effect when callbacks change
   const callbackRefs = useRef<Record<string, ViostreamEventHandler | undefined>>({});
   callbackRefs.current = {
@@ -144,6 +153,9 @@ export function ViostreamPlayer({
   // Mount / unmount: load script, embed player, wire initial events
   // -----------------------------------------------------------------------
   useEffect(() => {
+    // Wait until the container <div> is confirmed in the DOM via the ref callback.
+    if (!containerReady) return;
+
     let destroyed = false;
 
     async function init() {
@@ -151,16 +163,6 @@ export function ViostreamPlayer({
         const api = await loadViostream(accountKey);
 
         if (destroyed) return;
-
-        // Ensure the container element is in the DOM before embedding.
-        // When loadViostream resolves from cache (synchronous Promise.resolve),
-        // the microtask can run before the browser has attached the rendered
-        // DOM node. A single requestAnimationFrame tick guarantees the
-        // container is available.
-        if (!document.getElementById(containerId.current)) {
-          await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
-          if (destroyed) return;
-        }
 
         const raw: RawViostreamPlayerInstance = api.embed(
           publicKey,
@@ -194,9 +196,9 @@ export function ViostreamPlayer({
       playerRef.current?.destroy();
       playerRef.current = undefined;
     };
-    // Only re-init when accountKey or publicKey change
+    // Re-init when accountKey, publicKey, or container readiness change
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountKey, publicKey]);
+  }, [accountKey, publicKey, containerReady]);
 
   // -----------------------------------------------------------------------
   // Reactively re-wire event handlers when callback props change
@@ -236,6 +238,7 @@ export function ViostreamPlayer({
 
   return (
     <div
+      ref={containerRefCallback}
       id={containerId.current}
       className={className}
       data-viostream-player
