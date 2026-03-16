@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.3](https://github.com/Viostream/viostream-kit/compare/player-svelte-v0.2.2...player-svelte-v0.2.3) (2026-03-16)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @viostream/viostream-player-core bumped from ^0.2.2 to ^0.2.3
+
 ## [0.2.2](https://github.com/Viostream/viostream-kit/compare/player-svelte-v0.2.1...player-svelte-v0.2.2) (2026-03-16)
 
 
