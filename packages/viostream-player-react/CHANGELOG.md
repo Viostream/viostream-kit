@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.3](https://github.com/Viostream/viostream-kit/compare/player-react-v0.2.2...player-react-v0.2.3) (2026-03-16)
+
+
+### Bug Fixes
+
+* **player-react:** use ref callback to gate init on container DOM readiness ([a5bf204](https://github.com/Viostream/viostream-kit/commit/a5bf204fa155fe293864d608ed1c940de7bd7e5a))
+* **player-react:** use ref callback to gate init on container DOM readiness ([4eeeb63](https://github.com/Viostream/viostream-kit/commit/4eeeb63a337395659d3093a4e23e960cf67dae52))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @viostream/viostream-player-core bumped from ^0.2.2 to ^0.2.3
+
 ## [0.2.2](https://github.com/Viostream/viostream-kit/compare/player-react-v0.2.1...player-react-v0.2.2) (2026-03-16)
 
 
