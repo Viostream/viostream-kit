@@ -78,8 +78,6 @@ export class ViostreamPlayerComponent implements OnInit, OnDestroy {
 
   /** Display chapter markers. */
   @Input() chapters?: boolean;
-  /** Chapter display style. */
-  @Input() chapterDisplayType?: 'progressbar';
   /** Seek to a named chapter before playback begins. */
   @Input() chapterSlug?: string;
   /** Show the video title overlay. */
@@ -88,8 +86,18 @@ export class ViostreamPlayerComponent implements OnInit, OnDestroy {
   @Input() hlsQualitySelector?: boolean;
   /** Override the player theme/key to use. */
   @Input() playerKey?: string;
+  /** The player rendering style. */
+  @Input() playerStyle?: 'video' | 'audio' | 'audio-poster';
   /** Show the sharing control. */
   @Input() sharing?: boolean;
+  /** Custom skin active colour (e.g. `'#000'`). Requires `skinCustom: true`. */
+  @Input() skinActive?: string;
+  /** Custom skin background colour (e.g. `'#000'`). Requires `skinCustom: true`. */
+  @Input() skinBackground?: string;
+  /** Enable a custom skin via the API. */
+  @Input() skinCustom?: boolean;
+  /** Custom skin inactive colour (e.g. `'#000'`). Requires `skinCustom: true`. */
+  @Input() skinInactive?: string;
   /** Show the playback speed selector. */
   @Input() speedSelector?: boolean;
   /** Play only a specific section of the video (e.g. `'10,30'`). */
@@ -98,6 +106,8 @@ export class ViostreamPlayerComponent implements OnInit, OnDestroy {
   @Input() startTime?: string;
   /** Allow transcript download. */
   @Input() transcriptDownload?: boolean;
+  /** Enable the settings menu on the control bar. */
+  @Input() useSettingsMenu?: boolean;
 
   // ---------------------------------------------------------------------------
   // Inputs (styling)
@@ -224,16 +234,21 @@ export class ViostreamPlayerComponent implements OnInit, OnDestroy {
   private buildEmbedOptions(): ViostreamEmbedOptions {
     const opts: ViostreamEmbedOptions = {};
     if (this.chapters !== undefined) opts.chapters = this.chapters;
-    if (this.chapterDisplayType !== undefined) opts.chapterDisplayType = this.chapterDisplayType;
     if (this.chapterSlug !== undefined) opts.chapterSlug = this.chapterSlug;
     if (this.displayTitle !== undefined) opts.displayTitle = this.displayTitle;
     if (this.hlsQualitySelector !== undefined) opts.hlsQualitySelector = this.hlsQualitySelector;
     if (this.playerKey !== undefined) opts.playerKey = this.playerKey;
+    if (this.playerStyle !== undefined) opts.playerStyle = this.playerStyle;
     if (this.sharing !== undefined) opts.sharing = this.sharing;
+    if (this.skinActive !== undefined) opts.skinActive = this.skinActive;
+    if (this.skinBackground !== undefined) opts.skinBackground = this.skinBackground;
+    if (this.skinCustom !== undefined) opts.skinCustom = this.skinCustom;
+    if (this.skinInactive !== undefined) opts.skinInactive = this.skinInactive;
     if (this.speedSelector !== undefined) opts.speedSelector = this.speedSelector;
     if (this.startEndTimespan !== undefined) opts.startEndTimespan = this.startEndTimespan;
     if (this.startTime !== undefined) opts.startTime = this.startTime;
     if (this.transcriptDownload !== undefined) opts.transcriptDownload = this.transcriptDownload;
+    if (this.useSettingsMenu !== undefined) opts.useSettingsMenu = this.useSettingsMenu;
     return opts;
   }
 

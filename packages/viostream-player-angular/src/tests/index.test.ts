@@ -15,15 +15,14 @@ describe('index.ts barrel exports', () => {
     expect(typeof mod.createViostreamPlayer).toBe('function');
   });
 
-  it('exports wrapRawPlayer function from core', async () => {
-    const mod = await import('../index');
-    expect(mod.wrapRawPlayer).toBeDefined();
-    expect(typeof mod.wrapRawPlayer).toBe('function');
-  });
-
   it('exports loadViostream function from core', async () => {
     const mod = await import('../index');
     expect(mod.loadViostream).toBeDefined();
     expect(typeof mod.loadViostream).toBe('function');
+  });
+
+  it('does not export internal-only symbols', async () => {
+    const mod = await import('../index') as Record<string, unknown>;
+    expect(mod.wrapRawPlayer).toBeUndefined();
   });
 });

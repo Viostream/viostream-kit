@@ -38,15 +38,8 @@ function createMockRawPlayer(): RawViostreamPlayerInstance {
     getDuration: vi.fn((cb: (v: number) => void) => cb(120)),
     getMuted: vi.fn((cb: (v: boolean) => void) => cb(false)),
     getAspectRatio: vi.fn((cb: (v: number) => void) => cb(1.7778)),
-    getLiveCurrentTime: vi.fn((cb: (v: number) => void) => cb(0)),
     getHeight: vi.fn((cb: (v: number) => void) => cb(360)),
     reload: vi.fn(),
-    getTracks: vi.fn((cb: (v: never[]) => void) => cb([])),
-    setTrack: vi.fn(),
-    cueAdd: vi.fn(),
-    cueUpdate: vi.fn(),
-    cueDelete: vi.fn(),
-    asrAdd: vi.fn(),
     on: vi.fn(),
   };
 }
@@ -157,10 +150,15 @@ describe('ViostreamPlayerComponent', () => {
         speedSelector: true,
         hlsQualitySelector: false,
         chapters: true,
-        chapterDisplayType: 'progressbar' as const,
         chapterSlug: 'chapter-2',
+        playerStyle: 'audio',
+        skinCustom: true,
+        skinActive: '#ff0000',
+        skinBackground: '#000000',
+        skinInactive: '#cccccc',
         startTime: '30',
         transcriptDownload: true,
+        useSettingsMenu: true,
       });
 
       await vi.waitFor(() => {
@@ -174,10 +172,15 @@ describe('ViostreamPlayerComponent', () => {
         speedSelector: true,
         hlsQualitySelector: false,
         chapters: true,
-        chapterDisplayType: 'progressbar',
         chapterSlug: 'chapter-2',
+        playerStyle: 'audio',
+        skinCustom: true,
+        skinActive: '#ff0000',
+        skinBackground: '#000000',
+        skinInactive: '#cccccc',
         startTime: '30',
         transcriptDownload: true,
+        useSettingsMenu: true,
       });
     });
 
