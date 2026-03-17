@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.5](https://github.com/Viostream/viostream-kit/compare/player-react-v0.2.4...player-react-v0.2.5) (2026-03-17)
+
+
+### Bug Fixes
+
+* **player-react:** isolate embed DOM mutations with nested target div ([38bddf4](https://github.com/Viostream/viostream-kit/commit/38bddf4d388d9c799c792715400297a8aba8183e))
+* **player-react:** isolate embed DOM mutations with nested target div ([690936f](https://github.com/Viostream/viostream-kit/commit/690936fb3b562e038a5fae762814f96d99c945e3))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @viostream/viostream-player-core bumped from ^0.2.4 to ^0.2.5
+
 ## [0.2.4](https://github.com/Viostream/viostream-kit/compare/player-react-v0.2.3...player-react-v0.2.4) (2026-03-17)
 
 
