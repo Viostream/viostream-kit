@@ -26,7 +26,10 @@ export type { CreateViostreamPlayerOptions } from './player.js';
 // Internal — used by framework wrapper packages (not part of the consumer-facing API)
 export { wrapRawPlayer } from './player.js';
 
-// Script loader
+// Bundled embed API
+export { getViostreamApi } from './api.js';
+
+// Script loader (deprecated — kept for backward compatibility)
 export { loadViostream } from './loader.js';
 
 // Types — re-export everything so consumers can import types

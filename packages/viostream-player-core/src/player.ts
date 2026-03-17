@@ -6,7 +6,7 @@
  * methods, and event subscription.
  */
 
-import { loadViostream } from './loader.js';
+import { getViostreamApi } from './api.js';
 import type {
   RawViostreamPlayerInstance,
   ViostreamEmbedOptions,
@@ -68,8 +68,8 @@ export async function createViostreamPlayer(opts: CreateViostreamPlayerOptions):
     targetId = opts.target.id;
   }
 
-  // Load the Viostream API script
-  const api = await loadViostream(accountKey);
+  // Get the bundled Viostream embed API
+  const api = getViostreamApi();
 
   // Embed the player
   const raw: RawViostreamPlayerInstance = api.embed(publicKey, targetId, options);

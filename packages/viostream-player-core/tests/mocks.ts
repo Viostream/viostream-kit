@@ -5,7 +5,7 @@
  * and allows simulating callback-based getters and event emission.
  */
 
-import type { RawViostreamPlayerInstance, ViostreamEventHandler, ViostreamGlobal } from '../types.js';
+import type { RawViostreamPlayerInstance, ViostreamEventHandler, ViostreamGlobal } from '../src/types.js';
 import { vi } from 'vitest';
 
 /**

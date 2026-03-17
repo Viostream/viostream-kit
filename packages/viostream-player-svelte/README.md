@@ -14,18 +14,18 @@ Svelte 5 SDK for the [Viostream](https://www.viostream.com) video player. Embed,
 ## Installation
 
 ```bash
-npm install viostream-player-svelte
+npm install @viostream/viostream-player-svelte
 ```
 
 ## Quick Start
 
 ### Component
 
-Drop a `<ViostreamPlayer>` into any Svelte component. The SDK loads the Viostream script automatically.
+Drop a `<ViostreamPlayer>` into any Svelte component. The SDK loads the Viostream player automatically.
 
 ```svelte
 <script lang="ts">
-  import { ViostreamPlayer } from 'viostream-player-svelte';
+  import { ViostreamPlayer } from '@viostream/viostream-player-svelte';
 </script>
 
 <ViostreamPlayer
@@ -42,7 +42,7 @@ Drop a `<ViostreamPlayer>` into any Svelte component. The SDK loads the Viostrea
 Use `createViostreamPlayer` when you need full control without a component:
 
 ```ts
-import { createViostreamPlayer } from 'viostream-player-svelte';
+import { createViostreamPlayer } from '@viostream/viostream-player-svelte';
 
 const player = await createViostreamPlayer({
   accountKey: 'vc-100100100',
@@ -120,8 +120,8 @@ Use `onplayerready` to get a reference to the player for programmatic control:
 
 ```svelte
 <script lang="ts">
-  import { ViostreamPlayer } from 'viostream-player-svelte';
-  import type { ViostreamPlayerInstance } from 'viostream-player-svelte';
+  import { ViostreamPlayer } from '@viostream/viostream-player-svelte';
+  import type { ViostreamPlayerInstance } from '@viostream/viostream-player-svelte';
 
   let player: ViostreamPlayerInstance | undefined = $state();
 </script>
@@ -166,8 +166,8 @@ The player is destroyed automatically when the component unmounts. All event lis
 For use outside of Svelte components or when you need full lifecycle control.
 
 ```ts
-import { createViostreamPlayer } from 'viostream-player-svelte';
-import type { CreateViostreamPlayerOptions } from 'viostream-player-svelte';
+import { createViostreamPlayer } from '@viostream/viostream-player-svelte';
+import type { CreateViostreamPlayerOptions } from '@viostream/viostream-player-svelte';
 
 const player = await createViostreamPlayer({
   accountKey: 'vc-100100100',
@@ -216,7 +216,7 @@ player.reload({ key: 'value' }); // reload with new settings
 All getters return promises. The SDK converts the underlying callback-based API to `async`/`await`.
 
 ```ts
-const volume    = await player.getVolume();          // number (0–1)
+const volume    = await player.getVolume();          // number (0-1)
 const loop      = await player.getLoop();            // boolean
 const time      = await player.getCurrentTime();     // number (seconds)
 const paused    = await player.getPaused();          // boolean
@@ -282,34 +282,16 @@ After calling `destroy()`:
 - Getter calls will reject with `"Player has been destroyed"`.
 ---
 
-## Script Loader
-
-The SDK loads the Viostream API script automatically. If you need manual control over loading (e.g. preloading), you can use `loadViostream` directly:
-
-```ts
-import { loadViostream } from 'viostream-player-svelte';
-
-const api = await loadViostream('vc-100100100');
-// api.embed(...) is now available
-```
-
-The loader:
-- Injects `<script src="https://play.viostream.com/api/{accountKey}">` into `<head>`.
-- Deduplicates requests -- calling it multiple times with the same key returns the same promise.
-- Times out after 15 seconds if the script fails to load.
-- Detects if the script tag already exists in the DOM (e.g. added manually) and waits for it.
-
----
-
 ## TypeScript
 
 Every export is fully typed. Import types alongside runtime exports:
 
 ```ts
-import { ViostreamPlayer, createViostreamPlayer } from 'viostream-player-svelte';
+import { ViostreamPlayer, createViostreamPlayer } from '@viostream/viostream-player-svelte';
 import type {
   ViostreamPlayerInstance,
   ViostreamPlayerProps,
+  ViostreamPlayerEventProps,
   ViostreamEmbedOptions,
   ViostreamTimeUpdateData,
   ViostreamVolumeChangeData,
@@ -318,7 +300,7 @@ import type {
   ViostreamPlayerEventMap,
   ViostreamEventHandler,
   CreateViostreamPlayerOptions,
-} from 'viostream-player-svelte';
+} from '@viostream/viostream-player-svelte';
 ```
 
 ---
@@ -329,8 +311,8 @@ A complete example showing the component with custom controls, event logging, an
 
 ```svelte
 <script lang="ts">
-  import { ViostreamPlayer } from 'viostream-player-svelte';
-  import type { ViostreamPlayerInstance, ViostreamTimeUpdateData } from 'viostream-player-svelte';
+  import { ViostreamPlayer } from '@viostream/viostream-player-svelte';
+  import type { ViostreamPlayerInstance, ViostreamTimeUpdateData } from '@viostream/viostream-player-svelte';
 
   let player: ViostreamPlayerInstance | undefined = $state();
   let currentTime = $state(0);

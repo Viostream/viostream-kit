@@ -6,5 +6,8 @@
     "packages/*",
     "examples/*"
   ],
+  "scripts": {
+    "test:pack:react": "node scripts/test-pack-react.mjs"
+  },
   "license": "MIT"
 }
