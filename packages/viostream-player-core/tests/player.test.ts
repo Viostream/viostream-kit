@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { wrapRawPlayer } from '../player.js';
+import { wrapRawPlayer } from '../src/player.js';
 import { createMockRawPlayer } from './mocks.js';
 
 describe('wrapRawPlayer', () => {

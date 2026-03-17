@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, cleanup } from '@testing-library/react';
-import { ViostreamPlayer } from '../ViostreamPlayer.js';
+import { render, cleanup } from '@testing-library/vue';
+import ViostreamPlayer from '../src/ViostreamPlayer.vue';
 
 // Mock the core module so we control when/how loadViostream resolves
 vi.mock('@viostream/viostream-player-core', async (importOriginal) => {
@@ -71,35 +71,35 @@ describe('ViostreamPlayer component', () => {
   // -----------------------------------------------------------------------
   describe('rendering', () => {
     it('renders a container div with data-viostream-player attribute', () => {
-      const { container } = render(
-        <ViostreamPlayer accountKey="vc-test" publicKey="pk-test" />
-      );
+      const { container } = render(ViostreamPlayer, {
+        props: { accountKey: 'vc-test', publicKey: 'pk-test' },
+      });
       const el = container.querySelector('[data-viostream-player]');
       expect(el).not.toBeNull();
     });
 
     it('sets data-viostream-public-key attribute on the container', () => {
-      const { container } = render(
-        <ViostreamPlayer accountKey="vc-test" publicKey="my-public-key" />
-      );
+      const { container } = render(ViostreamPlayer, {
+        props: { accountKey: 'vc-test', publicKey: 'my-public-key' },
+      });
       const el = container.querySelector('[data-viostream-player]');
       expect(el?.getAttribute('data-viostream-public-key')).toBe('my-public-key');
     });
 
     it('applies custom CSS class to the container', () => {
-      const { container } = render(
-        <ViostreamPlayer accountKey="vc-test" publicKey="pk-test" className="my-custom-class" />
-      );
+      const { container } = render(ViostreamPlayer, {
+        props: { accountKey: 'vc-test', publicKey: 'pk-test', class: 'my-custom-class' },
+      });
       const el = container.querySelector('[data-viostream-player]');
       expect(el?.classList.contains('my-custom-class')).toBe(true);
     });
 
     it('generates a unique ID for the container', () => {
-      const { container } = render(
-        <ViostreamPlayer accountKey="vc-test" publicKey="pk-test" />
-      );
+      const { container } = render(ViostreamPlayer, {
+        props: { accountKey: 'vc-test', publicKey: 'pk-test' },
+      });
       const el = container.querySelector('[data-viostream-player]');
-      expect(el?.id).toMatch(/^viostream-player-.+$/);
+      expect(el?.id).toMatch(/^viostream-player-[a-z0-9]+$/);
     });
   });
 
@@ -108,9 +108,9 @@ describe('ViostreamPlayer component', () => {
   // -----------------------------------------------------------------------
   describe('script loading', () => {
     it('calls loadViostream with the provided account key', async () => {
-      render(
-        <ViostreamPlayer accountKey="vc-my-account" publicKey="pk-test" />
-      );
+      render(ViostreamPlayer, {
+        props: { accountKey: 'vc-my-account', publicKey: 'pk-test' },
+      });
 
       await vi.waitFor(() => {
         expect(mockedLoadViostream).toHaveBeenCalledWith('vc-my-account');
@@ -118,9 +118,9 @@ describe('ViostreamPlayer component', () => {
     });
 
     it('calls api.embed with publicKey and container id', async () => {
-      const { container } = render(
-        <ViostreamPlayer accountKey="vc-test" publicKey="my-video-key" />
-      );
+      const { container } = render(ViostreamPlayer, {
+        props: { accountKey: 'vc-test', publicKey: 'my-video-key' },
+      });
 
       await vi.waitFor(() => {
         expect(mockGlobal.embed).toHaveBeenCalledOnce();
@@ -141,20 +141,20 @@ describe('ViostreamPlayer component', () => {
   // -----------------------------------------------------------------------
   describe('embed options', () => {
     it('passes embed options to api.embed()', async () => {
-      render(
-        <ViostreamPlayer
-          accountKey="vc-test"
-          publicKey="pk-test"
-          displayTitle={true}
-          sharing={true}
-          speedSelector={true}
-          hlsQualitySelector={false}
-          chapters={true}
-          chapterSlug="chapter-2"
-          startTime="30"
-          transcriptDownload={true}
-        />
-      );
+      render(ViostreamPlayer, {
+        props: {
+          accountKey: 'vc-test',
+          publicKey: 'pk-test',
+          displayTitle: true,
+          sharing: true,
+          speedSelector: true,
+          hlsQualitySelector: false,
+          chapters: true,
+          chapterSlug: 'chapter-2',
+          startTime: '30',
+          transcriptDownload: true,
+        },
+      });
 
       await vi.waitFor(() => {
         expect(mockGlobal.embed).toHaveBeenCalledOnce();
@@ -174,13 +174,13 @@ describe('ViostreamPlayer component', () => {
     });
 
     it('omits undefined options', async () => {
-      render(
-        <ViostreamPlayer
-          accountKey="vc-test"
-          publicKey="pk-test"
-          displayTitle={true}
-        />
-      );
+      render(ViostreamPlayer, {
+        props: {
+          accountKey: 'vc-test',
+          publicKey: 'pk-test',
+          displayTitle: true,
+        },
+      });
 
       await vi.waitFor(() => {
         expect(mockGlobal.embed).toHaveBeenCalledOnce();
@@ -194,19 +194,19 @@ describe('ViostreamPlayer component', () => {
   });
 
   // -----------------------------------------------------------------------
-  // Player ready callback
+  // Player ready event
   // -----------------------------------------------------------------------
-  describe('onPlayerReady', () => {
-    it('calls onPlayerReady with the wrapped player', async () => {
+  describe('playerReady event', () => {
+    it('emits playerReady with the wrapped player', async () => {
       const onPlayerReady = vi.fn();
 
-      render(
-        <ViostreamPlayer
-          accountKey="vc-test"
-          publicKey="pk-test"
-          onPlayerReady={onPlayerReady}
-        />
-      );
+      render(ViostreamPlayer, {
+        props: {
+          accountKey: 'vc-test',
+          publicKey: 'pk-test',
+          onPlayerReady,
+        },
+      });
 
       await vi.waitFor(() => {
         expect(onPlayerReady).toHaveBeenCalledOnce();
@@ -228,9 +228,9 @@ describe('ViostreamPlayer component', () => {
     it('displays error message when loadViostream rejects', async () => {
       mockedLoadViostream.mockRejectedValue(new Error('Network failure'));
 
-      const { container } = render(
-        <ViostreamPlayer accountKey="vc-test" publicKey="pk-test" />
-      );
+      const { container } = render(ViostreamPlayer, {
+        props: { accountKey: 'vc-test', publicKey: 'pk-test' },
+      });
 
       await vi.waitFor(() => {
         const errorEl = container.querySelector('[data-viostream-error]');
@@ -242,9 +242,9 @@ describe('ViostreamPlayer component', () => {
     it('displays error for non-Error rejection values', async () => {
       mockedLoadViostream.mockRejectedValue('string error');
 
-      const { container } = render(
-        <ViostreamPlayer accountKey="vc-test" publicKey="pk-test" />
-      );
+      const { container } = render(ViostreamPlayer, {
+        props: { accountKey: 'vc-test', publicKey: 'pk-test' },
+      });
 
       await vi.waitFor(() => {
         const errorEl = container.querySelector('[data-viostream-error]');
@@ -253,16 +253,15 @@ describe('ViostreamPlayer component', () => {
       });
     });
 
-    it('uses renderError prop when provided', async () => {
+    it('uses error slot when provided', async () => {
       mockedLoadViostream.mockRejectedValue(new Error('Custom error'));
 
-      const { container } = render(
-        <ViostreamPlayer
-          accountKey="vc-test"
-          publicKey="pk-test"
-          renderError={(msg) => <div data-custom-error>{msg}</div>}
-        />
-      );
+      const { container } = render(ViostreamPlayer, {
+        props: { accountKey: 'vc-test', publicKey: 'pk-test' },
+        slots: {
+          error: '<div data-custom-error>{{ params.message }}</div>',
+        },
+      });
 
       await vi.waitFor(() => {
         const errorEl = container.querySelector('[data-custom-error]');
@@ -273,34 +272,32 @@ describe('ViostreamPlayer component', () => {
   });
 
   // -----------------------------------------------------------------------
-  // Render props
+  // Slots
   // -----------------------------------------------------------------------
-  describe('render props', () => {
-    it('renders loading content from renderLoading prop', () => {
+  describe('slots', () => {
+    it('renders loading slot while player is loading', () => {
       // Make loadViostream never resolve so we stay in loading state
       mockedLoadViostream.mockReturnValue(new Promise(() => {}));
 
-      const { container } = render(
-        <ViostreamPlayer
-          accountKey="vc-test"
-          publicKey="pk-test"
-          renderLoading={() => <div data-loading>Loading player...</div>}
-        />
-      );
+      const { container } = render(ViostreamPlayer, {
+        props: { accountKey: 'vc-test', publicKey: 'pk-test' },
+        slots: {
+          loading: '<div data-loading>Loading player...</div>',
+        },
+      });
 
       const loadingEl = container.querySelector('[data-loading]');
       expect(loadingEl).not.toBeNull();
       expect(loadingEl?.textContent).toBe('Loading player...');
     });
 
-    it('does not render loading content after player is ready', async () => {
-      const { container } = render(
-        <ViostreamPlayer
-          accountKey="vc-test"
-          publicKey="pk-test"
-          renderLoading={() => <div data-loading>Loading...</div>}
-        />
-      );
+    it('does not render loading slot after player is ready', async () => {
+      const { container } = render(ViostreamPlayer, {
+        props: { accountKey: 'vc-test', publicKey: 'pk-test' },
+        slots: {
+          loading: '<div data-loading>Loading...</div>',
+        },
+      });
 
       await vi.waitFor(() => {
         expect(mockGlobal.embed).toHaveBeenCalledOnce();
@@ -318,13 +315,13 @@ describe('ViostreamPlayer component', () => {
     it('destroys the player when the component unmounts', async () => {
       const onPlayerReady = vi.fn();
 
-      const { unmount } = render(
-        <ViostreamPlayer
-          accountKey="vc-test"
-          publicKey="pk-test"
-          onPlayerReady={onPlayerReady}
-        />
-      );
+      const { unmount } = render(ViostreamPlayer, {
+        props: {
+          accountKey: 'vc-test',
+          publicKey: 'pk-test',
+          onPlayerReady,
+        },
+      });
 
       await vi.waitFor(() => {
         expect(onPlayerReady).toHaveBeenCalledOnce();
@@ -338,55 +335,6 @@ describe('ViostreamPlayer component', () => {
       unmount();
 
       expect(destroySpy).toHaveBeenCalledOnce();
-    });
-  });
-
-  // -----------------------------------------------------------------------
-  // DOM readiness (ref callback gating)
-  // -----------------------------------------------------------------------
-  describe('DOM readiness', () => {
-    it('only calls api.embed after the container ref callback fires', async () => {
-      // loadViostream resolves immediately (simulating a cached/fast-path load).
-      // The component must still wait for the ref callback before embedding.
-      const onPlayerReady = vi.fn();
-
-      render(
-        <ViostreamPlayer
-          accountKey="vc-test"
-          publicKey="pk-test"
-          onPlayerReady={onPlayerReady}
-        />
-      );
-
-      await vi.waitFor(() => {
-        expect(onPlayerReady).toHaveBeenCalledOnce();
-      });
-
-      // The container element must exist in the DOM when embed is called
-      const [, targetId] = (mockGlobal.embed as ReturnType<typeof vi.fn>).mock.calls[0];
-      const container = document.getElementById(targetId);
-      expect(container).not.toBeNull();
-      expect(container?.hasAttribute('data-viostream-player')).toBe(true);
-    });
-
-    it('does not call api.embed if unmounted before container is ready', async () => {
-      // Never let loadViostream resolve — the component should not embed
-      mockedLoadViostream.mockReturnValue(new Promise(() => {}));
-
-      const { unmount } = render(
-        <ViostreamPlayer
-          accountKey="vc-test"
-          publicKey="pk-test"
-        />
-      );
-
-      // Unmount immediately
-      unmount();
-
-      // Give any pending microtasks/effects time to settle
-      await vi.waitFor(() => {});
-
-      expect(mockGlobal.embed).not.toHaveBeenCalled();
     });
   });
 });
