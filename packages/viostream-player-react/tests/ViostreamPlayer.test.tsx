@@ -101,6 +101,17 @@ describe('ViostreamPlayer component', () => {
       const el = container.querySelector('[data-viostream-player]');
       expect(el?.id).toMatch(/^viostream-player-.+$/);
     });
+
+    it('renders a nested embed target div inside the container', () => {
+      const { container } = render(
+        <ViostreamPlayer accountKey="vc-test" publicKey="pk-test" />
+      );
+      const outer = container.querySelector('[data-viostream-player]');
+      const embedTarget = container.querySelector('[data-viostream-embed-target]');
+      expect(embedTarget).not.toBeNull();
+      expect(embedTarget?.id).toMatch(/^viostream-embed-.+$/);
+      expect(outer?.contains(embedTarget)).toBe(true);
+    });
   });
 
   // -----------------------------------------------------------------------
@@ -117,7 +128,7 @@ describe('ViostreamPlayer component', () => {
       });
     });
 
-    it('calls api.embed with publicKey and container id', async () => {
+    it('calls api.embed with publicKey and embed target id', async () => {
       const { container } = render(
         <ViostreamPlayer accountKey="vc-test" publicKey="my-video-key" />
       );
@@ -130,9 +141,14 @@ describe('ViostreamPlayer component', () => {
       expect(publicKey).toBe('my-video-key');
       expect(typeof targetId).toBe('string');
 
-      // The target id should match the container's id
-      const el = container.querySelector('[data-viostream-player]');
-      expect(targetId).toBe(el?.id);
+      // The target id should match the nested embed target div, not the outer container
+      const embedTarget = container.querySelector('[data-viostream-embed-target]');
+      expect(embedTarget).not.toBeNull();
+      expect(targetId).toBe(embedTarget?.id);
+
+      // The embed target should be a child of the outer container
+      const outerContainer = container.querySelector('[data-viostream-player]');
+      expect(outerContainer?.contains(embedTarget)).toBe(true);
     });
   });
 
@@ -362,11 +378,11 @@ describe('ViostreamPlayer component', () => {
         expect(onPlayerReady).toHaveBeenCalledOnce();
       });
 
-      // The container element must exist in the DOM when embed is called
+      // The embed target element must exist in the DOM when embed is called
       const [, targetId] = (mockGlobal.embed as ReturnType<typeof vi.fn>).mock.calls[0];
-      const container = document.getElementById(targetId);
-      expect(container).not.toBeNull();
-      expect(container?.hasAttribute('data-viostream-player')).toBe(true);
+      const embedTarget = document.getElementById(targetId);
+      expect(embedTarget).not.toBeNull();
+      expect(embedTarget?.hasAttribute('data-viostream-embed-target')).toBe(true);
     });
 
     it('does not call api.embed if unmounted before container is ready', async () => {
