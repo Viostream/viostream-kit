@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.5](https://github.com/Viostream/viostream-kit/compare/player-angular-v0.1.4...player-angular-v0.1.5) (2026-03-17)
+
+
+### Features
+
+* **player-core:** bundle embed API, move tests outside src, add pack smoke tests ([782947e](https://github.com/Viostream/viostream-kit/commit/782947e9373145e5022cea921691d9bbf5fe399a))
+* **player-core:** bundle embed API, move tests outside src, add pack… ([e2b7e7e](https://github.com/Viostream/viostream-kit/commit/e2b7e7ed66687aad57159ab88a7c322008d03e1c))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @viostream/viostream-player-core bumped from ^0.2.3 to ^0.2.4
+
 ## [0.1.4](https://github.com/Viostream/viostream-kit/compare/player-angular-v0.1.3...player-angular-v0.1.4) (2026-03-16)
 
 
