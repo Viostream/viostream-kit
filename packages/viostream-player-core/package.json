@@ -1,6 +1,6 @@
 {
   "name": "@viostream/viostream-player-core",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Framework-agnostic core for the Viostream player SDK — script loader, player wrapper, and TypeScript types",
   "license": "MIT",
   "publishConfig": {
