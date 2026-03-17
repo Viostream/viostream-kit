@@ -97,6 +97,13 @@ export function ViostreamPlayer({
   const containerId = useRef(
     `viostream-player-${reactId.replace(/:/g, '').slice(0, 8)}${Math.random().toString(36).slice(2, 6)}`,
   );
+  // Separate ID for the nested div that the embed API operates on.
+  // This isolates embed DOM mutations (innerHTML = '') from React-managed
+  // children (loading/error indicators), preventing reconciliation issues
+  // on hard refresh and StrictMode double-mount.
+  const embedTargetId = useRef(
+    `viostream-embed-${reactId.replace(/:/g, '').slice(0, 8)}${Math.random().toString(36).slice(2, 6)}`,
+  );
 
   const [isLoading, setIsLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | undefined>();
@@ -166,10 +173,10 @@ export function ViostreamPlayer({
 
         const raw: RawViostreamPlayerInstance = api.embed(
           publicKey,
-          containerId.current,
+          embedTargetId.current,
           embedOptsRef.current,
         );
-        const wrappedPlayer = wrapRawPlayer(raw, containerId.current);
+        const wrappedPlayer = wrapRawPlayer(raw, embedTargetId.current);
 
         if (destroyed) {
           wrappedPlayer.destroy();
@@ -244,6 +251,8 @@ export function ViostreamPlayer({
       data-viostream-player
       data-viostream-public-key={publicKey}
     >
+      <div id={embedTargetId.current} data-viostream-embed-target />
+
       {isLoading && renderLoading ? renderLoading() : null}
 
       {errorMsg ? (
