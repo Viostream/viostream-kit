@@ -38,7 +38,7 @@ import type {
   ViostreamErrorData,
   ViostreamProgressData,
 } from '@viostream/viostream-player-core';
-import { SDK_NAME, SDK_VERSION } from './version.js';
+import { SDK_NAME, SDK_VERSION } from './version';
 
 @Component({
   selector: 'viostream-player',
