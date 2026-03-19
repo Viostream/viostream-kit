@@ -14,6 +14,7 @@ import type {
   ViostreamPlayer,
   ViostreamPlayerEventMap,
 } from './types.js';
+import { SDK_NAME, SDK_VERSION } from './version.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -32,6 +33,9 @@ export interface CreateViostreamPlayerOptions {
   /** Optional embed options. */
   options?: ViostreamEmbedOptions;
 }
+
+/** Maximum time (ms) to wait for a callback-based getter before rejecting. */
+const GETTER_TIMEOUT_MS = 10_000;
 
 // ---------------------------------------------------------------------------
 // Implementation
@@ -68,6 +72,12 @@ export async function createViostreamPlayer(opts: CreateViostreamPlayerOptions):
     targetId = opts.target.id;
   }
 
+  // Stamp the SDK identifier on the target element
+  const targetEl = typeof opts.target === 'string'
+    ? document.getElementById(opts.target)
+    : opts.target;
+  targetEl?.setAttribute('data-viostream-sdk', `${SDK_NAME}@${SDK_VERSION}`);
+
   // Get the bundled Viostream embed API
   const api = getViostreamApi();
 
@@ -95,8 +105,15 @@ export function wrapRawPlayer(raw: RawViostreamPlayerInstance, targetId: string)
   // -- Helper: promisify a callback-style getter --------------------------
   function promisifyGet<T>(method: (cb: (v: T) => void) => void): Promise<T> {
     if (destroyed) return Promise.reject(new Error('Player has been destroyed'));
-    return new Promise<T>((resolve) => {
-      method.call(raw, resolve);
+    return new Promise<T>((resolve, reject) => {
+      const timer = setTimeout(() => {
+        reject(new Error('Player getter timed out'));
+      }, GETTER_TIMEOUT_MS);
+
+      method.call(raw, (value: T) => {
+        clearTimeout(timer);
+        resolve(value);
+      });
     });
   }
 
@@ -170,8 +187,17 @@ export function wrapRawPlayer(raw: RawViostreamPlayerInstance, targetId: string)
       }
       listeners.get(eventName)!.add(handler as ViostreamEventHandler);
 
-      // Register with the raw player's event system
-      raw.on(eventName, handler as ViostreamEventHandler);
+      // Wrap the handler in a proxy so that when off() removes it from
+      // the internal set, the raw player's event system stops forwarding
+      // to it. The raw API does not expose an `off()` method, so this
+      // proxy-based approach is the only way to truly unsubscribe.
+      const proxy: ViostreamEventHandler = (data: unknown) => {
+        const set = listeners.get(eventName);
+        if (set?.has(handler as ViostreamEventHandler)) {
+          (handler as ViostreamEventHandler)(data);
+        }
+      };
+      raw.on(eventName, proxy);
 
       // Return unsubscribe function
       return () => {
@@ -191,9 +217,6 @@ export function wrapRawPlayer(raw: RawViostreamPlayerInstance, targetId: string)
           listeners.delete(eventName);
         }
       }
-      // Note: the raw API doesn't expose an `off()` method, so we track
-      // listeners ourselves. The raw `on()` bridge simply won't fire
-      // handlers we've removed from our set. See the emit bridge comment below.
     },
 
     // -- Lifecycle --------------------------------------------------------

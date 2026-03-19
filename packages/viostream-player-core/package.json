@@ -8,8 +8,7 @@
   },
   "type": "module",
   "scripts": {
-    "update:vendor": "node ../../scripts/update-vendor-embed.mjs",
-    "prebuild": "node ../../scripts/update-vendor-embed.mjs",
+    "prebuild": "node ../../scripts/sync-version.mjs",
     "build": "tsc",
     "check": "tsc --noEmit",
     "test": "vitest run",

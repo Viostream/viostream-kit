@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue';
-import { loadViostream, wrapRawPlayer } from '@viostream/viostream-player-core';
+import { getViostreamApi, wrapRawPlayer } from '@viostream/viostream-player-core';
 import type {
   ViostreamEmbedOptions,
   ViostreamPlayer,
@@ -18,6 +18,7 @@ import type {
   ViostreamErrorData,
   ViostreamProgressData,
 } from '@viostream/viostream-player-core';
+import { SDK_NAME, SDK_VERSION } from './version.js';
 
 // ---------------------------------------------------------------------------
 // Props
@@ -187,7 +188,7 @@ function unwireEvents(): void {
 
 async function init(): Promise<void> {
   try {
-    const api = await loadViostream(props.accountKey);
+    const api = getViostreamApi();
 
     if (destroyed) return;
 
@@ -235,6 +236,7 @@ onUnmounted(() => {
     ref="containerRef"
     data-viostream-player
     :data-viostream-public-key="publicKey"
+    :data-viostream-sdk="`${SDK_NAME}@${SDK_VERSION}`"
   >
     <slot v-if="isLoading" name="loading" />
 

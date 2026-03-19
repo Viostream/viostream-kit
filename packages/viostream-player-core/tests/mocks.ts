@@ -2,10 +2,10 @@
  * Shared mock factory for tests.
  *
  * Provides a mock `RawViostreamPlayerInstance` that tracks all method calls
- * and allows simulating callback-based getters and event emission.
+ * and allows simulating callback-based getters.
  */
 
-import type { RawViostreamPlayerInstance, ViostreamEventHandler, ViostreamGlobal } from '../src/types.js';
+import type { RawViostreamPlayerInstance } from '../src/types.js';
 import { vi } from 'vitest';
 
 /**
@@ -13,14 +13,9 @@ import { vi } from 'vitest';
  * Callback-based getters will invoke the callback with configurable return values.
  */
 export function createMockRawPlayer(overrides: Partial<RawViostreamPlayerInstance> = {}): RawViostreamPlayerInstance & {
-  /** Simulate emitting an event to all registered `on()` handlers. */
-  _emit: (event: string, data?: unknown) => void;
-  /** All handlers registered via `on()`. */
-  _handlers: Map<string, ViostreamEventHandler[]>;
   /** Configure what value a getter callback should receive. */
   _getterValues: Record<string, unknown>;
 } {
-  const handlers = new Map<string, ViostreamEventHandler[]>();
   const getterValues: Record<string, unknown> = {
     getVolume: 0.75,
     getLoop: false,
@@ -55,39 +50,11 @@ export function createMockRawPlayer(overrides: Partial<RawViostreamPlayerInstanc
     getAspectRatio: makeGetter('getAspectRatio'),
     getHeight: makeGetter('getHeight'),
     reload: vi.fn(),
-    on: vi.fn((event: string, handler: ViostreamEventHandler) => {
-      if (!handlers.has(event)) {
-        handlers.set(event, []);
-      }
-      handlers.get(event)!.push(handler);
-    }),
+    on: vi.fn(),
     ...overrides,
   };
 
   return Object.assign(mock, {
-    _emit(event: string, data?: unknown) {
-      const eventHandlers = handlers.get(event);
-      if (eventHandlers) {
-        for (const h of eventHandlers) {
-          h(data);
-        }
-      }
-    },
-    _handlers: handlers,
     _getterValues: getterValues,
   });
-}
-
-/**
- * Creates a mock ViostreamGlobal (`window.$viostream`) that returns
- * a mock raw player from `embed()`.
- */
-export function createMockViostreamGlobal(
-  rawPlayer?: ReturnType<typeof createMockRawPlayer>,
-): ViostreamGlobal & { _rawPlayer: ReturnType<typeof createMockRawPlayer> } {
-  const player = rawPlayer ?? createMockRawPlayer();
-  const global: ViostreamGlobal = {
-    embed: vi.fn(() => player),
-  };
-  return Object.assign(global, { _rawPlayer: player });
 }
