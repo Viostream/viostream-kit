@@ -136,22 +136,18 @@ rather than the full suite to get fast feedback.**
 
 > No linter or formatter is configured yet. When one is added, update this section.
 
-## Environment Variables
+## Host Override (Development Only)
 
-The SDK reads environment variables via `import.meta.env` at runtime. Vite
-statically replaces these at build time in consuming applications.
+The vendored embed API defaults to `play.viostream.com`. To point at a
+development or staging environment, set `window.playerDomain` before any
+player is created:
 
-| Variable | Context | Description |
-|----------|---------|-------------|
-| `PUBLIC_VIOSTREAM_HOST` | SvelteKit apps | Override the Viostream API hostname (e.g. `dev.viostream.com`) |
-| `VITE_VIOSTREAM_HOST` | Plain Vite apps | Override the Viostream API hostname (e.g. `dev.viostream.com`) |
+```js
+window.playerDomain = 'dev.viostream.com';
+```
 
-- `PUBLIC_VIOSTREAM_HOST` takes precedence over `VITE_VIOSTREAM_HOST`.
-- When neither is set, the SDK defaults to `play.viostream.com`.
-- See `.env.example` at the repo root for a template.
-- The host override is resolved internally by the loader — it is **not** exposed
-  as a prop or function parameter in the public API.
-- Type declarations for these variables live in `packages/viostream-player-core/src/env.d.ts`.
+This is handled internally by the embed API's `config()` function and is
+**not** exposed as a prop, parameter, or environment variable in the SDK.
 
 ## Code Style Guidelines
 
@@ -227,7 +223,6 @@ viostream-kit/
   AGENTS.md                 — this file
   README.md                 — project overview
   LICENSE                   — MIT
-  .env.example              — environment variable template
   packages/
     player-core/            — framework-agnostic core
       src/
@@ -235,7 +230,6 @@ viostream-kit/
         types.ts            — all shared TypeScript types/interfaces
         player.ts           — createViostreamPlayer() + wrapRawPlayer()
         loader.ts           — loadViostream() script loader
-        env.d.ts            — import.meta.env type declarations
         tests/              — vitest tests + mocks
       dist/                 — compiled output (gitignored)
       package.json

@@ -185,9 +185,11 @@ After calling `destroy()`:
 
 ---
 
-## Script Loader
+## Script Loader (Deprecated)
 
-The SDK loads the Viostream API script automatically when you call `createViostreamPlayer()`. If you need manual control over loading (e.g. preloading or building a custom wrapper), you can use `loadViostream` directly:
+> **Note:** `loadViostream()` is kept for backward compatibility. The embed
+> API is now bundled directly in the package — no script injection occurs.
+> Prefer `createViostreamPlayer()` or `getViostreamApi()` instead.
 
 ```ts
 import { loadViostream } from '@viostream/viostream-player-core';
@@ -196,22 +198,16 @@ const api = await loadViostream('vc-100100100');
 const raw = api.embed('nhedxonrxsyfee', 'my-video-div', { displayTitle: true });
 ```
 
-The loader:
-- Injects `<script src="https://play.viostream.com/api/{accountKey}">` into `<head>`.
-- Deduplicates requests -- calling it multiple times with the same key returns the same promise.
-- Times out after 15 seconds if the script fails to load.
-- Detects if the script tag already exists in the DOM (e.g. added manually) and waits for it.
+### Host Override (Development Only)
 
-### Host Override
+The API hostname defaults to `play.viostream.com`. To point at a development
+or staging environment, set `window.playerDomain` before any player is created:
 
-The API hostname defaults to `play.viostream.com`. To point at a development or staging environment, set one of the following environment variables in your `.env` file:
+```js
+window.playerDomain = 'dev.viostream.com';
+```
 
-| Variable | Context | Description |
-|---|---|---|
-| `PUBLIC_VIOSTREAM_HOST` | SvelteKit apps | Override the API hostname (e.g. `dev.viostream.com`) |
-| `VITE_VIOSTREAM_HOST` | Plain Vite apps | Override the API hostname (e.g. `dev.viostream.com`) |
-
-`PUBLIC_VIOSTREAM_HOST` takes precedence. When neither is set, the default `play.viostream.com` is used.
+This is handled internally by the embed API's `config()` function.
 
 ---
 
