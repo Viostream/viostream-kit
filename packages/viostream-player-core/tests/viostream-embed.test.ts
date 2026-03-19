@@ -9,15 +9,9 @@ import { createEmbedApi } from '../src/vendor/viostream-embed.js';
  */
 describe('createEmbedApi', () => {
   it('returns an object with an embed() method', () => {
-    const api = createEmbedApi('play.viostream.com');
+    const api = createEmbedApi();
     expect(api).toBeDefined();
     expect(typeof api.embed).toBe('function');
-  });
-
-  it('returns different instances for different hosts', () => {
-    const api1 = createEmbedApi('play.viostream.com');
-    const api2 = createEmbedApi('dev.viostream.com');
-    expect(api1).not.toBe(api2);
   });
 });
 
@@ -36,7 +30,7 @@ describe('embed() — DOM behavior', () => {
   });
 
   it('creates an iframe inside the target container', () => {
-    const api = createEmbedApi('play.viostream.com');
+    const api = createEmbedApi();
     api.embed('test-public-key', TARGET_ID);
 
     const iframe = targetDiv.querySelector('iframe');
@@ -45,7 +39,7 @@ describe('embed() — DOM behavior', () => {
   });
 
   it('sets the iframe src with the correct host and public key', () => {
-    const api = createEmbedApi('play.viostream.com');
+    const api = createEmbedApi();
     api.embed('my-video-key', TARGET_ID);
 
     const iframe = targetDiv.querySelector('iframe');
@@ -53,17 +47,8 @@ describe('embed() — DOM behavior', () => {
     expect(src).toContain('https://play.viostream.com/iframe/my-video-key');
   });
 
-  it('uses the provided host in the iframe src', () => {
-    const api = createEmbedApi('dev.viostream.com');
-    api.embed('test-key', TARGET_ID);
-
-    const iframe = targetDiv.querySelector('iframe');
-    const src = iframe?.getAttribute('src') ?? '';
-    expect(src).toContain('https://dev.viostream.com/iframe/test-key');
-  });
-
   it('returns a raw player instance with expected methods', () => {
-    const api = createEmbedApi('play.viostream.com');
+    const api = createEmbedApi();
     const raw = api.embed('test-key', TARGET_ID);
 
     // Playback commands
@@ -97,7 +82,7 @@ describe('embed() — DOM behavior', () => {
     // methods. This test verifies the raw instance has the expected shape —
     // the deprecated methods exist on the raw object but are NOT part of the
     // public ViostreamPlayer interface.
-    const api = createEmbedApi('play.viostream.com');
+    const api = createEmbedApi();
     const raw = api.embed('test-key', TARGET_ID) as unknown as Record<string, unknown>;
 
     // Deprecated methods ARE present on the raw instance (not stripped)
@@ -111,7 +96,7 @@ describe('embed() — DOM behavior', () => {
   });
 
   it('passes embed options to the iframe payload', () => {
-    const api = createEmbedApi('play.viostream.com');
+    const api = createEmbedApi();
     api.embed('test-key', TARGET_ID, { displayTitle: true, sharing: true });
 
     const iframe = targetDiv.querySelector('iframe');
@@ -131,7 +116,7 @@ describe('embed() — DOM behavior', () => {
   it('clears the target container before embedding', () => {
     targetDiv.innerHTML = '<p>Old content</p>';
 
-    const api = createEmbedApi('play.viostream.com');
+    const api = createEmbedApi();
     api.embed('test-key', TARGET_ID);
 
     // Old content should be gone
@@ -144,7 +129,7 @@ describe('embed() — DOM behavior', () => {
     const original = window.$viostream;
     window.$viostream = undefined;
 
-    createEmbedApi('play.viostream.com');
+    createEmbedApi();
 
     expect(window.$viostream).toBeUndefined();
     window.$viostream = original;

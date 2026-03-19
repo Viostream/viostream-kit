@@ -1,69 +1,15 @@
 // @ts-nocheck — Vendored Viostream embed API source (development ESM build).
 //
-// This file is a lightly patched copy of the Viostream embed API ESM bundle.
-// The only modification from the original source is at the bottom of the file:
-// the module-scope `domain` constant and bare `embed()` export have been
-// replaced with a `createEmbed(domain)` factory so the host can be passed
-// dynamically by the SDK rather than read from `window.playerDomain`.
+// This file is an unmodified copy of the upstream Viostream embed API ESM
+// bundle. No patches are applied — the `config()` function natively reads
+// `window.playerDomain` for host resolution and defaults to
+// `play.viostream.com`.
 //
-// When updating this file from a new upstream build, re-apply the factory
-// patch to the last ~20 lines. Everything else should be kept as-is.
+// When updating this file from a new upstream build, replace the content
+// below the `/* eslint-disable */` pragma. No manual patches required.
 
 /* eslint-disable */
 
-var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
-function getDefaultExportFromCjs(x) {
-  return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
-}
-function getAugmentedNamespace(n) {
-  if (Object.prototype.hasOwnProperty.call(n, "__esModule")) return n;
-  var f = n.default;
-  if (typeof f == "function") {
-    var a = function a2() {
-      var isInstance = false;
-      try {
-        isInstance = this instanceof a2;
-      } catch {
-      }
-      if (isInstance) {
-        return Reflect.construct(f, arguments, this.constructor);
-      }
-      return f.apply(this, arguments);
-    };
-    a.prototype = f.prototype;
-  } else a = {};
-  Object.defineProperty(a, "__esModule", { value: true });
-  Object.keys(n).forEach(function (k) {
-    var d = Object.getOwnPropertyDescriptor(n, k);
-    Object.defineProperty(a, k, d.get ? d : {
-      enumerable: true,
-      get: function () {
-        return n[k];
-      }
-    });
-  });
-  return a;
-}
-var window_1;
-var hasRequiredWindow;
-function requireWindow() {
-  if (hasRequiredWindow) return window_1;
-  hasRequiredWindow = 1;
-  var win;
-  if (typeof window !== "undefined") {
-    win = window;
-  } else if (typeof commonjsGlobal !== "undefined") {
-    win = commonjsGlobal;
-  } else if (typeof self !== "undefined") {
-    win = self;
-  } else {
-    win = {};
-  }
-  window_1 = win;
-  return window_1;
-}
-var windowExports = requireWindow();
-const window$1 = /* @__PURE__ */ getDefaultExportFromCjs(windowExports);
 const byteToHex = [];
 for (let i = 0; i < 256; ++i) {
   byteToHex.push((i + 256).toString(16).slice(1));
@@ -96,6 +42,39 @@ function v4(options, buf, offset) {
   rnds[6] = rnds[6] & 15 | 64;
   rnds[8] = rnds[8] & 63 | 128;
   return unsafeStringify(rnds);
+}
+var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
+function getDefaultExportFromCjs(x) {
+  return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
+}
+function getAugmentedNamespace(n) {
+  if (Object.prototype.hasOwnProperty.call(n, "__esModule")) return n;
+  var f = n.default;
+  if (typeof f == "function") {
+    var a = function a2() {
+      var isInstance = false;
+      try {
+        isInstance = this instanceof a2;
+      } catch {
+      }
+      if (isInstance) {
+        return Reflect.construct(f, arguments, this.constructor);
+      }
+      return f.apply(this, arguments);
+    };
+    a.prototype = f.prototype;
+  } else a = {};
+  Object.defineProperty(a, "__esModule", { value: true });
+  Object.keys(n).forEach(function(k) {
+    var d = Object.getOwnPropertyDescriptor(n, k);
+    Object.defineProperty(a, k, d.get ? d : {
+      enumerable: true,
+      get: function() {
+        return n[k];
+      }
+    });
+  });
+  return a;
 }
 const __viteBrowserExternal = {};
 const __viteBrowserExternal$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
@@ -134,12 +113,42 @@ const determineMaxWidth = (aspectRatio, maxHeight = 0) => {
   const maxWidth = maxHeight * aspectRatio;
   return maxWidth;
 };
-const GenerateFrameUrl = (domain2, embedKey, playerSettings, embedId) => {
-  if (window$1.trackerParams) {
-    playerSettings.trackerParams = window$1.trackerParams;
+var window_1;
+var hasRequiredWindow;
+function requireWindow() {
+  if (hasRequiredWindow) return window_1;
+  hasRequiredWindow = 1;
+  var win;
+  if (typeof window !== "undefined") {
+    win = window;
+  } else if (typeof commonjsGlobal !== "undefined") {
+    win = commonjsGlobal;
+  } else if (typeof self !== "undefined") {
+    win = self;
+  } else {
+    win = {};
+  }
+  window_1 = win;
+  return window_1;
+}
+var windowExports = requireWindow();
+const window$1 = /* @__PURE__ */ getDefaultExportFromCjs(windowExports);
+const defaultPLayerDomain = "play.viostream.com";
+function config() {
+  return {
+    location: window$1 && window$1.location ? window$1.location.href : null,
+    playerDomain: (window$1 && window$1.playerDomain) ?? defaultPLayerDomain,
+    trackerParamsOverride: window$1 && window$1.trackerParams ? window$1.trackerParams : null,
+    isLocal: window$1 && window$1.location && window$1.location.host && window$1.location.host.indexOf("localhost") !== -1
+  };
+}
+const GenerateFrameUrl = (embedKey, playerSettings, embedId) => {
+  const { playerDomain, trackerParamsOverride } = config();
+  if (trackerParamsOverride) {
+    playerSettings.trackerParams = trackerParamsOverride;
   }
   const payload = btoa(JSON.stringify(playerSettings));
-  let frameUrl = `https://${domain2}/iframe/${embedKey}?payload=${payload}`;
+  let frameUrl = `https://${playerDomain}/iframe/${embedKey}?payload=${payload}`;
   if (playerSettings.playerKey) {
     frameUrl = `${frameUrl}&playerKey=${playerSettings.playerKey}`;
   }
@@ -160,9 +169,9 @@ const writeInnerTarget = (targetId, aspectRatio, maxHeight) => {
     innerTarget.style.maxWidth = `${maxWidth}px`;
   return innerTarget;
 };
-const frameWriter = (domain2, embedKey, targetId, playerSettings, forceAspectRatio = void 0, maxHeight = 0) => {
+const frameWriter = (embedKey, targetId, playerSettings, forceAspectRatio = void 0, maxHeight = 0) => {
   const embedId = `viostream-player-${embedKey}-${v4()}`.toLocaleLowerCase();
-  const frameUrl = GenerateFrameUrl(domain2, embedKey, playerSettings, embedId);
+  const frameUrl = GenerateFrameUrl(embedKey, playerSettings, embedId);
   const aspectRatio = forceAspectRatio || 1.7778;
   let padding = `${Number.isNaN(aspectRatio) ? 56.25 : 1 / aspectRatio * 100}%`;
   if (playerSettings.playerStyle === "audio") {
@@ -406,7 +415,7 @@ var getDestroyedConnectionMethodCallError = (methodPath) => {
 };
 var connectRemoteProxy = (messenger, channel, log) => {
   let isDestroyed = false;
-  const replyHandlers = /* @__PURE__  */ new Map();
+  const replyHandlers = /* @__PURE__ */ new Map();
   const handleMessage = (message) => {
     if (!isReplyMessage(message)) {
       return;
@@ -671,13 +680,13 @@ var shakeHands = ({
   const handleSynMessage = (message) => {
     log?.(`Received handshake SYN`, message);
     if (message.participantId === remoteParticipantId && // TODO: Used for backward-compatibility. Remove in next major version.
-      remoteParticipantId !== DEPRECATED_PENPAL_PARTICIPANT_ID) {
+    remoteParticipantId !== DEPRECATED_PENPAL_PARTICIPANT_ID) {
       return;
     }
     remoteParticipantId = message.participantId;
     sendSynMessage();
     const isHandshakeLeader = participantId > remoteParticipantId || // TODO: Used for backward-compatibility. Remove in next major version.
-      remoteParticipantId === DEPRECATED_PENPAL_PARTICIPANT_ID;
+    remoteParticipantId === DEPRECATED_PENPAL_PARTICIPANT_ID;
     if (!isHandshakeLeader) {
       return;
     }
@@ -850,9 +859,9 @@ var WindowMessenger = class {
       return;
     }
     if (isAck1Message(message) || // If the child is using a previous version of Penpal, we need to
-      // downgrade the message and send it through the window rather than
-      // the port because older versions of Penpal don't use MessagePorts.
-      this.#isChildUsingDeprecatedProtocol) {
+    // downgrade the message and send it through the window rather than
+    // the port because older versions of Penpal don't use MessagePorts.
+    this.#isChildUsingDeprecatedProtocol) {
       const payload = this.#isChildUsingDeprecatedProtocol ? downgradeMessage(message) : message;
       const originForSending = this.#getOriginForSendingMessage(message);
       this.#remoteWindow.postMessage(payload, {
@@ -955,8 +964,8 @@ var WindowMessenger = class {
       this.#concreteRemoteOrigin = origin;
     }
     if (isAck2Message(data) && // Previous versions of Penpal don't use MessagePorts and do all
-      // communication through the window.
-      !this.#isChildUsingDeprecatedProtocol) {
+    // communication through the window.
+    !this.#isChildUsingDeprecatedProtocol) {
       this.#port = ports[0];
       if (!this.#port) {
         this.#log?.("Ignoring ACK2 because it did not include a MessagePort");
@@ -981,23 +990,24 @@ var WindowMessenger = class {
 var WindowMessenger_default = WindowMessenger;
 var debug = (prefix) => {
   return (...args) => {
-    console.log(`✍️ %c${prefix}%c`, "font-weight: bold;", "", ...args);
+    console.log(`\u270d\ufe0f %c${prefix}%c`, "font-weight: bold;", "", ...args);
   };
 };
 var debug_default = debug;
-class PlayerApi {
+class PlayerCommandApi {
   /**
    * @param {any} frame
    */
-  constructor(domain2, frame, playerSettings) {
+  constructor(frame, playerSettings) {
     this.frame = frame;
     this.playerSettings = playerSettings;
     this.remote = void 0;
     this.events = {};
-    let debugMode = window.location.host && window.location.host.indexOf("localhost") !== -1 || window.localStorage.getItem("vsd") === "true";
+    const { playerDomain, isLocal } = config();
+    let debugMode = isLocal;
     const messenger = new WindowMessenger_default({
       remoteWindow: frame.el.contentWindow,
-      allowedOrigins: [`https://${domain2}`]
+      allowedOrigins: [`https://${playerDomain}`]
     });
     let cachedThis = this;
     this.connection = connect_default({
@@ -1084,44 +1094,44 @@ class PlayerApi {
   getCurrentTime(callback) {
     this._get("getCurrentTime", callback);
   }
-  /** Set the current time in seconds
-   *  @param {number} seconds
+  /** Set the current time in seconds 
+   *  @param {number} seconds 
   */
   setCurrentTime(seconds, play) {
     this._call("setCurrentTime", { seconds, play });
   }
-  /** Get the current paused state.
-   * @param {function} callback
+  /** Get the current paused state. 
+   * @param {function} callback 
   */
   getPaused(callback) {
     this._get("getPaused", callback);
   }
-  /** Get the current media's duration.
+  /** Get the current media's duration. 
    * @param {function} callback
   */
   getDuration(callback) {
     this._get("getDuration", callback);
   }
-  /** Get the current muted state.
-   * @param {function} callback
+  /** Get the current muted state. 
+   * @param {function} callback   
   */
   getMuted(callback) {
     this._get("getMuted", callback);
   }
-  /** Get the current aspect ratio
+  /** Get the current aspect ratio 
    * @param {function } callback
   */
   getAspectRatio(callback) {
     this._get("getAspectRatio", callback);
   }
-  /** private api
+  /** private api 
    * Get the current time for live streams in seconds.
    * @param {function } callback
   */
   getLiveCurrentTime(callback) {
     this._get("getLiveCurrentTime", callback);
   }
-  /** Get the current height
+  /** Get the current height 
    * @param {function} callback
   */
   getHeight(callback) {
@@ -1133,15 +1143,15 @@ class PlayerApi {
   reload(payload) {
     this._call("reload", payload);
   }
-  /** private api
-   *  Get the current media's duration.
+  /** private api 
+   *  Get the current media's duration. 
    * @param {function} callback
   */
   getTracks(callback) {
     this._get("getTracks", callback);
   }
-  /** private api
-   * Sets the desired text track to active
+  /** private api 
+   * Sets the desired text track to active 
    * Checkes if the track url is aleready added to player - does not create duplicates
    * @param {object} track
   */
@@ -1149,14 +1159,14 @@ class PlayerApi {
     this._call("setTrack", track);
   }
   /** private api
-   * Add a new cue on the currently playing track
-   * @param {object} cue
+   * Add a new cue on the currently playing track     
+   * @param {object} cue     
   */
   cueAdd(cue) {
     this._call("cueAdd", cue);
   }
   /** private api
-   * Update the cue on the currently playing track
+   * Update the cue on the currently playing track     
    * @param {object} cue
    * @param {object} field
   */
@@ -1164,14 +1174,14 @@ class PlayerApi {
     this._call("cueUpdate", { cue, field });
   }
   /** private api
-   * Delete the cue on the currently playing track
-   * @param {object} cue
+   * Delete the cue on the currently playing track     
+   * @param {object} cue     
   */
   cueDelete(cue) {
     this._call("cueDelete", cue);
   }
   /** private api
-   * Update the cue on the currently playing track
+   * Update the cue on the currently playing track     
    * @param {object} cues
    * @param {object} id
   */
@@ -1190,31 +1200,19 @@ class PlayerApi {
     this.events[eventName].push(callback);
   }
 }
-
-// ---------------------------------------------------------------------------
-// SDK factory patch (only modification from the original ESM source).
-//
-// The original ESM had:
-//   const domain = window$1.playerDomain ?? "play.viostream.com";
-//   function embed(...) { ... uses domain ... }
-//   export { embed as default };
-//
-// We wrap embed() in a factory so the SDK can pass the host dynamically.
-// ---------------------------------------------------------------------------
-
-function createEmbed(domain) {
-  return function embed(embedKey, targetId, playerSettings = {}, forceAspectRatio = void 0) {
-    playerSettings.dynamicSizing = forceAspectRatio == void 0;
-    playerSettings.apiEmbed = true;
-    playerSettings.documentLocation = window$1.location.href;
-    const target = document.getElementById(targetId);
-    if (target) {
-      target.innerHTML = "";
-    }
-    const frame = frameWriter(domain, embedKey, targetId, playerSettings, forceAspectRatio);
-    const api = new PlayerApi(domain, frame, playerSettings);
-    return api;
-  };
+function embed(embedKey, targetId, playerSettings = {}, forceAspectRatio = void 0) {
+  const { location } = config();
+  playerSettings.dynamicSizing = forceAspectRatio == void 0;
+  playerSettings.apiEmbed = true;
+  playerSettings.documentLocation = location;
+  const target = document.getElementById(targetId);
+  if (target) {
+    target.innerHTML = "";
+  }
+  const frame = frameWriter(embedKey, targetId, playerSettings, forceAspectRatio);
+  const api = new PlayerCommandApi(frame, playerSettings);
+  return api;
 }
-
-export { createEmbed as default };
+export {
+  embed as default
+};

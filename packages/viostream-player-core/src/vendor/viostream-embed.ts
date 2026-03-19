@@ -2,25 +2,29 @@
  * Vendored Viostream embed API.
  *
  * Wraps the ESM embed API source (`embed-api.ts`) as a typed export.
- * The ESM is a development build of the Viostream embed script that will
- * eventually be served from a production URL.
+ * The ESM is an unmodified development build of the Viostream embed script.
+ * Host resolution is handled internally by the embed API's `config()`
+ * function, which reads `window.playerDomain` (defaulting to
+ * `play.viostream.com`).
  *
  * The rest of the codebase depends only on the
- * `createEmbedApi(host: string): ViostreamGlobal` signature.
+ * `createEmbedApi(): ViostreamGlobal` signature.
  */
 
 import type { ViostreamGlobal } from '../types.js';
 
 // The vendored ESM uses @ts-nocheck — the default export is untyped.
-import createEmbed from './embed-api.js';
+import embed from './embed-api.js';
 
 /**
- * Create a Viostream embed API instance bound to the given host.
+ * Create a Viostream embed API instance.
  *
- * @param host - The Viostream API hostname (e.g. `'play.viostream.com'`).
+ * Host resolution is handled internally by the vendored embed API — it
+ * reads `window.playerDomain` at embed time and defaults to
+ * `play.viostream.com`.
+ *
  * @returns A `ViostreamGlobal`-compatible object with an `embed()` method.
  */
-export function createEmbedApi(host: string): ViostreamGlobal {
-  const embed = createEmbed(host);
+export function createEmbedApi(): ViostreamGlobal {
   return { embed } as ViostreamGlobal;
 }
