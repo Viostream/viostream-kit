@@ -8,6 +8,7 @@
   },
   "type": "module",
   "scripts": {
+    "prebuild": "node ../../scripts/sync-version.mjs",
     "build": "tsc",
     "check": "tsc --noEmit",
     "test": "vitest run",

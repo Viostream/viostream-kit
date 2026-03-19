@@ -25,7 +25,7 @@
  */
 
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
-import { loadViostream, wrapRawPlayer } from '@viostream/viostream-player-core';
+import { getViostreamApi, wrapRawPlayer } from '@viostream/viostream-player-core';
 import type {
   ViostreamEmbedOptions,
   ViostreamPlayer as ViostreamPlayerType,
@@ -33,6 +33,7 @@ import type {
   ViostreamEventHandler,
 } from '@viostream/viostream-player-core';
 import type { ViostreamPlayerProps } from './types.js';
+import { SDK_NAME, SDK_VERSION } from './version.js';
 
 // Maps React camelCase prop names → raw player event names
 const EVENT_MAP: Array<[string, keyof ViostreamPlayerProps]> = [
@@ -167,7 +168,7 @@ export function ViostreamPlayer({
 
     async function init() {
       try {
-        const api = await loadViostream(accountKey);
+        const api = getViostreamApi();
 
         if (destroyed) return;
 
@@ -250,6 +251,7 @@ export function ViostreamPlayer({
       className={className}
       data-viostream-player
       data-viostream-public-key={publicKey}
+      data-viostream-sdk={`${SDK_NAME}@${SDK_VERSION}`}
     >
       <div id={embedTargetId.current} data-viostream-embed-target />
 

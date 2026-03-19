@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { wrapRawPlayer } from '../src/player.js';
+import { wrapRawPlayer, createViostreamPlayer } from '../src/player.js';
+import type { RawViostreamPlayerInstance } from '../src/types.js';
+import { SDK_NAME, SDK_VERSION } from '../src/version.js';
 import { createMockRawPlayer } from './mocks.js';
 
 describe('wrapRawPlayer', () => {
@@ -146,17 +148,41 @@ describe('wrapRawPlayer', () => {
       await player.getDuration();
       expect(mockRaw.getDuration).toHaveBeenCalledOnce();
     });
+
+    it('getters reject with timeout when callback is never invoked', async () => {
+      // Create a mock raw player where getVolume never calls its callback
+      const stuckRaw = createMockRawPlayer({
+        getVolume: vi.fn(() => {
+          // intentionally never call the callback
+        }) as unknown as RawViostreamPlayerInstance['getVolume'],
+      });
+
+      const player = wrapRawPlayer(stuckRaw, TARGET_ID);
+
+      // Use fake timers to avoid waiting 10 real seconds
+      vi.useFakeTimers();
+      const promise = player.getVolume();
+
+      // Advance past the timeout
+      vi.advanceTimersByTime(10_001);
+
+      await expect(promise).rejects.toThrow('Player getter timed out');
+
+      vi.useRealTimers();
+    });
   });
 
   // -----------------------------------------------------------------------
   // Event subscription
   // -----------------------------------------------------------------------
   describe('event subscription (on/off)', () => {
-    it('on() registers a handler with the raw player', () => {
+    it('on() registers a proxy handler with the raw player', () => {
       const player = wrapRawPlayer(mockRaw, TARGET_ID);
       const handler = vi.fn();
       player.on('play', handler);
-      expect(mockRaw.on).toHaveBeenCalledWith('play', handler);
+      // A proxy is registered (not the original handler), so raw.on is still called
+      expect(mockRaw.on).toHaveBeenCalledOnce();
+      expect(mockRaw.on).toHaveBeenCalledWith('play', expect.any(Function));
     });
 
     it('on() returns an unsubscribe function', () => {
@@ -166,13 +192,13 @@ describe('wrapRawPlayer', () => {
       expect(typeof unsub).toBe('function');
     });
 
-    it('on() registers handler in internal listener map', () => {
+    it('on() registers proxy handler in raw player for the correct event', () => {
       const player = wrapRawPlayer(mockRaw, TARGET_ID);
       const handler = vi.fn();
       player.on('timeupdate', handler);
 
-      // Verify through the raw mock that on was called
-      expect(mockRaw.on).toHaveBeenCalledWith('timeupdate', handler);
+      // Verify the proxy was registered with the correct event name
+      expect(mockRaw.on).toHaveBeenCalledWith('timeupdate', expect.any(Function));
     });
 
     it('off() removes a handler from the internal listener map', () => {
@@ -188,6 +214,46 @@ describe('wrapRawPlayer', () => {
       player.on('play', handler2);
       player.off('play', handler2);
       // No errors means the map was properly managed
+    });
+
+    it('off() prevents the proxy from forwarding events to the handler', () => {
+      const player = wrapRawPlayer(mockRaw, TARGET_ID);
+      const handler = vi.fn();
+      player.on('play', handler);
+
+      // Grab the proxy function that was registered with raw.on
+      const proxy = (mockRaw.on as ReturnType<typeof vi.fn>).mock.calls[0][1];
+
+      // Simulate the raw player firing the event — handler should be called
+      proxy();
+      expect(handler).toHaveBeenCalledOnce();
+
+      // Now unsubscribe
+      player.off('play', handler);
+
+      // Simulate the raw player firing again — handler should NOT be called
+      proxy();
+      expect(handler).toHaveBeenCalledOnce(); // still 1, not 2
+    });
+
+    it('off() via unsubscribe function prevents event forwarding', () => {
+      const player = wrapRawPlayer(mockRaw, TARGET_ID);
+      const handler = vi.fn();
+      const unsub = player.on('play', handler);
+
+      // Grab the proxy
+      const proxy = (mockRaw.on as ReturnType<typeof vi.fn>).mock.calls[0][1];
+
+      // Fire event — should forward
+      proxy({ type: 'play' });
+      expect(handler).toHaveBeenCalledOnce();
+
+      // Unsubscribe
+      unsub();
+
+      // Fire event — should NOT forward
+      proxy({ type: 'play' });
+      expect(handler).toHaveBeenCalledOnce(); // still 1
     });
 
     it('unsubscribe function from on() calls off()', () => {
@@ -299,5 +365,56 @@ describe('wrapRawPlayer', () => {
       // Should not throw
       player.destroy();
     });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// createViostreamPlayer — SDK attribute
+// ---------------------------------------------------------------------------
+
+vi.mock('../src/api.js', () => ({
+  getViostreamApi: vi.fn(),
+}));
+
+import { getViostreamApi } from '../src/api.js';
+const mockedGetViostreamApi = vi.mocked(getViostreamApi);
+
+describe('createViostreamPlayer', () => {
+  let targetDiv: HTMLDivElement;
+
+  beforeEach(() => {
+    targetDiv = document.createElement('div');
+    targetDiv.id = 'sdk-attr-test';
+    document.body.appendChild(targetDiv);
+
+    const mockRaw = createMockRawPlayer();
+    mockedGetViostreamApi.mockReturnValue({
+      embed: vi.fn(() => mockRaw),
+    });
+  });
+
+  afterEach(() => {
+    targetDiv.remove();
+    vi.clearAllMocks();
+  });
+
+  it('stamps data-viostream-sdk on the target element (string id)', async () => {
+    await createViostreamPlayer({
+      accountKey: 'vc-test',
+      publicKey: 'pk-test',
+      target: 'sdk-attr-test',
+    });
+
+    expect(targetDiv.getAttribute('data-viostream-sdk')).toBe(`${SDK_NAME}@${SDK_VERSION}`);
+  });
+
+  it('stamps data-viostream-sdk on the target element (HTMLElement)', async () => {
+    await createViostreamPlayer({
+      accountKey: 'vc-test',
+      publicKey: 'pk-test',
+      target: targetDiv,
+    });
+
+    expect(targetDiv.getAttribute('data-viostream-sdk')).toBe(`${SDK_NAME}@${SDK_VERSION}`);
   });
 });

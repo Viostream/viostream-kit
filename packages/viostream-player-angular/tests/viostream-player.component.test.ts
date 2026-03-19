@@ -2,20 +2,20 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { ViostreamPlayerComponent } from '../src/viostream-player.component';
 
-// Mock the core module so we control when/how loadViostream resolves
+// Mock the core module so we control the embed API
 vi.mock('@viostream/viostream-player-core', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@viostream/viostream-player-core')>();
   return {
     ...actual,
-    loadViostream: vi.fn(),
+    getViostreamApi: vi.fn(),
     wrapRawPlayer: vi.fn(actual.wrapRawPlayer),
   };
 });
 
-import { loadViostream, wrapRawPlayer } from '@viostream/viostream-player-core';
+import { getViostreamApi, wrapRawPlayer } from '@viostream/viostream-player-core';
 import type { RawViostreamPlayerInstance, ViostreamEventHandler, ViostreamGlobal } from '@viostream/viostream-player-core';
 
-const mockedLoadViostream = vi.mocked(loadViostream);
+const mockedGetViostreamApi = vi.mocked(getViostreamApi);
 const mockedWrapRawPlayer = vi.mocked(wrapRawPlayer);
 
 // ---------------------------------------------------------------------------
@@ -58,7 +58,7 @@ describe('ViostreamPlayerComponent', () => {
 
   beforeEach(async () => {
     mockGlobal = createMockViostreamGlobal();
-    mockedLoadViostream.mockResolvedValue(mockGlobal);
+    mockedGetViostreamApi.mockReturnValue(mockGlobal);
 
     await TestBed.configureTestingModule({
       imports: [ViostreamPlayerComponent],
@@ -95,6 +95,13 @@ describe('ViostreamPlayerComponent', () => {
       expect(el?.getAttribute('data-viostream-public-key')).toBe('my-public-key');
     });
 
+    it('sets data-viostream-sdk attribute with package name and version', () => {
+      const { nativeElement } = createComponent({ accountKey: 'vc-test', publicKey: 'pk-test' });
+      const el = nativeElement.querySelector('[data-viostream-player]');
+      const sdkAttr = el?.getAttribute('data-viostream-sdk');
+      expect(sdkAttr).toMatch(/^viostream-player-angular@\d+\.\d+\.\d+$/);
+    });
+
     it('applies custom CSS class to the container', () => {
       const { nativeElement } = createComponent({ accountKey: 'vc-test', publicKey: 'pk-test', cssClass: 'my-custom-class' });
       const el = nativeElement.querySelector('[data-viostream-player]');
@@ -111,12 +118,12 @@ describe('ViostreamPlayerComponent', () => {
   // -----------------------------------------------------------------------
   // Script loading
   // -----------------------------------------------------------------------
-  describe('script loading', () => {
-    it('calls loadViostream with the provided account key', async () => {
+  describe('API initialization', () => {
+    it('calls getViostreamApi to get the embed API', async () => {
       createComponent({ accountKey: 'vc-my-account', publicKey: 'pk-test' });
 
       await vi.waitFor(() => {
-        expect(mockedLoadViostream).toHaveBeenCalledWith('vc-my-account');
+        expect(mockedGetViostreamApi).toHaveBeenCalled();
       });
     });
 
@@ -208,8 +215,14 @@ describe('ViostreamPlayerComponent', () => {
   describe('playerReady output', () => {
     it('emits playerReady with the wrapped player', async () => {
       const playerReadySpy = vi.fn();
-      const { componentInstance } = createComponent({ accountKey: 'vc-test', publicKey: 'pk-test' });
-      componentInstance.playerReady.subscribe(playerReadySpy);
+      // Create the component but subscribe to playerReady BEFORE detectChanges
+      // triggers ngOnInit, since the synchronous API means init() completes
+      // during the first change detection cycle.
+      fixture = TestBed.createComponent(ViostreamPlayerComponent);
+      const component = fixture.componentInstance;
+      Object.assign(component, { accountKey: 'vc-test', publicKey: 'pk-test' });
+      component.playerReady.subscribe(playerReadySpy);
+      fixture.detectChanges();
 
       await vi.waitFor(() => {
         expect(playerReadySpy).toHaveBeenCalledOnce();
@@ -228,8 +241,8 @@ describe('ViostreamPlayerComponent', () => {
   // Error handling
   // -----------------------------------------------------------------------
   describe('error handling', () => {
-    it('displays error message when loadViostream rejects', async () => {
-      mockedLoadViostream.mockRejectedValue(new Error('Network failure'));
+    it('displays error message when getViostreamApi throws', async () => {
+      mockedGetViostreamApi.mockImplementation(() => { throw new Error('Network failure'); });
 
       const { nativeElement } = createComponent({ accountKey: 'vc-test', publicKey: 'pk-test' });
 
@@ -241,8 +254,8 @@ describe('ViostreamPlayerComponent', () => {
       });
     });
 
-    it('displays error for non-Error rejection values', async () => {
-      mockedLoadViostream.mockRejectedValue('string error');
+    it('displays error for non-Error throw values', async () => {
+      mockedGetViostreamApi.mockImplementation(() => { throw 'string error'; });
 
       const { nativeElement } = createComponent({ accountKey: 'vc-test', publicKey: 'pk-test' });
 
@@ -261,8 +274,12 @@ describe('ViostreamPlayerComponent', () => {
   describe('cleanup', () => {
     it('destroys the player when the component is destroyed', async () => {
       const playerReadySpy = vi.fn();
-      const { componentInstance } = createComponent({ accountKey: 'vc-test', publicKey: 'pk-test' });
-      componentInstance.playerReady.subscribe(playerReadySpy);
+      // Subscribe before detectChanges so we capture the synchronous emission
+      fixture = TestBed.createComponent(ViostreamPlayerComponent);
+      const component = fixture.componentInstance;
+      Object.assign(component, { accountKey: 'vc-test', publicKey: 'pk-test' });
+      component.playerReady.subscribe(playerReadySpy);
+      fixture.detectChanges();
 
       await vi.waitFor(() => {
         expect(playerReadySpy).toHaveBeenCalledOnce();

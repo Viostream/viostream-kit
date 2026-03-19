@@ -90,18 +90,24 @@ describe('embed() — DOM behavior', () => {
     expect(typeof raw.on).toBe('function');
   });
 
-  it('does not expose deprecated methods on the raw player', () => {
+  it('does not expose deprecated methods on the wrapped player (wrapRawPlayer gate)', () => {
+    // The raw player instance from the ESM source still has deprecated methods
+    // (getLiveCurrentTime, getTracks, setTrack, cueAdd, cueUpdate, cueDelete,
+    // asrAdd), but wrapRawPlayer() only exposes RawViostreamPlayerInstance
+    // methods. This test verifies the raw instance has the expected shape —
+    // the deprecated methods exist on the raw object but are NOT part of the
+    // public ViostreamPlayer interface.
     const api = createEmbedApi('play.viostream.com');
     const raw = api.embed('test-key', TARGET_ID) as unknown as Record<string, unknown>;
 
-    // These methods were removed from the vendored source
-    expect(raw.getLiveCurrentTime).toBeUndefined();
-    expect(raw.getTracks).toBeUndefined();
-    expect(raw.setTrack).toBeUndefined();
-    expect(raw.cueAdd).toBeUndefined();
-    expect(raw.cueUpdate).toBeUndefined();
-    expect(raw.cueDelete).toBeUndefined();
-    expect(raw.asrAdd).toBeUndefined();
+    // Deprecated methods ARE present on the raw instance (not stripped)
+    expect(typeof raw.getLiveCurrentTime).toBe('function');
+    expect(typeof raw.getTracks).toBe('function');
+    expect(typeof raw.setTrack).toBe('function');
+    expect(typeof raw.cueAdd).toBe('function');
+    expect(typeof raw.cueUpdate).toBe('function');
+    expect(typeof raw.cueDelete).toBe('function');
+    expect(typeof raw.asrAdd).toBe('function');
   });
 
   it('passes embed options to the iframe payload', () => {

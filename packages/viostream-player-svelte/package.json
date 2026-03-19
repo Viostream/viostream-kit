@@ -8,6 +8,7 @@
   },
   "type": "module",
   "scripts": {
+    "prebuild": "node ../../scripts/sync-version.mjs src/lib/version.ts",
     "package": "svelte-kit sync && svelte-package && publint",
     "build": "npm run package",
     "prepublishOnly": "npm run package",

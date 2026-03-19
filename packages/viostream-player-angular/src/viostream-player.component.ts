@@ -27,7 +27,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { loadViostream, wrapRawPlayer } from '@viostream/viostream-player-core';
+import { getViostreamApi, wrapRawPlayer } from '@viostream/viostream-player-core';
 import type {
   ViostreamEmbedOptions,
   ViostreamPlayer,
@@ -38,6 +38,7 @@ import type {
   ViostreamErrorData,
   ViostreamProgressData,
 } from '@viostream/viostream-player-core';
+import { SDK_NAME, SDK_VERSION } from './version.js';
 
 @Component({
   selector: 'viostream-player',
@@ -49,6 +50,7 @@ import type {
       [class]="cssClass"
       data-viostream-player
       [attr.data-viostream-public-key]="publicKey"
+      [attr.data-viostream-sdk]="sdkTag"
     >
       @if (isLoading()) {
         <ng-content select="[loading]" />
@@ -150,6 +152,9 @@ export class ViostreamPlayerComponent implements OnInit, OnDestroy {
   /** Unique ID for the player container element. */
   readonly containerId = `viostream-player-${Math.random().toString(36).slice(2, 10)}`;
 
+  /** SDK identifier stamped as a data attribute on the container. */
+  readonly sdkTag = `${SDK_NAME}@${SDK_VERSION}`;
+
   /** Whether the player is still loading. */
   readonly isLoading = signal(true);
 
@@ -192,7 +197,7 @@ export class ViostreamPlayerComponent implements OnInit, OnDestroy {
 
   private async init(): Promise<void> {
     try {
-      const api = await loadViostream(this.accountKey);
+      const api = getViostreamApi();
 
       if (this.destroyed) return;
 

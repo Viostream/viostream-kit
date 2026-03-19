@@ -25,7 +25,7 @@
 -->
 <script lang="ts">
 	import { onMount, type Snippet } from 'svelte';
-	import { loadViostream, wrapRawPlayer } from '@viostream/viostream-player-core';
+	import { getViostreamApi, wrapRawPlayer } from '@viostream/viostream-player-core';
 	import type {
 		ViostreamEmbedOptions,
 		ViostreamPlayer,
@@ -33,6 +33,7 @@
 		ViostreamEventHandler,
 	} from '@viostream/viostream-player-core';
 	import type { ViostreamPlayerProps } from './types.js';
+	import { SDK_NAME, SDK_VERSION } from './version.js';
 
 	let {
 		// Required props
@@ -137,7 +138,7 @@
 
 		async function init() {
 			try {
-				const api = await loadViostream(accountKey);
+				const api = getViostreamApi();
 
 				if (destroyed) return;
 
@@ -213,6 +214,7 @@
 	bind:this={containerEl}
 	data-viostream-player
 	data-viostream-public-key={publicKey}
+	data-viostream-sdk={`${SDK_NAME}@${SDK_VERSION}`}
 >
 	{#if isLoading}
 		{#if loadingSnippet}
