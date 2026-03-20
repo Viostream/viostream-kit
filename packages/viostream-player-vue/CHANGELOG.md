@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.6](https://github.com/Viostream/viostream-kit/compare/player-vue-v0.2.5...player-vue-v0.2.6) (2026-03-20)
+
+
+### Bug Fixes
+
+* sync all packages for release ([578dae0](https://github.com/Viostream/viostream-kit/commit/578dae0f251c13a273fa58a26bca1b8c41a4725b))
+* sync all packages for release ([2fa8079](https://github.com/Viostream/viostream-kit/commit/2fa807934db3c72a780a47242c2fe17d4c6948e6))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @viostream/viostream-player-core bumped from ^0.2.5 to ^0.2.6
+
 ## [0.2.5](https://github.com/Viostream/viostream-kit/compare/player-vue-v0.2.4...player-vue-v0.2.5) (2026-03-17)
 
 
