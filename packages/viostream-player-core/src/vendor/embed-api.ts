@@ -139,7 +139,8 @@ function config() {
     location: window$1 && window$1.location ? window$1.location.href : null,
     playerDomain: (window$1 && window$1.playerDomain) ?? defaultPLayerDomain,
     trackerParamsOverride: window$1 && window$1.trackerParams ? window$1.trackerParams : null,
-    isLocal: window$1 && window$1.location && window$1.location.host && window$1.location.host.indexOf("localhost") !== -1
+    isLocal: window$1 && window$1.location && window$1.location.host && window$1.location.host.indexOf("localhost") !== -1,
+    editorMode: window$1 && window$1.editorMode ? window$1.editorMode : false
   };
 }
 const GenerateFrameUrl = (embedKey, playerSettings, embedId) => {
