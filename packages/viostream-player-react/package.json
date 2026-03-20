@@ -1,6 +1,6 @@
 {
   "name": "@viostream/viostream-player-react",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "React 18+ SDK for the Viostream video player — embed, control, and listen to player events",
   "license": "MIT",
   "publishConfig": {
@@ -28,7 +28,7 @@
     "!dist/**/*.spec.*"
   ],
   "dependencies": {
-    "@viostream/viostream-player-core": "^0.2.5"
+    "@viostream/viostream-player-core": "^0.2.6"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",

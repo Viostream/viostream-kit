@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.7](https://github.com/Viostream/viostream-kit/compare/player-angular-v0.1.6...player-angular-v0.1.7) (2026-03-20)
+
+
+### Bug Fixes
+
+* **player-angular:** use extensionless import for version module ([5a8393f](https://github.com/Viostream/viostream-kit/commit/5a8393fc5bd1fc9f24176407d7af37d2f76a29c1))
+* sync all packages for release ([578dae0](https://github.com/Viostream/viostream-kit/commit/578dae0f251c13a273fa58a26bca1b8c41a4725b))
+* sync all packages for release ([2fa8079](https://github.com/Viostream/viostream-kit/commit/2fa807934db3c72a780a47242c2fe17d4c6948e6))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @viostream/viostream-player-core bumped from ^0.2.5 to ^0.2.6
+
 ## [0.1.6](https://github.com/Viostream/viostream-kit/compare/player-angular-v0.1.5...player-angular-v0.1.6) (2026-03-17)
 
 
