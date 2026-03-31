@@ -284,21 +284,17 @@ describe('wrapRawPlayer', () => {
       player.off('play', handler2);
     });
 
-    it('on() warns and returns noop when player is destroyed', () => {
+    it('on() returns noop when player is destroyed', () => {
       const player = wrapRawPlayer(mockRaw, TARGET_ID);
-      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
       player.destroy();
 
       const handler = vi.fn();
       const unsub = player.on('play', handler);
 
-      expect(warnSpy).toHaveBeenCalledWith('Cannot subscribe to events on a destroyed player');
       expect(typeof unsub).toBe('function');
       // The noop unsubscribe should not throw
       unsub();
-
-      warnSpy.mockRestore();
     });
 
     it('off() is safe to call for a non-existent event', () => {

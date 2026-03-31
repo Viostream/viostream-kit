@@ -29,7 +29,8 @@
     "!dist/**/*.spec.*"
   ],
   "dependencies": {
-    "@viostream/viostream-player-core": "^0.2.5"
+    "@viostream/viostream-player-core": "^0.2.5",
+    "debug": "^4.4.3"
   },
   "peerDependencies": {
     "vue": "^3.3.0"
@@ -37,6 +38,7 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/vue": "^8.1.0",
+    "@types/debug": "^4.1.13",
     "@vitejs/plugin-vue": "^5.2.0",
     "jsdom": "^28.1.0",
     "typescript": "^5.7.0",

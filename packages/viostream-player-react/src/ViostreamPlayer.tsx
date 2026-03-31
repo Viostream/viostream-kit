@@ -25,6 +25,7 @@
  */
 
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import Debug from 'debug';
 import { getViostreamApi, wrapRawPlayer } from '@viostream/viostream-player-core';
 import type {
   ViostreamEmbedOptions,
@@ -34,6 +35,8 @@ import type {
 } from '@viostream/viostream-player-core';
 import type { ViostreamPlayerProps } from './types.js';
 import { SDK_NAME, SDK_VERSION } from './version.js';
+
+const debug = Debug('viostream:react');
 
 // Maps React camelCase prop names → raw player event names
 const EVENT_MAP: Array<[string, keyof ViostreamPlayerProps]> = [
@@ -106,6 +109,8 @@ export function ViostreamPlayer({
     `viostream-embed-${reactId.replace(/:/g, '').slice(0, 8)}${Math.random().toString(36).slice(2, 6)}`,
   );
 
+  debug('render publicKey=%s containerId=%s embedTargetId=%s', publicKey, containerId.current, embedTargetId.current);
+
   const [isLoading, setIsLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | undefined>();
   const playerRef = useRef<ViostreamPlayerType | undefined>(undefined);
@@ -116,7 +121,9 @@ export function ViostreamPlayer({
   // container is available for the Viostream embed API.
   const [containerReady, setContainerReady] = useState(false);
   const containerRefCallback = useCallback((el: HTMLDivElement | null) => {
-    setContainerReady(el !== null);
+    const isAttached = el !== null;
+    debug('ref callback el=%s containerReady -> %s containerId=%s', isAttached ? 'HTMLDivElement' : 'null', isAttached, containerId.current);
+    setContainerReady(isAttached);
   }, []);
 
   // Keep latest callback refs to avoid re-running the init effect when callbacks change
@@ -162,37 +169,57 @@ export function ViostreamPlayer({
   // -----------------------------------------------------------------------
   useEffect(() => {
     // Wait until the container <div> is confirmed in the DOM via the ref callback.
-    if (!containerReady) return;
+    if (!containerReady) {
+      debug('init effect skipped — containerReady=false publicKey=%s', publicKey);
+      return;
+    }
+
+    debug('init effect running publicKey=%s accountKey=%s containerReady=%s embedTargetId=%s', publicKey, accountKey, containerReady, embedTargetId.current);
 
     let destroyed = false;
 
     async function init() {
       try {
+        debug('init: getting embed API');
         const api = getViostreamApi();
 
-        if (destroyed) return;
+        if (destroyed) {
+          debug('init: stale closure detected after getViostreamApi — aborting publicKey=%s', publicKey);
+          return;
+        }
 
+        debug('init: calling api.embed publicKey=%s embedTargetId=%s options=%o', publicKey, embedTargetId.current, embedOptsRef.current);
         const raw: RawViostreamPlayerInstance = api.embed(
           publicKey,
           embedTargetId.current,
           embedOptsRef.current,
         );
+        debug('init: api.embed returned raw player');
+
         const wrappedPlayer = wrapRawPlayer(raw, embedTargetId.current);
+        debug('init: wrapRawPlayer completed embedTargetId=%s', embedTargetId.current);
 
         if (destroyed) {
+          debug('init: stale closure detected after wrapRawPlayer — destroying and aborting publicKey=%s', publicKey);
           wrappedPlayer.destroy();
           return;
         }
 
         playerRef.current = wrappedPlayer;
+        debug('init: playerRef set, isLoading -> false publicKey=%s', publicKey);
         setIsLoading(false);
 
         // Notify consumer that the player is ready
+        debug('init: firing onPlayerReady publicKey=%s', publicKey);
         onPlayerReadyRef.current?.(wrappedPlayer);
       } catch (err) {
         if (!destroyed) {
-          setErrorMsg(err instanceof Error ? err.message : String(err));
+          const msg = err instanceof Error ? err.message : String(err);
+          debug('init: error caught publicKey=%s error=%s', publicKey, msg);
+          setErrorMsg(msg);
           setIsLoading(false);
+        } else {
+          debug('init: error caught but destroyed — ignoring publicKey=%s', publicKey);
         }
       }
     }
@@ -200,6 +227,7 @@ export function ViostreamPlayer({
     init();
 
     return () => {
+      debug('init effect cleanup publicKey=%s hasPlayer=%s', publicKey, !!playerRef.current);
       destroyed = true;
       playerRef.current?.destroy();
       playerRef.current = undefined;
@@ -213,19 +241,27 @@ export function ViostreamPlayer({
   // -----------------------------------------------------------------------
   useEffect(() => {
     const player = playerRef.current;
-    if (!player) return;
+    if (!player) {
+      debug('event wiring effect skipped — no player isLoading=%s', isLoading);
+      return;
+    }
 
     const unsubscribers: Array<() => void> = [];
+    const wiredEvents: string[] = [];
 
     for (const [eventName, propName] of EVENT_MAP) {
       const handler = callbackRefs.current[propName];
       if (handler) {
         const unsub = player.on(eventName, handler);
         unsubscribers.push(unsub);
+        wiredEvents.push(eventName);
       }
     }
 
+    debug('event wiring: subscribed to [%s] isLoading=%s', wiredEvents.join(', '), isLoading);
+
     return () => {
+      debug('event wiring cleanup: unsubscribing %d events', unsubscribers.length);
       for (const unsub of unsubscribers) {
         unsub();
       }

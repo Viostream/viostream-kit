@@ -25,6 +25,7 @@
 -->
 <script lang="ts">
 	import { onMount, type Snippet } from 'svelte';
+	import Debug from 'debug';
 	import { getViostreamApi, wrapRawPlayer } from '@viostream/viostream-player-core';
 	import type {
 		ViostreamEmbedOptions,
@@ -34,6 +35,8 @@
 	} from '@viostream/viostream-player-core';
 	import type { ViostreamPlayerProps } from './types.js';
 	import { SDK_NAME, SDK_VERSION } from './version.js';
+
+	const debug = Debug('viostream:svelte');
 
 	let {
 		// Required props
@@ -133,42 +136,62 @@
 	];
 
 	onMount(() => {
+		debug('onMount publicKey=%s accountKey=%s containerId=%s', publicKey, accountKey, containerId);
+
 		let destroyed = false;
 		const unsubscribers: Array<() => void> = [];
 
 		async function init() {
 			try {
+				debug('init: getting embed API');
 				const api = getViostreamApi();
 
-				if (destroyed) return;
+				if (destroyed) {
+					debug('init: stale closure detected after getViostreamApi — aborting publicKey=%s', publicKey);
+					return;
+				}
 
 				const embedOpts = buildEmbedOptions();
+				debug('init: calling api.embed publicKey=%s containerId=%s options=%o', publicKey, containerId, embedOpts);
 				const raw: RawViostreamPlayerInstance = api.embed(publicKey, containerId, embedOpts);
+				debug('init: api.embed returned raw player');
+
 				const wrappedPlayer = wrapRawPlayer(raw, containerId);
+				debug('init: wrapRawPlayer completed containerId=%s', containerId);
 
 				if (destroyed) {
+					debug('init: stale closure detected after wrapRawPlayer — destroying and aborting publicKey=%s', publicKey);
 					wrappedPlayer.destroy();
 					return;
 				}
 
 				player = wrappedPlayer;
 				isLoading = false;
+				debug('init: player set, isLoading -> false publicKey=%s', publicKey);
 
 				// Wire up event callbacks from props
+				const wiredEvents: string[] = [];
 				for (const [eventName, getHandler] of EVENT_MAP) {
 					const handler = getHandler();
 					if (handler) {
 						const unsub = wrappedPlayer.on(eventName, handler);
 						unsubscribers.push(unsub);
+						wiredEvents.push(eventName);
 					}
 				}
+				debug('init: event wiring subscribed to [%s]', wiredEvents.join(', '));
 
 				// Notify consumer that the player is ready
+				debug('init: firing onplayerready publicKey=%s', publicKey);
 				onplayerready?.(wrappedPlayer);
 			} catch (err) {
 				if (!destroyed) {
-					errorMsg = err instanceof Error ? err.message : String(err);
+					const msg = err instanceof Error ? err.message : String(err);
+					debug('init: error caught publicKey=%s error=%s', publicKey, msg);
+					errorMsg = msg;
 					isLoading = false;
+				} else {
+					debug('init: error caught but destroyed — ignoring publicKey=%s', publicKey);
 				}
 			}
 		}
@@ -176,6 +199,7 @@
 		init();
 
 		return () => {
+			debug('cleanup publicKey=%s hasPlayer=%s unsubscribers=%d', publicKey, !!player, unsubscribers.length);
 			destroyed = true;
 			for (const unsub of unsubscribers) {
 				unsub();
@@ -188,19 +212,27 @@
 	// Re-wire event handlers reactively when callback props change
 	// This handles the case where a consumer conditionally provides callbacks
 	$effect(() => {
-		if (!player) return;
+		if (!player) {
+			debug('$effect event wiring skipped — no player');
+			return;
+		}
 
 		const currentUnsubscribers: Array<() => void> = [];
+		const wiredEvents: string[] = [];
 
 		for (const [eventName, getHandler] of EVENT_MAP) {
 			const handler = getHandler();
 			if (handler) {
 				const unsub = player.on(eventName, handler);
 				currentUnsubscribers.push(unsub);
+				wiredEvents.push(eventName);
 			}
 		}
 
+		debug('$effect event wiring: subscribed to [%s]', wiredEvents.join(', '));
+
 		return () => {
+			debug('$effect event wiring cleanup: unsubscribing %d events', currentUnsubscribers.length);
 			for (const unsub of currentUnsubscribers) {
 				unsub();
 			}

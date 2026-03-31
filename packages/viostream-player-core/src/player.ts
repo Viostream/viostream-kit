@@ -6,6 +6,7 @@
  * methods, and event subscription.
  */
 
+import Debug from 'debug';
 import { getViostreamApi } from './api.js';
 import type {
   RawViostreamPlayerInstance,
@@ -15,6 +16,8 @@ import type {
   ViostreamPlayerEventMap,
 } from './types.js';
 import { SDK_NAME, SDK_VERSION } from './version.js';
+
+const debug = Debug('viostream:core:player');
 
 // ---------------------------------------------------------------------------
 // Types
@@ -59,17 +62,21 @@ const GETTER_TIMEOUT_MS = 10_000;
  */
 export async function createViostreamPlayer(opts: CreateViostreamPlayerOptions): Promise<ViostreamPlayer> {
   const { accountKey, publicKey, options = {} } = opts;
+  debug('createViostreamPlayer publicKey=%s accountKey=%s', publicKey, accountKey);
 
   // Resolve the target element id
   let targetId: string;
   if (typeof opts.target === 'string') {
     targetId = opts.target;
+    debug('target resolved from string id=%s', targetId);
   } else {
     // If a DOM element was provided, ensure it has an id (create one if needed)
     if (!opts.target.id) {
       opts.target.id = `viostream-target-${Math.random().toString(36).slice(2, 10)}`;
+      debug('target element had no id, generated id=%s', opts.target.id);
     }
     targetId = opts.target.id;
+    debug('target resolved from HTMLElement id=%s', targetId);
   }
 
   // Stamp the SDK identifier on the target element
@@ -82,7 +89,9 @@ export async function createViostreamPlayer(opts: CreateViostreamPlayerOptions):
   const api = getViostreamApi();
 
   // Embed the player
+  debug('calling api.embed publicKey=%s targetId=%s options=%o', publicKey, targetId, options);
   const raw: RawViostreamPlayerInstance = api.embed(publicKey, targetId, options);
+  debug('api.embed returned raw player for targetId=%s', targetId);
 
   // Build the SDK wrapper
   return wrapRawPlayer(raw, targetId);
@@ -97,6 +106,8 @@ export async function createViostreamPlayer(opts: CreateViostreamPlayerOptions):
  * promise-based public API.
  */
 export function wrapRawPlayer(raw: RawViostreamPlayerInstance, targetId: string): ViostreamPlayer {
+  debug('wrapRawPlayer targetId=%s', targetId);
+
   /** Registry of event listeners for teardown. */
   const listeners = new Map<string, Set<ViostreamEventHandler>>();
 
@@ -104,7 +115,10 @@ export function wrapRawPlayer(raw: RawViostreamPlayerInstance, targetId: string)
 
   // -- Helper: promisify a callback-style getter --------------------------
   function promisifyGet<T>(method: (cb: (v: T) => void) => void): Promise<T> {
-    if (destroyed) return Promise.reject(new Error('Player has been destroyed'));
+    if (destroyed) {
+      debug('getter rejected — player is destroyed targetId=%s', targetId);
+      return Promise.reject(new Error('Player has been destroyed'));
+    }
     return new Promise<T>((resolve, reject) => {
       const timer = setTimeout(() => {
         reject(new Error('Player getter timed out'));
@@ -176,11 +190,12 @@ export function wrapRawPlayer(raw: RawViostreamPlayerInstance, targetId: string)
       handler: ViostreamEventHandler<ViostreamPlayerEventMap[E]>,
     ): () => void {
       if (destroyed) {
-        console.warn('Cannot subscribe to events on a destroyed player');
+        debug('on() rejected — player is destroyed targetId=%s event=%s', targetId, event);
         return () => {};
       }
 
       const eventName = event as string;
+      debug('on event=%s targetId=%s', eventName, targetId);
 
       if (!listeners.has(eventName)) {
         listeners.set(eventName, new Set());
@@ -210,6 +225,7 @@ export function wrapRawPlayer(raw: RawViostreamPlayerInstance, targetId: string)
       handler: ViostreamEventHandler<ViostreamPlayerEventMap[E]>,
     ): void {
       const eventName = event as string;
+      debug('off event=%s targetId=%s', eventName, targetId);
       const set = listeners.get(eventName);
       if (set) {
         set.delete(handler as ViostreamEventHandler);
@@ -221,7 +237,11 @@ export function wrapRawPlayer(raw: RawViostreamPlayerInstance, targetId: string)
 
     // -- Lifecycle --------------------------------------------------------
     destroy() {
-      if (destroyed) return;
+      if (destroyed) {
+        debug('destroy() called but already destroyed targetId=%s', targetId);
+        return;
+      }
+      debug('destroy targetId=%s listeners=%d', targetId, listeners.size);
       destroyed = true;
 
       // Clear all listener registrations

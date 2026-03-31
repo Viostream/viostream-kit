@@ -7,6 +7,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue';
+import Debug from 'debug';
 import { getViostreamApi, wrapRawPlayer } from '@viostream/viostream-player-core';
 import type {
   ViostreamEmbedOptions,
@@ -19,6 +20,8 @@ import type {
   ViostreamProgressData,
 } from '@viostream/viostream-player-core';
 import { SDK_NAME, SDK_VERSION } from './version.js';
+
+const debug = Debug('viostream:vue');
 
 // ---------------------------------------------------------------------------
 // Props
@@ -109,6 +112,8 @@ const isLoading = ref(true);
 let destroyed = false;
 const unsubscribers: Array<() => void> = [];
 
+debug('component setup publicKey=%s containerId=%s', props.publicKey, containerId);
+
 // ---------------------------------------------------------------------------
 // Build embed options from props
 // ---------------------------------------------------------------------------
@@ -166,16 +171,20 @@ const RAW_EVENT_MAP: Record<string, string> = {
 };
 
 function wireEvents(wrappedPlayer: ViostreamPlayer): void {
+  const wiredEvents: string[] = [];
   for (const [emitName, handler] of EVENT_MAP) {
     const rawName = RAW_EVENT_MAP[emitName];
     if (rawName) {
       const unsub = wrappedPlayer.on(rawName, handler as ViostreamEventHandler);
       unsubscribers.push(unsub);
+      wiredEvents.push(rawName);
     }
   }
+  debug('wireEvents: subscribed to [%s]', wiredEvents.join(', '));
 }
 
 function unwireEvents(): void {
+  debug('unwireEvents: unsubscribing %d events', unsubscribers.length);
   for (const unsub of unsubscribers) {
     unsub();
   }
@@ -188,40 +197,57 @@ function unwireEvents(): void {
 
 async function init(): Promise<void> {
   try {
+    debug('init: getting embed API');
     const api = getViostreamApi();
 
-    if (destroyed) return;
+    if (destroyed) {
+      debug('init: stale closure detected after getViostreamApi — aborting publicKey=%s', props.publicKey);
+      return;
+    }
 
     const embedOpts = buildEmbedOptions();
+    debug('init: calling api.embed publicKey=%s containerId=%s options=%o', props.publicKey, containerId, embedOpts);
     const raw: RawViostreamPlayerInstance = api.embed(props.publicKey, containerId, embedOpts);
+    debug('init: api.embed returned raw player');
+
     const wrappedPlayer = wrapRawPlayer(raw, containerId);
+    debug('init: wrapRawPlayer completed containerId=%s', containerId);
 
     if (destroyed) {
+      debug('init: stale closure detected after wrapRawPlayer — destroying and aborting publicKey=%s', props.publicKey);
       wrappedPlayer.destroy();
       return;
     }
 
     player.value = wrappedPlayer;
     isLoading.value = false;
+    debug('init: player set, isLoading -> false publicKey=%s', props.publicKey);
 
     // Wire up event callbacks
     wireEvents(wrappedPlayer);
 
     // Notify consumer that the player is ready
+    debug('init: emitting playerReady publicKey=%s', props.publicKey);
     emit('playerReady', wrappedPlayer);
   } catch (err) {
     if (!destroyed) {
-      errorMsg.value = err instanceof Error ? err.message : String(err);
+      const msg = err instanceof Error ? err.message : String(err);
+      debug('init: error caught publicKey=%s error=%s', props.publicKey, msg);
+      errorMsg.value = msg;
       isLoading.value = false;
+    } else {
+      debug('init: error caught but destroyed — ignoring publicKey=%s', props.publicKey);
     }
   }
 }
 
 onMounted(() => {
+  debug('onMounted publicKey=%s accountKey=%s containerId=%s', props.publicKey, props.accountKey, containerId);
   init();
 });
 
 onUnmounted(() => {
+  debug('onUnmounted publicKey=%s hasPlayer=%s', props.publicKey, !!player.value);
   destroyed = true;
   unwireEvents();
   player.value?.destroy();

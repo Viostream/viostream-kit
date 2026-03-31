@@ -6,6 +6,7 @@
   },
   "allowedNonPeerDependencies": [
     "@viostream/viostream-player-core",
+    "debug",
     "tslib"
   ]
 }
