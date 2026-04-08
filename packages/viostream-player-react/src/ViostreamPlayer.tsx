@@ -163,8 +163,12 @@ export function ViostreamPlayer({
   if (startTime !== undefined) embedOpts.startTime = startTime;
   if (transcriptDownload !== undefined) embedOpts.transcriptDownload = transcriptDownload;
   if (useSettingsMenu !== undefined) embedOpts.useSettingsMenu = useSettingsMenu;
-  if (forceAspectRatio !== undefined) embedOpts.forceAspectRatio = normalizeForceAspectRatio(forceAspectRatio);
   embedOptsRef.current = embedOpts;
+
+  // Keep the normalized forceAspectRatio in a ref so the init effect can read
+  // the latest value without re-running (mirrors the embedOptsRef pattern).
+  const forceAspectRatioRef = useRef<number | undefined>();
+  forceAspectRatioRef.current = normalizeForceAspectRatio(forceAspectRatio);
 
   // -----------------------------------------------------------------------
   // Mount / unmount: load script, embed player, wire initial events
@@ -195,7 +199,7 @@ export function ViostreamPlayer({
           publicKey,
           embedTargetId.current,
           embedOptsRef.current,
-          embedOptsRef.current.forceAspectRatio,
+          forceAspectRatioRef.current,
         );
         debug('init: api.embed returned raw player');
 

@@ -200,6 +200,105 @@ describe('ViostreamPlayer component', () => {
       expect(options).not.toHaveProperty('sharing');
       expect(options).not.toHaveProperty('chapters');
     });
+
+    // -----------------------------------------------------------------
+    // forceAspectRatio
+    // -----------------------------------------------------------------
+    describe('forceAspectRatio', () => {
+      it('passes a valid forceAspectRatio as the 4th argument to api.embed()', async () => {
+        render(ViostreamPlayer, {
+          props: {
+            accountKey: 'vc-test',
+            publicKey: 'pk-test',
+            forceAspectRatio: 1.7778,
+          },
+        });
+
+        await vi.waitFor(() => {
+          expect(mockGlobal.embed).toHaveBeenCalledOnce();
+        });
+
+        const embedFn = mockGlobal.embed as ReturnType<typeof vi.fn>;
+        expect(embedFn.mock.calls[0][3]).toBe(1.7778);
+        expect(embedFn.mock.calls[0][2]).not.toHaveProperty('forceAspectRatio');
+      });
+
+      it('normalizes NaN to undefined', async () => {
+        render(ViostreamPlayer, {
+          props: {
+            accountKey: 'vc-test',
+            publicKey: 'pk-test',
+            forceAspectRatio: NaN,
+          },
+        });
+
+        await vi.waitFor(() => {
+          expect(mockGlobal.embed).toHaveBeenCalledOnce();
+        });
+
+        const embedFn = mockGlobal.embed as ReturnType<typeof vi.fn>;
+        expect(embedFn.mock.calls[0][3]).toBeUndefined();
+        expect(embedFn.mock.calls[0][2]).not.toHaveProperty('forceAspectRatio');
+      });
+
+      it('normalizes 0 and negative values to undefined', async () => {
+        render(ViostreamPlayer, {
+          props: {
+            accountKey: 'vc-test',
+            publicKey: 'pk-test',
+            forceAspectRatio: 0,
+          },
+        });
+
+        await vi.waitFor(() => {
+          expect(mockGlobal.embed).toHaveBeenCalledOnce();
+        });
+
+        let embedFn = mockGlobal.embed as ReturnType<typeof vi.fn>;
+        expect(embedFn.mock.calls[0][3]).toBeUndefined();
+        expect(embedFn.mock.calls[0][2]).not.toHaveProperty('forceAspectRatio');
+
+        // Reset and re-render with a negative value
+        cleanup();
+        vi.clearAllMocks();
+        mockGlobal = createMockViostreamGlobal();
+        mockedGetViostreamApi.mockReturnValue(mockGlobal);
+
+        render(ViostreamPlayer, {
+          props: {
+            accountKey: 'vc-test',
+            publicKey: 'pk-test',
+            forceAspectRatio: -1,
+          },
+        });
+
+        await vi.waitFor(() => {
+          expect(mockGlobal.embed).toHaveBeenCalledOnce();
+        });
+
+        embedFn = mockGlobal.embed as ReturnType<typeof vi.fn>;
+        expect(embedFn.mock.calls[0][3]).toBeUndefined();
+        expect(embedFn.mock.calls[0][2]).not.toHaveProperty('forceAspectRatio');
+      });
+
+      it('normalizes Infinity to undefined', async () => {
+        render(ViostreamPlayer, {
+          props: {
+            accountKey: 'vc-test',
+            publicKey: 'pk-test',
+            forceAspectRatio: Infinity,
+          },
+        });
+
+        await vi.waitFor(() => {
+          expect(mockGlobal.embed).toHaveBeenCalledOnce();
+        });
+
+        const embedFn = mockGlobal.embed as ReturnType<typeof vi.fn>;
+        expect(embedFn.mock.calls[0][3]).toBeUndefined();
+        expect(embedFn.mock.calls[0][2]).not.toHaveProperty('forceAspectRatio');
+      });
+    });
   });
 
   // -----------------------------------------------------------------------

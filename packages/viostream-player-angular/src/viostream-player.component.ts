@@ -218,7 +218,7 @@ export class ViostreamPlayerComponent implements OnInit, OnDestroy {
         this.publicKey,
         this.containerId,
         embedOpts,
-        embedOpts.forceAspectRatio,
+        normalizeForceAspectRatio(this.forceAspectRatio),
       );
       debug('init: api.embed returned raw player');
 
@@ -277,7 +277,6 @@ export class ViostreamPlayerComponent implements OnInit, OnDestroy {
     if (this.startTime !== undefined) opts.startTime = this.startTime;
     if (this.transcriptDownload !== undefined) opts.transcriptDownload = this.transcriptDownload;
     if (this.useSettingsMenu !== undefined) opts.useSettingsMenu = this.useSettingsMenu;
-    if (this.forceAspectRatio !== undefined) opts.forceAspectRatio = normalizeForceAspectRatio(this.forceAspectRatio);
     return opts;
   }
 

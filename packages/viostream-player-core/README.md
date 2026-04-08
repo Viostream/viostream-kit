@@ -66,7 +66,7 @@ const player = await createViostreamPlayer({
 | `publicKey` | `string` | Public key of the media asset. |
 | `target` | `string \| HTMLElement` | Container element id or direct DOM reference. |
 | `options` | `ViostreamEmbedOptions` | Embed options (see below). |
-| `forceAspectRatio` | `number` | Force a specific aspect ratio (e.g. `1.7778` for 16:9). |
+| `forceAspectRatio` | `number` | Force a specific aspect ratio (e.g. `1.7778` for 16:9). Disables dynamic sizing. Must be a finite positive number; invalid values are ignored. |
 
 ---
 
@@ -92,7 +92,7 @@ All embed options are optional and passed to the Viostream embed API.
 | `startTime` | `string` | Seek to a time (seconds) before playback. |
 | `transcriptDownload` | `boolean` | Allow transcript download. Default: `false`. |
 | `useSettingsMenu` | `boolean` | Enable the settings menu on the control bar. Default: `false`. |
-| `forceAspectRatio` | `number` | Force a specific aspect ratio (e.g. `1.7778` for 16:9). Disables dynamicSizing. |
+| `forceAspectRatio` | `number` | Force a specific aspect ratio (e.g. `1.7778` for 16:9). Disables dynamic sizing. Must be a finite positive number; invalid values are ignored. |
 
 ---
 
@@ -220,6 +220,8 @@ This package is the foundation for framework-specific SDKs. If you are using a s
 |---|---|
 | Svelte 5 | [`@viostream/viostream-player-svelte`](https://www.npmjs.com/package/@viostream/viostream-player-svelte) |
 | React 18+ | [`@viostream/viostream-player-react`](https://www.npmjs.com/package/@viostream/viostream-player-react) |
+| Vue 3 | [`@viostream/viostream-player-vue`](https://www.npmjs.com/package/@viostream/viostream-player-vue) |
+| Angular 17+ | [`@viostream/viostream-player-angular`](https://www.npmjs.com/package/@viostream/viostream-player-angular) |
 
 ---
 
