@@ -102,7 +102,7 @@ All embed option inputs are optional and passed directly to the Viostream embed 
 | `startTime` | `string` | Seek to a time (seconds) before playback. |
 | `transcriptDownload` | `boolean` | Allow transcript download. Default: `false`. |
 | `useSettingsMenu` | `boolean` | Enable the settings menu on the control bar. Default: `false`. |
-| `forceAspectRatio` | `number` | Force a specific aspect ratio (e.g. `1.7778` for 16:9). Disables dynamicSizing. |
+| `forceAspectRatio` | `number` | Force a specific aspect ratio (e.g. `1.7778` for 16:9). Disables dynamic sizing. Must be a finite positive number; invalid values are ignored. |
 
 #### Other Inputs
 

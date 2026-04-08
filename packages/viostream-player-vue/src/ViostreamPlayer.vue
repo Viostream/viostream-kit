@@ -138,7 +138,6 @@ function buildEmbedOptions(): ViostreamEmbedOptions {
   if (props.startTime !== undefined) opts.startTime = props.startTime;
   if (props.transcriptDownload !== undefined) opts.transcriptDownload = props.transcriptDownload;
   if (props.useSettingsMenu !== undefined) opts.useSettingsMenu = props.useSettingsMenu;
-  if (props.forceAspectRatio !== undefined) opts.forceAspectRatio = normalizeForceAspectRatio(props.forceAspectRatio);
   return opts;
 }
 
@@ -210,7 +209,7 @@ async function init(): Promise<void> {
 
     const embedOpts = buildEmbedOptions();
     debug('init: calling api.embed publicKey=%s containerId=%s options=%o', props.publicKey, containerId, embedOpts);
-    const raw: RawViostreamPlayerInstance = api.embed(props.publicKey, containerId, embedOpts, embedOpts.forceAspectRatio);
+    const raw: RawViostreamPlayerInstance = api.embed(props.publicKey, containerId, embedOpts, normalizeForceAspectRatio(props.forceAspectRatio));
     debug('init: api.embed returned raw player');
 
     const wrappedPlayer = wrapRawPlayer(raw, containerId);

@@ -119,7 +119,6 @@
 		if (startTime !== undefined) opts.startTime = startTime;
 		if (transcriptDownload !== undefined) opts.transcriptDownload = transcriptDownload;
 		if (useSettingsMenu !== undefined) opts.useSettingsMenu = useSettingsMenu;
-		if (forceAspectRatio !== undefined) opts.forceAspectRatio = normalizeForceAspectRatio(forceAspectRatio);
 		return opts;
 	}
 
@@ -155,7 +154,7 @@
 
 				const embedOpts = buildEmbedOptions();
 				debug('init: calling api.embed publicKey=%s containerId=%s options=%o', publicKey, containerId, embedOpts);
-				const raw: RawViostreamPlayerInstance = api.embed(publicKey, containerId, embedOpts, embedOpts.forceAspectRatio);
+				const raw: RawViostreamPlayerInstance = api.embed(publicKey, containerId, embedOpts, normalizeForceAspectRatio(forceAspectRatio));
 				debug('init: api.embed returned raw player');
 
 				const wrappedPlayer = wrapRawPlayer(raw, containerId);
