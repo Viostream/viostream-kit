@@ -28,7 +28,7 @@ import {
   viewChild,
 } from '@angular/core';
 import Debug from 'debug';
-import { getViostreamApi, wrapRawPlayer } from '@viostream/viostream-player-core';
+import { getViostreamApi, wrapRawPlayer, normalizeForceAspectRatio } from '@viostream/viostream-player-core';
 import type {
   ViostreamEmbedOptions,
   ViostreamPlayer,
@@ -277,7 +277,7 @@ export class ViostreamPlayerComponent implements OnInit, OnDestroy {
     if (this.startTime !== undefined) opts.startTime = this.startTime;
     if (this.transcriptDownload !== undefined) opts.transcriptDownload = this.transcriptDownload;
     if (this.useSettingsMenu !== undefined) opts.useSettingsMenu = this.useSettingsMenu;
-    if (this.forceAspectRatio !== undefined) opts.forceAspectRatio = this.forceAspectRatio;
+    if (this.forceAspectRatio !== undefined) opts.forceAspectRatio = normalizeForceAspectRatio(this.forceAspectRatio);
     return opts;
   }
 

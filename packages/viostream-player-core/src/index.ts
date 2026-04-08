@@ -24,7 +24,7 @@ export { createViostreamPlayer } from './player.js';
 export type { CreateViostreamPlayerOptions } from './player.js';
 
 // Internal — used by framework wrapper packages (not part of the consumer-facing API)
-export { wrapRawPlayer } from './player.js';
+export { wrapRawPlayer, normalizeForceAspectRatio } from './player.js';
 
 // Bundled embed API
 export { getViostreamApi } from './api.js';

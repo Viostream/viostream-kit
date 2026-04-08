@@ -1201,7 +1201,14 @@ class PlayerCommandApi {
     this.events[eventName].push(callback);
   }
 }
-function embed(embedKey, targetId, playerSettings = {}, forceAspectRatio = void 0) {
+const setDynamicSize = (frame: ReturnType<typeof frameWriter>, mediaAspectRatio: number, mediaHeight: number) => {
+  const maxWidth = determineMaxWidth(mediaAspectRatio, mediaHeight);
+  if (maxWidth > 0) {
+    frame.inner.style.maxWidth = `${maxWidth}px`;
+  }
+  frame.container.style.paddingTop = `${1 / mediaAspectRatio * 100}%`;
+};
+function embed(embedKey: string, targetId: string, playerSettings = {}, forceAspectRatio = void 0) {
   const { location } = config();
   playerSettings.dynamicSizing = forceAspectRatio == void 0;
   playerSettings.apiEmbed = true;
@@ -1212,6 +1219,13 @@ function embed(embedKey, targetId, playerSettings = {}, forceAspectRatio = void 
   }
   const frame = frameWriter(embedKey, targetId, playerSettings, forceAspectRatio);
   const api = new PlayerCommandApi(frame, playerSettings);
+  if (playerSettings.dynamicSizing) {
+    api.on("ready", () => {
+      api.getAspectRatio((result) => {
+        setDynamicSize(frame, parseFloat(result.aspectRatio), parseInt(result.maxHeight));
+      });
+    });
+  }
   return api;
 }
 export {

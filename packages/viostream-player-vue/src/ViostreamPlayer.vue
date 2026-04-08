@@ -8,7 +8,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue';
 import Debug from 'debug';
-import { getViostreamApi, wrapRawPlayer } from '@viostream/viostream-player-core';
+import { getViostreamApi, wrapRawPlayer, normalizeForceAspectRatio } from '@viostream/viostream-player-core';
 import type {
   ViostreamEmbedOptions,
   ViostreamPlayer,
@@ -138,7 +138,7 @@ function buildEmbedOptions(): ViostreamEmbedOptions {
   if (props.startTime !== undefined) opts.startTime = props.startTime;
   if (props.transcriptDownload !== undefined) opts.transcriptDownload = props.transcriptDownload;
   if (props.useSettingsMenu !== undefined) opts.useSettingsMenu = props.useSettingsMenu;
-  if (props.forceAspectRatio !== undefined) opts.forceAspectRatio = props.forceAspectRatio;
+  if (props.forceAspectRatio !== undefined) opts.forceAspectRatio = normalizeForceAspectRatio(props.forceAspectRatio);
   return opts;
 }
 

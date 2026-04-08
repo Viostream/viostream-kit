@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { wrapRawPlayer, createViostreamPlayer } from '../src/player.js';
+import { wrapRawPlayer, createViostreamPlayer, normalizeForceAspectRatio } from '../src/player.js';
 import type { RawViostreamPlayerInstance } from '../src/types.js';
 import { SDK_NAME, SDK_VERSION } from '../src/version.js';
 import { createMockRawPlayer } from './mocks.js';
@@ -365,6 +365,45 @@ describe('wrapRawPlayer', () => {
 });
 
 // ---------------------------------------------------------------------------
+// normalizeForceAspectRatio
+// ---------------------------------------------------------------------------
+
+describe('normalizeForceAspectRatio', () => {
+  it('returns undefined for undefined', () => {
+    expect(normalizeForceAspectRatio(undefined)).toBeUndefined();
+  });
+
+  it('passes through a valid positive finite number', () => {
+    expect(normalizeForceAspectRatio(1.7778)).toBe(1.7778);
+  });
+
+  it('passes through small positive numbers', () => {
+    expect(normalizeForceAspectRatio(0.001)).toBe(0.001);
+  });
+
+  it('normalizes NaN to undefined', () => {
+    expect(normalizeForceAspectRatio(NaN)).toBeUndefined();
+  });
+
+  it('normalizes 0 to undefined', () => {
+    expect(normalizeForceAspectRatio(0)).toBeUndefined();
+  });
+
+  it('normalizes negative numbers to undefined', () => {
+    expect(normalizeForceAspectRatio(-1)).toBeUndefined();
+    expect(normalizeForceAspectRatio(-0.5)).toBeUndefined();
+  });
+
+  it('normalizes Infinity to undefined', () => {
+    expect(normalizeForceAspectRatio(Infinity)).toBeUndefined();
+  });
+
+  it('normalizes -Infinity to undefined', () => {
+    expect(normalizeForceAspectRatio(-Infinity)).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
 // createViostreamPlayer — SDK attribute
 // ---------------------------------------------------------------------------
 
@@ -412,5 +451,121 @@ describe('createViostreamPlayer', () => {
     });
 
     expect(targetDiv.getAttribute('data-viostream-sdk')).toBe(`${SDK_NAME}@${SDK_VERSION}`);
+  });
+
+  // -----------------------------------------------------------------------
+  // forceAspectRatio handling
+  // -----------------------------------------------------------------------
+  describe('forceAspectRatio', () => {
+    it('forwards top-level forceAspectRatio as the 4th argument to api.embed()', async () => {
+      await createViostreamPlayer({
+        accountKey: 'vc-test',
+        publicKey: 'pk-test',
+        target: 'sdk-attr-test',
+        forceAspectRatio: 1.7778,
+      });
+
+      const embedFn = mockedGetViostreamApi().embed as ReturnType<typeof vi.fn>;
+      expect(embedFn).toHaveBeenCalledWith('pk-test', 'sdk-attr-test', expect.any(Object), 1.7778);
+    });
+
+    it('forwards options.forceAspectRatio as the 4th argument when top-level is not set', async () => {
+      await createViostreamPlayer({
+        accountKey: 'vc-test',
+        publicKey: 'pk-test',
+        target: 'sdk-attr-test',
+        options: { forceAspectRatio: 0.5625 },
+      });
+
+      const embedFn = mockedGetViostreamApi().embed as ReturnType<typeof vi.fn>;
+      expect(embedFn).toHaveBeenCalledWith('pk-test', 'sdk-attr-test', expect.any(Object), 0.5625);
+    });
+
+    it('top-level forceAspectRatio takes precedence over options.forceAspectRatio', async () => {
+      await createViostreamPlayer({
+        accountKey: 'vc-test',
+        publicKey: 'pk-test',
+        target: 'sdk-attr-test',
+        forceAspectRatio: 1.7778,
+        options: { forceAspectRatio: 0.5625 },
+      });
+
+      const embedFn = mockedGetViostreamApi().embed as ReturnType<typeof vi.fn>;
+      expect(embedFn).toHaveBeenCalledWith('pk-test', 'sdk-attr-test', expect.any(Object), 1.7778);
+    });
+
+    it('strips forceAspectRatio from the options object passed to api.embed()', async () => {
+      await createViostreamPlayer({
+        accountKey: 'vc-test',
+        publicKey: 'pk-test',
+        target: 'sdk-attr-test',
+        options: { forceAspectRatio: 0.5625, displayTitle: true },
+      });
+
+      const embedFn = mockedGetViostreamApi().embed as ReturnType<typeof vi.fn>;
+      const passedOptions = embedFn.mock.calls[0][2];
+      expect(passedOptions).not.toHaveProperty('forceAspectRatio');
+      expect(passedOptions).toHaveProperty('displayTitle', true);
+    });
+
+    it('passes undefined as the 4th argument when forceAspectRatio is not set anywhere', async () => {
+      await createViostreamPlayer({
+        accountKey: 'vc-test',
+        publicKey: 'pk-test',
+        target: 'sdk-attr-test',
+        options: { displayTitle: true },
+      });
+
+      const embedFn = mockedGetViostreamApi().embed as ReturnType<typeof vi.fn>;
+      expect(embedFn).toHaveBeenCalledWith('pk-test', 'sdk-attr-test', expect.any(Object), undefined);
+    });
+
+    it('normalizes NaN to undefined before passing to api.embed()', async () => {
+      await createViostreamPlayer({
+        accountKey: 'vc-test',
+        publicKey: 'pk-test',
+        target: 'sdk-attr-test',
+        forceAspectRatio: NaN,
+      });
+
+      const embedFn = mockedGetViostreamApi().embed as ReturnType<typeof vi.fn>;
+      expect(embedFn).toHaveBeenCalledWith('pk-test', 'sdk-attr-test', expect.any(Object), undefined);
+    });
+
+    it('normalizes 0 to undefined before passing to api.embed()', async () => {
+      await createViostreamPlayer({
+        accountKey: 'vc-test',
+        publicKey: 'pk-test',
+        target: 'sdk-attr-test',
+        options: { forceAspectRatio: 0 },
+      });
+
+      const embedFn = mockedGetViostreamApi().embed as ReturnType<typeof vi.fn>;
+      expect(embedFn).toHaveBeenCalledWith('pk-test', 'sdk-attr-test', expect.any(Object), undefined);
+    });
+
+    it('normalizes negative values to undefined before passing to api.embed()', async () => {
+      await createViostreamPlayer({
+        accountKey: 'vc-test',
+        publicKey: 'pk-test',
+        target: 'sdk-attr-test',
+        forceAspectRatio: -1,
+      });
+
+      const embedFn = mockedGetViostreamApi().embed as ReturnType<typeof vi.fn>;
+      expect(embedFn).toHaveBeenCalledWith('pk-test', 'sdk-attr-test', expect.any(Object), undefined);
+    });
+
+    it('normalizes Infinity to undefined before passing to api.embed()', async () => {
+      await createViostreamPlayer({
+        accountKey: 'vc-test',
+        publicKey: 'pk-test',
+        target: 'sdk-attr-test',
+        forceAspectRatio: Infinity,
+      });
+
+      const embedFn = mockedGetViostreamApi().embed as ReturnType<typeof vi.fn>;
+      expect(embedFn).toHaveBeenCalledWith('pk-test', 'sdk-attr-test', expect.any(Object), undefined);
+    });
   });
 });
