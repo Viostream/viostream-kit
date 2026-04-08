@@ -432,11 +432,12 @@ Branch: fix/missing-config
 
 The following are exported from `@viostream/viostream-player-core` for internal
 use by the wrapper packages, but must **never** be re-exported from the wrapper
-package barrel files (`player-svelte`, `player-react`, `player-vue`):
+package barrel files (`player-svelte`, `player-react`, `player-vue`, `player-angular`):
 
 | Export | Purpose |
 |--------|---------|
 | `wrapRawPlayer` | Used internally by wrapper components to wrap raw instances |
+| `normalizeForceAspectRatio` | Used internally by wrapper components to validate `forceAspectRatio` before passing to `api.embed()` |
 | `RawViostreamPlayerInstance` | Type used internally by wrapper components |
 | `ViostreamGlobal` | Type used internally by loader code |
 
@@ -474,4 +475,4 @@ user-facing options in `ViostreamEmbedOptions`.
 
 ---
 
-*Last updated: 2026-03-14. Update this file as the project evolves.*
+*Last updated: 2026-04-08. Update this file as the project evolves.*
