@@ -9,8 +9,11 @@
  * and defaults to `play.viostream.com`.
  */
 
+import Debug from 'debug';
 import { createEmbedApi } from './vendor/viostream-embed.js';
 import type { ViostreamGlobal } from './types.js';
+
+const debug = Debug('viostream:core:api');
 
 /** Cached API instance (created on first access). */
 let cachedApi: ViostreamGlobal | undefined;
@@ -25,7 +28,11 @@ let cachedApi: ViostreamGlobal | undefined;
  */
 export function getViostreamApi(): ViostreamGlobal {
   if (!cachedApi) {
+    debug('creating embed API instance');
     cachedApi = createEmbedApi();
+    debug('embed API instance created');
+  } else {
+    debug('returning cached embed API instance');
   }
   return cachedApi;
 }

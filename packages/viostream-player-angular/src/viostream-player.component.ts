@@ -27,6 +27,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import Debug from 'debug';
 import { getViostreamApi, wrapRawPlayer } from '@viostream/viostream-player-core';
 import type {
   ViostreamEmbedOptions,
@@ -39,6 +40,8 @@ import type {
   ViostreamProgressData,
 } from '@viostream/viostream-player-core';
 import { SDK_NAME, SDK_VERSION } from './version';
+
+const debug = Debug('viostream:angular');
 
 @Component({
   selector: 'viostream-player',
@@ -181,10 +184,12 @@ export class ViostreamPlayerComponent implements OnInit, OnDestroy {
   // ---------------------------------------------------------------------------
 
   ngOnInit(): void {
+    debug('ngOnInit publicKey=%s accountKey=%s containerId=%s', this.publicKey, this.accountKey, this.containerId);
     this.init();
   }
 
   ngOnDestroy(): void {
+    debug('ngOnDestroy publicKey=%s hasPlayer=%s', this.publicKey, !!this.player);
     this.destroyed = true;
     this.unwireEvents();
     this.player?.destroy();
@@ -197,19 +202,28 @@ export class ViostreamPlayerComponent implements OnInit, OnDestroy {
 
   private async init(): Promise<void> {
     try {
+      debug('init: getting embed API');
       const api = getViostreamApi();
 
-      if (this.destroyed) return;
+      if (this.destroyed) {
+        debug('init: destroyed detected after getViostreamApi — aborting publicKey=%s', this.publicKey);
+        return;
+      }
 
       const embedOpts = this.buildEmbedOptions();
+      debug('init: calling api.embed publicKey=%s containerId=%s options=%o', this.publicKey, this.containerId, embedOpts);
       const raw: RawViostreamPlayerInstance = api.embed(
         this.publicKey,
         this.containerId,
         embedOpts,
       );
+      debug('init: api.embed returned raw player');
+
       const wrappedPlayer = wrapRawPlayer(raw, this.containerId);
+      debug('init: wrapRawPlayer completed containerId=%s', this.containerId);
 
       if (this.destroyed) {
+        debug('init: destroyed detected after wrapRawPlayer — destroying and aborting publicKey=%s', this.publicKey);
         wrappedPlayer.destroy();
         return;
       }
@@ -220,18 +234,24 @@ export class ViostreamPlayerComponent implements OnInit, OnDestroy {
       this.ngZone.run(() => {
         this.isLoading.set(false);
       });
+      debug('init: player set, isLoading -> false publicKey=%s', this.publicKey);
 
       // Wire up event callbacks
       this.wireEvents(wrappedPlayer);
 
       // Notify consumer that the player is ready
+      debug('init: emitting playerReady publicKey=%s', this.publicKey);
       this.playerReady.emit(wrappedPlayer);
     } catch (err) {
       if (!this.destroyed) {
+        const msg = err instanceof Error ? err.message : String(err);
+        debug('init: error caught publicKey=%s error=%s', this.publicKey, msg);
         this.ngZone.run(() => {
-          this.errorMsg.set(err instanceof Error ? err.message : String(err));
+          this.errorMsg.set(msg);
           this.isLoading.set(false);
         });
+      } else {
+        debug('init: error caught but destroyed — ignoring publicKey=%s', this.publicKey);
       }
     }
   }
@@ -272,13 +292,17 @@ export class ViostreamPlayerComponent implements OnInit, OnDestroy {
   ];
 
   private wireEvents(wrappedPlayer: ViostreamPlayer): void {
+    const wiredEvents: string[] = [];
     for (const [eventName, handler] of this.EVENT_MAP) {
       const unsub = wrappedPlayer.on(eventName, handler);
       this.unsubscribers.push(unsub);
+      wiredEvents.push(eventName);
     }
+    debug('wireEvents: subscribed to [%s]', wiredEvents.join(', '));
   }
 
   private unwireEvents(): void {
+    debug('unwireEvents: unsubscribing %d events', this.unsubscribers.length);
     for (const unsub of this.unsubscribers) {
       unsub();
     }

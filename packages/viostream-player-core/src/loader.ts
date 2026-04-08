@@ -8,8 +8,11 @@
  * Use `getViostreamApi()` from `./api.js` for synchronous access instead.
  */
 
+import Debug from 'debug';
 import { getViostreamApi } from './api.js';
 import type { ViostreamGlobal } from './types.js';
+
+const debug = Debug('viostream:core:loader');
 
 /**
  * Load the Viostream embed API.
@@ -22,5 +25,6 @@ import type { ViostreamGlobal } from './types.js';
  * @returns A promise that resolves to the `ViostreamGlobal` API object.
  */
 export function loadViostream(_accountKey: string): Promise<ViostreamGlobal> {
+  debug('loadViostream called (deprecated) accountKey=%s', _accountKey);
   return Promise.resolve(getViostreamApi());
 }
