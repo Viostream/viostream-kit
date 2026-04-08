@@ -26,7 +26,7 @@
 <script lang="ts">
 	import { onMount, type Snippet } from 'svelte';
 	import Debug from 'debug';
-	import { getViostreamApi, wrapRawPlayer } from '@viostream/viostream-player-core';
+	import { getViostreamApi, wrapRawPlayer, normalizeForceAspectRatio } from '@viostream/viostream-player-core';
 	import type {
 		ViostreamEmbedOptions,
 		ViostreamPlayer,
@@ -60,6 +60,7 @@
 		startTime,
 		transcriptDownload,
 		useSettingsMenu,
+		forceAspectRatio,
 
 		// Event callbacks
 		onplay,
@@ -118,6 +119,7 @@
 		if (startTime !== undefined) opts.startTime = startTime;
 		if (transcriptDownload !== undefined) opts.transcriptDownload = transcriptDownload;
 		if (useSettingsMenu !== undefined) opts.useSettingsMenu = useSettingsMenu;
+		if (forceAspectRatio !== undefined) opts.forceAspectRatio = normalizeForceAspectRatio(forceAspectRatio);
 		return opts;
 	}
 
@@ -153,7 +155,7 @@
 
 				const embedOpts = buildEmbedOptions();
 				debug('init: calling api.embed publicKey=%s containerId=%s options=%o', publicKey, containerId, embedOpts);
-				const raw: RawViostreamPlayerInstance = api.embed(publicKey, containerId, embedOpts);
+				const raw: RawViostreamPlayerInstance = api.embed(publicKey, containerId, embedOpts, embedOpts.forceAspectRatio);
 				debug('init: api.embed returned raw player');
 
 				const wrappedPlayer = wrapRawPlayer(raw, containerId);

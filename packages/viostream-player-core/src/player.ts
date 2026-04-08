@@ -20,6 +20,27 @@ import { SDK_NAME, SDK_VERSION } from './version.js';
 const debug = Debug('viostream:core:player');
 
 // ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Normalize a `forceAspectRatio` value to `undefined` unless it is a finite
+ * positive number.  Non-finite values (NaN, ±Infinity) and values ≤ 0 would
+ * disable `dynamicSizing` inside the embed API while still falling back to the
+ * default 16:9 ratio — a silent and surprising failure mode.
+ *
+ * A `debug`-level warning is emitted when a value is discarded so that
+ * consumers can diagnose misconfiguration during development.
+ */
+export function normalizeForceAspectRatio(value: number | undefined): number | undefined {
+  if (value === undefined) return undefined;
+  if (Number.isFinite(value) && value > 0) return value;
+
+  debug('invalid forceAspectRatio=%o — must be a finite positive number; falling back to undefined', value);
+  return undefined;
+}
+
+// ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
@@ -35,6 +56,12 @@ export interface CreateViostreamPlayerOptions {
   target: string | HTMLElement;
   /** Optional embed options. */
   options?: ViostreamEmbedOptions;
+  /**
+   * Force a specific aspect ratio for the player container.
+   * Value is the ratio as a decimal (e.g., `1.7778` for 16:9).
+   * When set, dynamicSizing is disabled automatically.
+   */
+  forceAspectRatio?: number;
 }
 
 /** Maximum time (ms) to wait for a callback-based getter before rejecting. */
@@ -61,8 +88,16 @@ const GETTER_TIMEOUT_MS = 10_000;
  * ```
  */
 export async function createViostreamPlayer(opts: CreateViostreamPlayerOptions): Promise<ViostreamPlayer> {
-  const { accountKey, publicKey, options = {} } = opts;
+  const { accountKey, publicKey, options = {}, forceAspectRatio } = opts;
   debug('createViostreamPlayer publicKey=%s accountKey=%s', publicKey, accountKey);
+
+  // Derive the effective forceAspectRatio from the top-level option or the
+  // nested embed-options object (top-level takes precedence).  Strip it from
+  // the options bag so it is not passed through as a stray playerSetting — the
+  // vendored embed API only consumes it as a separate 4th argument.
+  // Normalize to undefined for non-finite / non-positive values.
+  const effectiveForceAspectRatio = normalizeForceAspectRatio(forceAspectRatio ?? options.forceAspectRatio);
+  delete options.forceAspectRatio;
 
   // Resolve the target element id
   let targetId: string;
@@ -90,7 +125,7 @@ export async function createViostreamPlayer(opts: CreateViostreamPlayerOptions):
 
   // Embed the player
   debug('calling api.embed publicKey=%s targetId=%s options=%o', publicKey, targetId, options);
-  const raw: RawViostreamPlayerInstance = api.embed(publicKey, targetId, options);
+  const raw: RawViostreamPlayerInstance = api.embed(publicKey, targetId, options, effectiveForceAspectRatio);
   debug('api.embed returned raw player for targetId=%s', targetId);
 
   // Build the SDK wrapper

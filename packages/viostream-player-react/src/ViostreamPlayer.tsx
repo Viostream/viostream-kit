@@ -26,7 +26,7 @@
 
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import Debug from 'debug';
-import { getViostreamApi, wrapRawPlayer } from '@viostream/viostream-player-core';
+import { getViostreamApi, wrapRawPlayer, normalizeForceAspectRatio } from '@viostream/viostream-player-core';
 import type {
   ViostreamEmbedOptions,
   ViostreamPlayer as ViostreamPlayerType,
@@ -74,6 +74,7 @@ export function ViostreamPlayer({
   startTime,
   transcriptDownload,
   useSettingsMenu,
+  forceAspectRatio,
 
   // Event callbacks
   onPlay,
@@ -162,6 +163,7 @@ export function ViostreamPlayer({
   if (startTime !== undefined) embedOpts.startTime = startTime;
   if (transcriptDownload !== undefined) embedOpts.transcriptDownload = transcriptDownload;
   if (useSettingsMenu !== undefined) embedOpts.useSettingsMenu = useSettingsMenu;
+  if (forceAspectRatio !== undefined) embedOpts.forceAspectRatio = normalizeForceAspectRatio(forceAspectRatio);
   embedOptsRef.current = embedOpts;
 
   // -----------------------------------------------------------------------
@@ -193,6 +195,7 @@ export function ViostreamPlayer({
           publicKey,
           embedTargetId.current,
           embedOptsRef.current,
+          embedOptsRef.current.forceAspectRatio,
         );
         debug('init: api.embed returned raw player');
 

@@ -292,25 +292,6 @@ After calling `destroy()`:
 - Getter calls will reject with `"Player has been destroyed"`.
 ---
 
-## Script Loader
-
-The SDK loads the Viostream API script automatically. If you need manual control over loading (e.g. preloading), you can use `loadViostream` directly:
-
-```ts
-import { loadViostream } from '@viostream/viostream-player-vue';
-
-const api = await loadViostream('vc-100100100');
-// api.embed(...) is now available
-```
-
-The loader:
-- Injects `<script src="https://play.viostream.com/api/{accountKey}">` into `<head>`.
-- Deduplicates requests -- calling it multiple times with the same key returns the same promise.
-- Times out after 15 seconds if the script fails to load.
-- Detects if the script tag already exists in the DOM (e.g. added manually) and waits for it.
-
----
-
 ## TypeScript
 
 Every export is fully typed. Import types alongside runtime exports:

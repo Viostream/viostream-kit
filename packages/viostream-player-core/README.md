@@ -66,6 +66,7 @@ const player = await createViostreamPlayer({
 | `publicKey` | `string` | Public key of the media asset. |
 | `target` | `string \| HTMLElement` | Container element id or direct DOM reference. |
 | `options` | `ViostreamEmbedOptions` | Embed options (see below). |
+| `forceAspectRatio` | `number` | Force a specific aspect ratio (e.g. `1.7778` for 16:9). |
 
 ---
 
@@ -91,6 +92,7 @@ All embed options are optional and passed to the Viostream embed API.
 | `startTime` | `string` | Seek to a time (seconds) before playback. |
 | `transcriptDownload` | `boolean` | Allow transcript download. Default: `false`. |
 | `useSettingsMenu` | `boolean` | Enable the settings menu on the control bar. Default: `false`. |
+| `forceAspectRatio` | `number` | Force a specific aspect ratio (e.g. `1.7778` for 16:9). Disables dynamicSizing. |
 
 ---
 
@@ -182,32 +184,6 @@ After calling `destroy()`:
 - All event listeners are removed.
 - The player iframe is removed from the DOM.
 - Getter calls will reject with `"Player has been destroyed"`.
-
----
-
-## Script Loader (Deprecated)
-
-> **Note:** `loadViostream()` is kept for backward compatibility. The embed
-> API is now bundled directly in the package — no script injection occurs.
-> Prefer `createViostreamPlayer()` or `getViostreamApi()` instead.
-
-```ts
-import { loadViostream } from '@viostream/viostream-player-core';
-
-const api = await loadViostream('vc-100100100');
-const raw = api.embed('nhedxonrxsyfee', 'my-video-div', { displayTitle: true });
-```
-
-### Host Override (Development Only)
-
-The API hostname defaults to `play.viostream.com`. To point at a development
-or staging environment, set `window.playerDomain` before any player is created:
-
-```js
-window.playerDomain = 'dev.viostream.com';
-```
-
-This is handled internally by the embed API's `config()` function.
 
 ---
 
