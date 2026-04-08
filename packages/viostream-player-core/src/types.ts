@@ -49,6 +49,12 @@ export interface ViostreamEmbedOptions {
   transcriptDownload?: boolean;
   /** Enable the settings menu on the control bar. Default: `false`. */
   useSettingsMenu?: boolean;
+  /**
+   * Force a specific aspect ratio for the player container.
+   * Value is the ratio as a decimal (e.g., `1.7778` for 16:9, `0.5625` for 9:16).
+   * When set, `dynamicSizing` is disabled automatically.
+   */
+  forceAspectRatio?: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -146,6 +152,7 @@ export interface ViostreamGlobal {
     publicKey: string,
     target: string,
     options?: ViostreamEmbedOptions,
+    forceAspectRatio?: number,
   ): RawViostreamPlayerInstance;
 }
 

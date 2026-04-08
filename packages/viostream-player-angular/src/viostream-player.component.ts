@@ -113,6 +113,8 @@ export class ViostreamPlayerComponent implements OnInit, OnDestroy {
   @Input() transcriptDownload?: boolean;
   /** Enable the settings menu on the control bar. */
   @Input() useSettingsMenu?: boolean;
+  /** Force a specific aspect ratio for the player container (e.g., `1.7778` for 16:9). */
+  @Input() forceAspectRatio?: number;
 
   // ---------------------------------------------------------------------------
   // Inputs (styling)
@@ -216,6 +218,7 @@ export class ViostreamPlayerComponent implements OnInit, OnDestroy {
         this.publicKey,
         this.containerId,
         embedOpts,
+        embedOpts.forceAspectRatio,
       );
       debug('init: api.embed returned raw player');
 
@@ -274,6 +277,7 @@ export class ViostreamPlayerComponent implements OnInit, OnDestroy {
     if (this.startTime !== undefined) opts.startTime = this.startTime;
     if (this.transcriptDownload !== undefined) opts.transcriptDownload = this.transcriptDownload;
     if (this.useSettingsMenu !== undefined) opts.useSettingsMenu = this.useSettingsMenu;
+    if (this.forceAspectRatio !== undefined) opts.forceAspectRatio = this.forceAspectRatio;
     return opts;
   }
 

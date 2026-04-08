@@ -74,6 +74,7 @@ export function ViostreamPlayer({
   startTime,
   transcriptDownload,
   useSettingsMenu,
+  forceAspectRatio,
 
   // Event callbacks
   onPlay,
@@ -162,6 +163,7 @@ export function ViostreamPlayer({
   if (startTime !== undefined) embedOpts.startTime = startTime;
   if (transcriptDownload !== undefined) embedOpts.transcriptDownload = transcriptDownload;
   if (useSettingsMenu !== undefined) embedOpts.useSettingsMenu = useSettingsMenu;
+  if (forceAspectRatio !== undefined) embedOpts.forceAspectRatio = forceAspectRatio;
   embedOptsRef.current = embedOpts;
 
   // -----------------------------------------------------------------------
@@ -193,6 +195,7 @@ export function ViostreamPlayer({
           publicKey,
           embedTargetId.current,
           embedOptsRef.current,
+          embedOptsRef.current.forceAspectRatio,
         );
         debug('init: api.embed returned raw player');
 

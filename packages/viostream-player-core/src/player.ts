@@ -35,6 +35,12 @@ export interface CreateViostreamPlayerOptions {
   target: string | HTMLElement;
   /** Optional embed options. */
   options?: ViostreamEmbedOptions;
+  /**
+   * Force a specific aspect ratio for the player container.
+   * Value is the ratio as a decimal (e.g., `1.7778` for 16:9).
+   * When set, dynamicSizing is disabled automatically.
+   */
+  forceAspectRatio?: number;
 }
 
 /** Maximum time (ms) to wait for a callback-based getter before rejecting. */
@@ -61,7 +67,7 @@ const GETTER_TIMEOUT_MS = 10_000;
  * ```
  */
 export async function createViostreamPlayer(opts: CreateViostreamPlayerOptions): Promise<ViostreamPlayer> {
-  const { accountKey, publicKey, options = {} } = opts;
+  const { accountKey, publicKey, options = {}, forceAspectRatio } = opts;
   debug('createViostreamPlayer publicKey=%s accountKey=%s', publicKey, accountKey);
 
   // Resolve the target element id
@@ -90,7 +96,7 @@ export async function createViostreamPlayer(opts: CreateViostreamPlayerOptions):
 
   // Embed the player
   debug('calling api.embed publicKey=%s targetId=%s options=%o', publicKey, targetId, options);
-  const raw: RawViostreamPlayerInstance = api.embed(publicKey, targetId, options);
+  const raw: RawViostreamPlayerInstance = api.embed(publicKey, targetId, options, forceAspectRatio);
   debug('api.embed returned raw player for targetId=%s', targetId);
 
   // Build the SDK wrapper

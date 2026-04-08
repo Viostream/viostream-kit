@@ -91,6 +91,7 @@ All embed options are optional and passed directly to the Viostream embed API.
 | `startTime` | `string` | Seek to a time (seconds) before playback. |
 | `transcriptDownload` | `boolean` | Allow transcript download. Default: `false`. |
 | `useSettingsMenu` | `boolean` | Enable the settings menu on the control bar. Default: `false`. |
+| `forceAspectRatio` | `number` | Force a specific aspect ratio (e.g. `1.7778` for 16:9). Disables dynamicSizing. |
 
 #### Event Callbacks
 
@@ -283,25 +284,6 @@ After calling `destroy()`:
 - All event listeners are removed.
 - The player iframe is removed from the DOM.
 - Getter calls will reject with `"Player has been destroyed"`.
----
-
-## Script Loader
-
-The SDK loads the Viostream API script automatically. If you need manual control over loading (e.g. preloading), you can use `loadViostream` directly:
-
-```ts
-import { loadViostream } from '@viostream/viostream-player-react';
-
-const api = await loadViostream('vc-100100100');
-// api.embed(...) is now available
-```
-
-The loader:
-- Injects `<script src="https://play.viostream.com/api/{accountKey}">` into `<head>`.
-- Deduplicates requests -- calling it multiple times with the same key returns the same promise.
-- Times out after 15 seconds if the script fails to load.
-- Detects if the script tag already exists in the DOM (e.g. added manually) and waits for it.
-
 ---
 
 ## TypeScript
