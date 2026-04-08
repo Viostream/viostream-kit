@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.8](https://github.com/Viostream/viostream-kit/compare/player-angular-v0.1.7...player-angular-v0.1.8) (2026-04-08)
+
+
+### Features
+
+* add debug logging across all packages using 'debug' package ([b196883](https://github.com/Viostream/viostream-kit/commit/b1968832b04b52f45d13fc0de8f055e57bbb2fc5))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @viostream/viostream-player-core bumped from ^0.2.6 to ^0.2.7
+
 ## [0.1.7](https://github.com/Viostream/viostream-kit/compare/player-angular-v0.1.6...player-angular-v0.1.7) (2026-03-20)
 
 
