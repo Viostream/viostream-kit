@@ -1029,12 +1029,22 @@ class PlayerCommandApi {
     this.remoteConnect();
   }
   _call(method, value) {
-    this.remote[method](value);
+    if (this.remote) {
+      this.remote[method](value);
+    } else {
+      this.connection.promise.then(() => {
+        this.remote[method](value);
+      });
+    }
   }
   _get(method, callback) {
-    this.remote[method]().then((value) => {
-      callback(value);
-    });
+    if (this.remote) {
+      this.remote[method]().then(callback);
+    } else {
+      this.connection.promise.then(() => {
+        this.remote[method]().then(callback);
+      });
+    }
   }
   remoteConnect() {
     let cachedThis = this;
@@ -1231,3 +1241,4 @@ function embed(embedKey, targetId, playerSettings = {}, forceAspectRatio = void 
 export {
   embed as default
 };
+
