@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.8](https://github.com/Viostream/viostream-kit/compare/player-core-v0.2.7...player-core-v0.2.8) (2026-04-09)
+
+
+### Features
+
+* add player-core example app and fix example workspace dependencies ([b7b5b6f](https://github.com/Viostream/viostream-kit/commit/b7b5b6f3d64ecb9045809e520632f8344c3c4dcf))
+
+
+### Bug Fixes
+
+* **player-svelte:** remove duplicate event wiring that caused callbac… ([1be838f](https://github.com/Viostream/viostream-kit/commit/1be838f287be25fc70b85fc4b892c870ec792ca6))
+
 ## [0.2.7](https://github.com/Viostream/viostream-kit/compare/player-core-v0.2.6...player-core-v0.2.7) (2026-04-08)
 
 

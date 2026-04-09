@@ -1,6 +1,6 @@
 {
   "name": "@viostream/viostream-player-angular",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Angular 17+ SDK for the Viostream video player — embed, control, and listen to player events",
   "license": "MIT",
   "publishConfig": {
@@ -15,7 +15,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@viostream/viostream-player-core": "^0.2.7",
+    "@viostream/viostream-player-core": "^0.2.8",
     "debug": "^4.4.3",
     "tslib": "^2.8.0"
   },
