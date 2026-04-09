@@ -4,6 +4,8 @@ SDK packages for the [Viostream](https://www.viostream.com) video platform.
 Embed, control, and listen to Viostream player events from your front-end
 application using framework-native wrappers.
 
+> **[Live Demo](https://viostream.github.io/viostream-kit/)** — try the player SDK in your browser.
+
 ## Packages
 
 | Package | Version | Framework | Description |
@@ -24,6 +26,7 @@ All framework wrappers build on `player-core`.
 | `example-react` | [`examples/react`](./examples/react) | React 18 / Vite | Interactive demo for `player-react` |
 | `example-vue` | [`examples/vue`](./examples/vue) | Vue 3 / Vite | Interactive demo for `player-vue` |
 | `example-angular` | [`examples/angular`](./examples/angular) | Angular 19 | Interactive demo for `player-angular` |
+| `example-core` | [`examples/core`](./examples/core) | Vanilla TS / Vite | Interactive demo for `player-core` — [Live Demo](https://viostream.github.io/viostream-kit/) |
 
 Examples are standalone apps that live in `examples/` and depend on the
 corresponding SDK package via npm workspaces. When a new framework wrapper is

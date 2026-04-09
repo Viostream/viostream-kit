@@ -14,14 +14,50 @@ import type {
   templateUrl: './app.component.html',
 })
 export class AppComponent {
-  accountKey = 'vc-100100100';
-  publicKey = 'nhedxonrxsyfee';
+  // ---------------------------------------------------------------------------
+  // Configuration
+  // ---------------------------------------------------------------------------
+  readonly accountKey = 'vc-100100100';
+  videoSelect = 'r3qyz91r5k7q6b';
+  customPublicKey = '';
+  embedRevision = 0;
 
-  /** Key used to force player remount when config changes. */
-  get playerKey(): string {
-    return `${this.accountKey}:${this.publicKey}`;
+  get publicKey(): string {
+    return this.videoSelect || this.customPublicKey;
   }
 
+  // ---------------------------------------------------------------------------
+  // Embed options
+  // ---------------------------------------------------------------------------
+  chapters = true;
+  chapterSlug = '';
+  displayTitle = false;
+  hlsQualitySelector = true;
+  optPlayerKey = '';
+  playerStyle: 'video' | 'audio' | 'audio-poster' = 'video';
+  sharing = false;
+  skinCustom = false;
+  skinActive = '';
+  skinActiveColour = '#ff0000';
+  skinBackground = '';
+  skinBackgroundColour = '#000000';
+  skinInactive = '';
+  skinInactiveColour = '#cccccc';
+  speedSelector = true;
+  startEndTimespan = '';
+  startTime = '';
+  transcriptDownload = false;
+  useSettingsMenu = false;
+  forceAspectRatioEnabled = false;
+  forceAspectRatioValue = 1.7778;
+
+  get forceAspectRatio(): number | undefined {
+    return this.forceAspectRatioEnabled ? this.forceAspectRatioValue : undefined;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Player state
+  // ---------------------------------------------------------------------------
   player: ViostreamPlayerInstance | undefined;
   currentTime = 0;
   duration = 0;
@@ -35,14 +71,27 @@ export class AppComponent {
   }
 
   // ---------------------------------------------------------------------------
+  // Actions
+  // ---------------------------------------------------------------------------
+
+  embed(): void {
+    this.player = undefined;
+    this.currentTime = 0;
+    this.duration = 0;
+    this.isPaused = true;
+    this.isMuted = false;
+    this.volume = 1;
+    this.embedRevision++;
+    this.addLog('Embed triggered');
+  }
+
+  // ---------------------------------------------------------------------------
   // Player event handlers
   // ---------------------------------------------------------------------------
 
   onPlayerReady(p: ViostreamPlayerInstance): void {
     this.player = p;
     this.addLog('Player ready');
-
-    // Fetch initial state
     p.getDuration().then((d: number) => (this.duration = d));
     p.getPaused().then((v: boolean) => (this.isPaused = v));
     p.getMuted().then((v: boolean) => (this.isMuted = v));
@@ -85,20 +134,12 @@ export class AppComponent {
 
   togglePlay(): void {
     if (!this.player) return;
-    if (this.isPaused) {
-      this.player.play();
-    } else {
-      this.player.pause();
-    }
+    if (this.isPaused) this.player.play(); else this.player.pause();
   }
 
   toggleMute(): void {
     if (!this.player) return;
-    if (this.isMuted) {
-      this.player.unmute();
-    } else {
-      this.player.mute();
-    }
+    if (this.isMuted) this.player.unmute(); else this.player.mute();
   }
 
   seek(seconds: number): void {
@@ -141,10 +182,16 @@ export class AppComponent {
     this.addLog(`getAspectRatio() → ${r}`);
   }
 
-  async getTracks(): Promise<void> {
-    if (!this.player) return;
-    const tracks = await this.player.getTracks();
-    this.addLog(`getTracks() → ${JSON.stringify(tracks)}`);
+  // ---------------------------------------------------------------------------
+  // Colour picker sync
+  // ---------------------------------------------------------------------------
+
+  syncColourToText(colour: string, field: 'skinActive' | 'skinBackground' | 'skinInactive'): void {
+    this[field] = colour;
+  }
+
+  syncTextToColour(text: string, field: 'skinActiveColour' | 'skinBackgroundColour' | 'skinInactiveColour'): void {
+    if (/^#[0-9a-fA-F]{6}$/.test(text)) this[field] = text;
   }
 
   // ---------------------------------------------------------------------------

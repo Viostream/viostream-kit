@@ -65,11 +65,11 @@ function getAugmentedNamespace(n) {
     a.prototype = f.prototype;
   } else a = {};
   Object.defineProperty(a, "__esModule", { value: true });
-  Object.keys(n).forEach(function(k) {
+  Object.keys(n).forEach(function (k) {
     var d = Object.getOwnPropertyDescriptor(n, k);
     Object.defineProperty(a, k, d.get ? d : {
       enumerable: true,
-      get: function() {
+      get: function () {
         return n[k];
       }
     });
@@ -681,13 +681,13 @@ var shakeHands = ({
   const handleSynMessage = (message) => {
     log?.(`Received handshake SYN`, message);
     if (message.participantId === remoteParticipantId && // TODO: Used for backward-compatibility. Remove in next major version.
-    remoteParticipantId !== DEPRECATED_PENPAL_PARTICIPANT_ID) {
+      remoteParticipantId !== DEPRECATED_PENPAL_PARTICIPANT_ID) {
       return;
     }
     remoteParticipantId = message.participantId;
     sendSynMessage();
     const isHandshakeLeader = participantId > remoteParticipantId || // TODO: Used for backward-compatibility. Remove in next major version.
-    remoteParticipantId === DEPRECATED_PENPAL_PARTICIPANT_ID;
+      remoteParticipantId === DEPRECATED_PENPAL_PARTICIPANT_ID;
     if (!isHandshakeLeader) {
       return;
     }
@@ -860,9 +860,9 @@ var WindowMessenger = class {
       return;
     }
     if (isAck1Message(message) || // If the child is using a previous version of Penpal, we need to
-    // downgrade the message and send it through the window rather than
-    // the port because older versions of Penpal don't use MessagePorts.
-    this.#isChildUsingDeprecatedProtocol) {
+      // downgrade the message and send it through the window rather than
+      // the port because older versions of Penpal don't use MessagePorts.
+      this.#isChildUsingDeprecatedProtocol) {
       const payload = this.#isChildUsingDeprecatedProtocol ? downgradeMessage(message) : message;
       const originForSending = this.#getOriginForSendingMessage(message);
       this.#remoteWindow.postMessage(payload, {
@@ -965,8 +965,8 @@ var WindowMessenger = class {
       this.#concreteRemoteOrigin = origin;
     }
     if (isAck2Message(data) && // Previous versions of Penpal don't use MessagePorts and do all
-    // communication through the window.
-    !this.#isChildUsingDeprecatedProtocol) {
+      // communication through the window.
+      !this.#isChildUsingDeprecatedProtocol) {
       this.#port = ports[0];
       if (!this.#port) {
         this.#log?.("Ignoring ACK2 because it did not include a MessagePort");
@@ -991,7 +991,7 @@ var WindowMessenger = class {
 var WindowMessenger_default = WindowMessenger;
 var debug = (prefix) => {
   return (...args) => {
-    console.log(`\u270d\ufe0f %c${prefix}%c`, "font-weight: bold;", "", ...args);
+    console.log(`✍️ %c${prefix}%c`, "font-weight: bold;", "", ...args);
   };
 };
 var debug_default = debug;
@@ -1201,28 +1201,28 @@ class PlayerCommandApi {
     this.events[eventName].push(callback);
   }
 }
-const setDynamicSize = (frame: ReturnType<typeof frameWriter>, mediaAspectRatio: number, mediaHeight: number) => {
+const setDynamicSize = (frame, mediaAspectRatio, mediaHeight) => {
   const maxWidth = determineMaxWidth(mediaAspectRatio, mediaHeight);
   if (maxWidth > 0) {
     frame.inner.style.maxWidth = `${maxWidth}px`;
   }
   frame.container.style.paddingTop = `${1 / mediaAspectRatio * 100}%`;
 };
-function embed(embedKey: string, targetId: string, playerSettings = {}, forceAspectRatio = void 0) {
+function embed(embedKey, targetId, playerSettings = {}, forceAspectRatio = void 0) {
   const { location } = config();
   playerSettings.dynamicSizing = forceAspectRatio == void 0;
   playerSettings.apiEmbed = true;
   playerSettings.documentLocation = location;
-  const target = document.getElementById(targetId);
+  const target = document$1.getElementById(targetId);
   if (target) {
     target.innerHTML = "";
   }
   const frame = frameWriter(embedKey, targetId, playerSettings, forceAspectRatio);
   const api = new PlayerCommandApi(frame, playerSettings);
   if (playerSettings.dynamicSizing) {
-    api.on("ready", () => {
+    api.connection.promise.then(() => {
       api.getAspectRatio((result) => {
-        setDynamicSize(frame, parseFloat(result.aspectRatio), parseInt(result.maxHeight));
+        setDynamicSize(frame, Number.parseFloat(result.aspectRatio), Number.parseInt(result.maxHeight));
       });
     });
   }

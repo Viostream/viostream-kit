@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@viostream/viostream-player-react": "*",
-    "@viostream/viostream-player-core": "*",
+    "@viostream/viostream-player-react": "file:../../packages/viostream-player-react",
+    "@viostream/viostream-player-core": "file:../../packages/viostream-player-core",
     "react": "^18.3.0",
     "react-dom": "^18.3.0"
   },

@@ -30,6 +30,7 @@
 | `example-react` | `examples/react` | React 18 / Vite | Demo app for `player-react` |
 | `example-vue` | `examples/vue` | Vue 3 / Vite | Demo app for `player-vue` |
 | `example-angular` | `examples/angular` | Angular 19 | Demo app for `player-angular` |
+| `example-core` | `examples/core` | Vanilla TS / Vite | Demo app for `player-core` (deployed to GitHub Pages) |
 
 ## Build Commands
 
@@ -87,6 +88,11 @@ npm run build               # vue-tsc + vite build (production build)
 cd examples/angular
 npm run dev                 # Angular CLI dev server (demo page)
 npm run build               # Angular CLI build (production build)
+
+# examples/core
+cd examples/core
+npm run dev                 # Vite dev server (demo page)
+npm run build               # tsc + vite build (production build)
 ```
 
 **Build order:** `player-core` must be built before any wrapper package can
@@ -320,6 +326,13 @@ viostream-kit/
       package.json
       tsconfig.json
       tsconfig.app.json
+    core/                   — Vanilla TS demo app for player-core (deployed to GitHub Pages)
+      src/
+        main.ts             — createViostreamPlayer() demo with all embed options
+      index.html            — Bootstrap 5 dark theme shell
+      package.json
+      tsconfig.json
+      vite.config.ts
 ```
 
 ## Commit Convention

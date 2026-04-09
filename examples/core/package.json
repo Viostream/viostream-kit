@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@viostream/viostream-player-core": "*"
+    "@viostream/viostream-player-core": "file:../../packages/viostream-player-core"
   },
   "devDependencies": {
     "typescript": "^5.7.0",

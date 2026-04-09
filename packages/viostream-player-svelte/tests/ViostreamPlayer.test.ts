@@ -140,8 +140,8 @@ describe('ViostreamPlayer component', () => {
 			expect(publicKey).toBe('my-video-key');
 			expect(typeof targetId).toBe('string');
 
-			// The target id should match the container's id
-			const el = container.querySelector('[data-viostream-player]');
+			// The target id should match the nested embed target div, not the outer container
+			const el = container.querySelector('[data-viostream-embed-target]');
 			expect(targetId).toBe(el?.id);
 		});
 	});

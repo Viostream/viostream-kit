@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@viostream/viostream-player-vue": "*",
-    "@viostream/viostream-player-core": "*",
+    "@viostream/viostream-player-vue": "file:../../packages/viostream-player-vue",
+    "@viostream/viostream-player-core": "file:../../packages/viostream-player-core",
     "vue": "^3.5.0"
   },
   "devDependencies": {
