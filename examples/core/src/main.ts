@@ -1,15 +1,20 @@
 import { createViostreamPlayer } from '@viostream/viostream-player-core';
-import type { ViostreamPlayer } from '@viostream/viostream-player-core';
+import type { ViostreamPlayer, ViostreamEmbedOptions } from '@viostream/viostream-player-core';
 
 // ---------------------------------------------------------------------------
 // DOM references
 // ---------------------------------------------------------------------------
 const $ = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T;
 
-const accountKeyInput = $<HTMLInputElement>('account-key');
-const publicKeyInput = $<HTMLInputElement>('public-key');
+const ACCOUNT_KEY = 'vc-100100100';
+
+const videoSelect = $<HTMLSelectElement>('video-select');
+const customKeyInput = $<HTMLInputElement>('public-key-custom');
+const customKeyGroup = $<HTMLDivElement>('custom-key-group');
 const farToggle = $<HTMLInputElement>('force-aspect-ratio-toggle');
 const farInput = $<HTMLInputElement>('force-aspect-ratio');
+const skinCustomToggle = $<HTMLInputElement>('opt-skin-custom');
+const playerStyleSelect = $<HTMLSelectElement>('opt-player-style');
 const embedBtn = $<HTMLButtonElement>('embed-btn');
 const playerTarget = $<HTMLDivElement>('player');
 
@@ -80,6 +85,36 @@ function updateMuteBtn(): void {
 }
 
 // ---------------------------------------------------------------------------
+// Build embed options from the UI controls
+// ---------------------------------------------------------------------------
+function buildOptions(): ViostreamEmbedOptions {
+  const opts: ViostreamEmbedOptions = {};
+
+  // Boolean toggles — driven by data-option-bool attribute on checkboxes
+  document.querySelectorAll<HTMLInputElement>('[data-option-bool]').forEach((el) => {
+    const key = el.dataset.optionBool!;
+    (opts as Record<string, unknown>)[key] = el.checked;
+  });
+
+  // String inputs — driven by data-option-str attribute on text inputs
+  document.querySelectorAll<HTMLInputElement>('[data-option-str]').forEach((el) => {
+    const key = el.dataset.optionStr!;
+    const val = el.value.trim();
+    if (val) {
+      (opts as Record<string, unknown>)[key] = val;
+    }
+  });
+
+  // Player style (select)
+  const style = playerStyleSelect.value;
+  if (style) {
+    opts.playerStyle = style as ViostreamEmbedOptions['playerStyle'];
+  }
+
+  return opts;
+}
+
+// ---------------------------------------------------------------------------
 // Embed
 // ---------------------------------------------------------------------------
 async function embed(): Promise<void> {
@@ -99,10 +134,10 @@ async function embed(): Promise<void> {
   updateMuteBtn();
   updateTimeDisplay();
 
-  const accountKey = accountKeyInput.value.trim();
-  const publicKey = publicKeyInput.value.trim();
-  if (!accountKey || !publicKey) {
-    addLog('Error: account key and public key are required');
+  const accountKey = ACCOUNT_KEY;
+  const publicKey = videoSelect.value || customKeyInput.value.trim();
+  if (!publicKey) {
+    addLog('Error: public key is required');
     return;
   }
 
@@ -110,7 +145,9 @@ async function embed(): Promise<void> {
     ? parseFloat(farInput.value)
     : undefined;
 
-  addLog(`Embedding player (publicKey=${publicKey}, forceAspectRatio=${forceAspectRatio ?? 'none'})`);
+  const options = buildOptions();
+
+  addLog(`Embedding (forceAspectRatio=${forceAspectRatio ?? 'none'})`);
 
   try {
     const p = await createViostreamPlayer({
@@ -118,12 +155,7 @@ async function embed(): Promise<void> {
       publicKey,
       target: playerTarget,
       forceAspectRatio,
-      options: {
-        displayTitle: true,
-        sharing: true,
-        speedSelector: true,
-        hlsQualitySelector: true,
-      },
+      options,
     });
 
     if (!p) {
@@ -168,20 +200,15 @@ async function embed(): Promise<void> {
       addLog('Event: seeked');
     });
 
-    // Fetch initial state once the iframe player connection is established.
-    // The 'ready' event fires when penpal handshake completes.
-    player.on('ready', async () => {
+    // Fetch initial state after a short delay to allow the penpal
+    // connection to establish and the player to be ready.
+    player.on('timeupdate', function initialSync() {
       if (!player) return;
-      try {
-        duration = await player.getDuration();
-        isPaused = await player.getPaused();
-        isMuted = await player.getMuted();
-        updatePlayPauseBtn();
-        updateMuteBtn();
-        updateTimeDisplay();
-      } catch {
-        // Player may not be fully ready; state will update via events.
-      }
+      // Only run once — remove ourselves after the first timeupdate
+      player.off('timeupdate', initialSync);
+      player.getDuration().then((d) => { duration = d; updateTimeDisplay(); }).catch(() => {});
+      player.getPaused().then((v) => { isPaused = v; updatePlayPauseBtn(); }).catch(() => {});
+      player.getMuted().then((v) => { isMuted = v; updateMuteBtn(); }).catch(() => {});
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -245,16 +272,52 @@ getAspectRatioBtn.addEventListener('click', async () => {
 });
 
 // ---------------------------------------------------------------------------
-// Force Aspect Ratio toggle
+// Toggle handlers for conditional inputs
 // ---------------------------------------------------------------------------
 farToggle.addEventListener('change', () => {
   farInput.disabled = !farToggle.checked;
 });
 
+videoSelect.addEventListener('change', () => {
+  const isCustom = videoSelect.value === '';
+  customKeyGroup.style.display = isCustom ? '' : 'none';
+  if (isCustom) {
+    customKeyInput.focus();
+  }
+});
+
+const skinColourGroup = $<HTMLDivElement>('skin-colour-group');
+
+skinCustomToggle.addEventListener('change', () => {
+  const enabled = skinCustomToggle.checked;
+  skinColourGroup.style.display = enabled ? '' : 'none';
+  document.querySelectorAll<HTMLInputElement>('.skin-colour-input').forEach((el) => {
+    el.disabled = !enabled;
+  });
+  document.querySelectorAll<HTMLInputElement>('.skin-colour-picker').forEach((el) => {
+    el.disabled = !enabled;
+  });
+});
+
+// Sync colour pickers ↔ text inputs
+const colourPairs: Array<[string, string]> = [
+  ['opt-skin-active-colour', 'opt-skin-active'],
+  ['opt-skin-background-colour', 'opt-skin-background'],
+  ['opt-skin-inactive-colour', 'opt-skin-inactive'],
+];
+for (const [pickerId, textId] of colourPairs) {
+  const picker = $<HTMLInputElement>(pickerId);
+  const text = $<HTMLInputElement>(textId);
+  picker.addEventListener('input', () => { text.value = picker.value; });
+  text.addEventListener('input', () => {
+    if (/^#[0-9a-fA-F]{6}$/.test(text.value)) {
+      picker.value = text.value;
+    }
+  });
+}
+
 // ---------------------------------------------------------------------------
 // Embed button + initial embed
 // ---------------------------------------------------------------------------
 embedBtn.addEventListener('click', embed);
-
-// Auto-embed on page load
 embed();

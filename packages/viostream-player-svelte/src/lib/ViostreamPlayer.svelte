@@ -93,12 +93,10 @@
 
 	// Internal state
 	let containerEl: HTMLDivElement | undefined = $state();
+	let embedTargetEl: HTMLDivElement | undefined = $state();
 	let player: ViostreamPlayer | undefined = $state();
 	let errorMsg: string | undefined = $state();
 	let isLoading = $state(true);
-
-	// Unique ID for the container
-	const containerId = `viostream-player-${Math.random().toString(36).slice(2, 10)}`;
 
 	// Build the embed options object from props
 	function buildEmbedOptions(): ViostreamEmbedOptions {
@@ -137,7 +135,17 @@
 	];
 
 	onMount(() => {
-		debug('onMount publicKey=%s accountKey=%s containerId=%s', publicKey, accountKey, containerId);
+		// Generate unique IDs on the client only and assign them imperatively
+		// to the DOM elements. This avoids SSR/hydration mismatches caused by
+		// Math.random() producing different values on server vs client.
+		const containerId = `viostream-player-${Math.random().toString(36).slice(2, 10)}`;
+		const embedTargetId = `viostream-embed-${Math.random().toString(36).slice(2, 10)}`;
+
+		containerEl!.id = containerId;
+		containerEl!.setAttribute('data-viostream-sdk', `${SDK_NAME}@${SDK_VERSION}`);
+		embedTargetEl!.id = embedTargetId;
+
+		debug('onMount publicKey=%s accountKey=%s containerId=%s embedTargetId=%s', publicKey, accountKey, containerId, embedTargetId);
 
 		let destroyed = false;
 
@@ -152,12 +160,12 @@
 				}
 
 				const embedOpts = buildEmbedOptions();
-				debug('init: calling api.embed publicKey=%s containerId=%s options=%o', publicKey, containerId, embedOpts);
-				const raw: RawViostreamPlayerInstance = api.embed(publicKey, containerId, embedOpts, normalizeForceAspectRatio(forceAspectRatio));
+				debug('init: calling api.embed publicKey=%s embedTargetId=%s options=%o', publicKey, embedTargetId, embedOpts);
+				const raw: RawViostreamPlayerInstance = api.embed(publicKey, embedTargetId, embedOpts, normalizeForceAspectRatio(forceAspectRatio));
 				debug('init: api.embed returned raw player');
 
-				const wrappedPlayer = wrapRawPlayer(raw, containerId);
-				debug('init: wrapRawPlayer completed containerId=%s', containerId);
+				const wrappedPlayer = wrapRawPlayer(raw, embedTargetId);
+				debug('init: wrapRawPlayer completed embedTargetId=%s', embedTargetId);
 
 				if (destroyed) {
 					debug('init: stale closure detected after wrapRawPlayer — destroying and aborting publicKey=%s', publicKey);
@@ -230,13 +238,13 @@
 </script>
 
 <div
-	id={containerId}
 	class={className}
 	bind:this={containerEl}
 	data-viostream-player
 	data-viostream-public-key={publicKey}
-	data-viostream-sdk={`${SDK_NAME}@${SDK_VERSION}`}
 >
+	<div bind:this={embedTargetEl} data-viostream-embed-target></div>
+
 	{#if isLoading}
 		{#if loadingSnippet}
 			{@render loadingSnippet()}

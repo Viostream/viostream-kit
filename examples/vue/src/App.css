@@ -1,5 +1,12 @@
-.log-scroll {
-  max-height: 200px;
-  overflow-y: auto;
-  line-height: 1.6;
+@media (min-width: 992px) {
+  .config-panel {
+    height: calc(100vh - 200px);
+    display: flex;
+    flex-direction: column;
+  }
+}
+.skin-colour-picker {
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  width: 2.5em;
+  min-width: 2.5em;
 }
