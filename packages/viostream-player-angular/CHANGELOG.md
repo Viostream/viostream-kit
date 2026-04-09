@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.10](https://github.com/Viostream/viostream-kit/compare/player-angular-v0.1.9...player-angular-v0.1.10) (2026-04-09)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @viostream/viostream-player-core bumped from ^0.2.8 to ^0.2.9
+
 ## [0.1.9](https://github.com/Viostream/viostream-kit/compare/player-angular-v0.1.8...player-angular-v0.1.9) (2026-04-09)
 
 
