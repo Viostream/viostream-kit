@@ -140,7 +140,6 @@
 		debug('onMount publicKey=%s accountKey=%s containerId=%s', publicKey, accountKey, containerId);
 
 		let destroyed = false;
-		const unsubscribers: Array<() => void> = [];
 
 		async function init() {
 			try {
@@ -170,17 +169,9 @@
 				isLoading = false;
 				debug('init: player set, isLoading -> false publicKey=%s', publicKey);
 
-				// Wire up event callbacks from props
-				const wiredEvents: string[] = [];
-				for (const [eventName, getHandler] of EVENT_MAP) {
-					const handler = getHandler();
-					if (handler) {
-						const unsub = wrappedPlayer.on(eventName, handler);
-						unsubscribers.push(unsub);
-						wiredEvents.push(eventName);
-					}
-				}
-				debug('init: event wiring subscribed to [%s]', wiredEvents.join(', '));
+				// Event wiring is handled by the $effect block below, which
+				// runs reactively when `player` is set and re-wires when
+				// callback props change.
 
 				// Notify consumer that the player is ready
 				debug('init: firing onplayerready publicKey=%s', publicKey);
@@ -200,11 +191,8 @@
 		init();
 
 		return () => {
-			debug('cleanup publicKey=%s hasPlayer=%s unsubscribers=%d', publicKey, !!player, unsubscribers.length);
+			debug('cleanup publicKey=%s hasPlayer=%s', publicKey, !!player);
 			destroyed = true;
-			for (const unsub of unsubscribers) {
-				unsub();
-			}
 			player?.destroy();
 			player = undefined;
 		};

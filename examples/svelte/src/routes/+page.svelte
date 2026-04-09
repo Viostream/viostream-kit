@@ -7,6 +7,9 @@
 
 	let accountKey = $state("vc-100100100");
 	let publicKey = $state("nhedxonrxsyfee");
+	let forceAspectRatioEnabled = $state(false);
+	let forceAspectRatioValue = $state(1.7778);
+	let forceAspectRatio = $derived(forceAspectRatioEnabled ? forceAspectRatioValue : undefined);
 
 	let player: ViostreamPlayerInstance | undefined = $state();
 	let currentTime = $state(0);
@@ -27,7 +30,6 @@
 		player = p;
 		addLog("Player ready");
 
-		// Fetch initial state
 		p.getDuration().then((d) => (duration = d));
 		p.getPaused().then((v) => (isPaused = v));
 		p.getMuted().then((v) => (isMuted = v));
@@ -112,16 +114,43 @@
 						placeholder="nhedxonrxsyfee"
 					/>
 				</div>
+				<div class="col-sm-6">
+					<div class="form-check mb-2">
+						<input
+							id="force-aspect-ratio-toggle"
+							type="checkbox"
+							class="form-check-input"
+							bind:checked={forceAspectRatioEnabled}
+						/>
+						<label class="form-check-label fw-semibold" for="force-aspect-ratio-toggle"
+							>Force Aspect Ratio</label
+						>
+					</div>
+					<input
+						id="force-aspect-ratio"
+						type="number"
+						class="form-control font-monospace"
+						bind:value={forceAspectRatioValue}
+						disabled={!forceAspectRatioEnabled}
+						step="0.0001"
+						min="0.0001"
+						placeholder="1.7778"
+					/>
+					<div class="form-text">
+						e.g. 1.7778 (16:9), 1.3333 (4:3), 0.5625 (9:16)
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
 
 	<!-- Player -->
-	{#key `${accountKey}:${publicKey}`}
+	{#key `${accountKey}:${publicKey}:${forceAspectRatio}`}
 		<div class="mb-4">
 			<ViostreamPlayer
 				{accountKey}
 				{publicKey}
+				{forceAspectRatio}
 				displayTitle={true}
 				sharing={true}
 				speedSelector={true}

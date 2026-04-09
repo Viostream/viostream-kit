@@ -134,4 +134,41 @@ describe('embed() — DOM behavior', () => {
     expect(window.$viostream).toBeUndefined();
     window.$viostream = original;
   });
+
+  it('sets data-aspect-ratio-forced and correct padding-top when forceAspectRatio is passed', () => {
+    const api = createEmbedApi();
+    api.embed('test-key', TARGET_ID, {}, 1.3333);
+
+    // The container with data-aspect-ratio-forced should exist
+    const forced = targetDiv.querySelector('[data-aspect-ratio-forced]') as HTMLElement | null;
+    expect(forced).not.toBeNull();
+    expect(forced?.dataset.aspectRatioForced).toBe('1.3333');
+
+    // padding-top should reflect 1/1.3333 * 100 ≈ 75%
+    const paddingTop = forced?.style.paddingTop ?? '';
+    expect(paddingTop).toContain('75');
+
+    // Payload should have dynamicSizing: false
+    const iframe = targetDiv.querySelector('iframe');
+    const src = iframe?.getAttribute('src') ?? '';
+    const payloadMatch = src.match(/payload=([^&]+)/);
+    expect(payloadMatch).not.toBeNull();
+    const payload = JSON.parse(atob(payloadMatch![1]));
+    expect(payload.dynamicSizing).toBe(false);
+  });
+
+  it('does NOT set data-aspect-ratio-forced when forceAspectRatio is undefined', () => {
+    const api = createEmbedApi();
+    api.embed('test-key', TARGET_ID, {});
+
+    const forced = targetDiv.querySelector('[data-aspect-ratio-forced]');
+    expect(forced).toBeNull();
+
+    // Payload should have dynamicSizing: true
+    const iframe = targetDiv.querySelector('iframe');
+    const src = iframe?.getAttribute('src') ?? '';
+    const payloadMatch = src.match(/payload=([^&]+)/);
+    const payload = JSON.parse(atob(payloadMatch![1]));
+    expect(payload.dynamicSizing).toBe(true);
+  });
 });

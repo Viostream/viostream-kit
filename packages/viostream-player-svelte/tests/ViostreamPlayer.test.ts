@@ -393,4 +393,66 @@ describe('ViostreamPlayer component', () => {
 			expect(destroySpy).toHaveBeenCalledOnce();
 		});
 	});
+
+	// -----------------------------------------------------------------------
+	// Event callbacks
+	// -----------------------------------------------------------------------
+	describe('event callbacks', () => {
+		it('fires an event callback exactly once per raw player event', async () => {
+			const onEnded = vi.fn();
+
+			render(ViostreamPlayer, {
+				props: {
+					accountKey: 'vc-test',
+					publicKey: 'pk-test',
+					onended: onEnded
+				}
+			});
+
+			await vi.waitFor(() => {
+				expect(mockGlobal.embed).toHaveBeenCalledOnce();
+			});
+
+			// Find the proxy registered for the 'ended' event on the raw player.
+			// wrapRawPlayer (the real implementation) calls raw.on(eventName, proxy)
+			// for each event the component subscribes to.
+			const rawOnMock = mockGlobal._rawPlayer.on as ReturnType<typeof vi.fn>;
+			const rawOnCalls = rawOnMock.mock.calls as Array<[string, ViostreamEventHandler]>;
+			const endedProxies = rawOnCalls.filter(([name]) => name === 'ended');
+
+			// There should be exactly one proxy registered for 'ended'
+			expect(endedProxies).toHaveLength(1);
+
+			// Simulate the raw player firing 'ended'
+			endedProxies[0][1](undefined as unknown);
+
+			expect(onEnded).toHaveBeenCalledOnce();
+		});
+
+		it('does not register duplicate proxies for the same event', async () => {
+			const onPlay = vi.fn();
+			const onPause = vi.fn();
+
+			render(ViostreamPlayer, {
+				props: {
+					accountKey: 'vc-test',
+					publicKey: 'pk-test',
+					onplay: onPlay,
+					onpause: onPause
+				}
+			});
+
+			await vi.waitFor(() => {
+				expect(mockGlobal.embed).toHaveBeenCalledOnce();
+			});
+
+			const rawOnMock2 = mockGlobal._rawPlayer.on as ReturnType<typeof vi.fn>;
+			const rawOnCalls = rawOnMock2.mock.calls as Array<[string, ViostreamEventHandler]>;
+			const playProxies = rawOnCalls.filter(([name]) => name === 'play');
+			const pauseProxies = rawOnCalls.filter(([name]) => name === 'pause');
+
+			expect(playProxies).toHaveLength(1);
+			expect(pauseProxies).toHaveLength(1);
+		});
+	});
 });

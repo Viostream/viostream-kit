@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@viostream/viostream-player-svelte": "^0.1.0",
-    "@viostream/viostream-player-core": "^0.1.0"
+    "@viostream/viostream-player-svelte": "*",
+    "@viostream/viostream-player-core": "*"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^4.0.0",
