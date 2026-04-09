@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.10](https://github.com/Viostream/viostream-kit/compare/player-core-v0.2.9...player-core-v0.2.10) (2026-04-09)
+
+
+### Bug Fixes
+
+* **player-core:** guard _call and _get against undefined remote befor… ([aad36e3](https://github.com/Viostream/viostream-kit/commit/aad36e30ce6e3907e17a1186403f41db634742d7))
+* **player-core:** guard _call and _get against undefined remote before penpal handshake ([62118c0](https://github.com/Viostream/viostream-kit/commit/62118c07359df7aa36fdd00b2230abcc9a2260fc))
+
 ## [0.2.9](https://github.com/Viostream/viostream-kit/compare/player-core-v0.2.8...player-core-v0.2.9) (2026-04-09)
 
 
