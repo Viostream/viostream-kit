@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.9](https://github.com/Viostream/viostream-kit/compare/player-core-v0.2.8...player-core-v0.2.9) (2026-04-09)
+
+
+### Features
+
+* overhaul example pages with two-column layout, all embed option… ([4450caa](https://github.com/Viostream/viostream-kit/commit/4450caa2a976e6def26e8e27b1dc6ddf65625b2d))
+
 ## [0.2.8](https://github.com/Viostream/viostream-kit/compare/player-core-v0.2.7...player-core-v0.2.8) (2026-04-09)
 
 
