@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.8](https://github.com/Viostream/viostream-kit/compare/player-svelte-v0.2.7...player-svelte-v0.2.8) (2026-04-09)
+
+
+### Bug Fixes
+
+* **player-svelte:** remove duplicate event wiring that caused callbac… ([1be838f](https://github.com/Viostream/viostream-kit/commit/1be838f287be25fc70b85fc4b892c870ec792ca6))
+* **player-svelte:** remove duplicate event wiring that caused callbacks to fire twice ([3b39a5b](https://github.com/Viostream/viostream-kit/commit/3b39a5b64759bd9ddaab693a89186c484225c291))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @viostream/viostream-player-core bumped from ^0.2.7 to ^0.2.8
+
 ## [0.2.7](https://github.com/Viostream/viostream-kit/compare/player-svelte-v0.2.6...player-svelte-v0.2.7) (2026-04-08)
 
 
