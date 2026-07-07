@@ -8,7 +8,7 @@ Angular 17+ SDK for the [Viostream](https://www.viostream.com) video player. Emb
 
 ## Requirements
 
-- Angular 17, 18, or 19
+- Angular 17+
 - A Viostream account key (found on the **Settings > General** page in Viostream)
 
 ## Installation
