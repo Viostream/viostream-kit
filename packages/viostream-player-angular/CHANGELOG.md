@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.12](https://github.com/Viostream/viostream-kit/compare/player-angular-v0.1.11...player-angular-v0.1.12) (2026-07-07)
+
+
+### Features
+
+* update npm dependencies, add support for angular 20-22 ([db8487a](https://github.com/Viostream/viostream-kit/commit/db8487a1a367633a67460db2f5d408474f5a975b))
+* update npm dependencies, add support for angular 20-22 ([0330d05](https://github.com/Viostream/viostream-kit/commit/0330d05d072effbd864457aa798c5d4a40eec853))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @viostream/viostream-player-core bumped from ^0.2.10 to ^0.2.11
+
 ## [0.1.11](https://github.com/Viostream/viostream-kit/compare/player-angular-v0.1.10...player-angular-v0.1.11) (2026-04-09)
 
 
