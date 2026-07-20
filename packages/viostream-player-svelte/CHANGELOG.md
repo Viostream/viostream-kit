@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.12](https://github.com/Viostream/viostream-kit/compare/player-svelte-v0.2.11...player-svelte-v0.2.12) (2026-07-20)
+
+
+### Bug Fixes
+
+* remove stray workspace lockfiles causing untracked dependabot alerts ([8984133](https://github.com/Viostream/viostream-kit/commit/89841339cb766ebc9ed9eed91f83b2797a3e6ade))
+* remove stray workspace lockfiles causing untracked dependabot alerts ([5397ecb](https://github.com/Viostream/viostream-kit/commit/5397ecbcea3b146d389a87b1a52881f3fd49840c))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @viostream/viostream-player-core bumped from ^0.2.11 to ^0.2.12
+
 ## [0.2.11](https://github.com/Viostream/viostream-kit/compare/player-svelte-v0.2.10...player-svelte-v0.2.11) (2026-07-07)
 
 
