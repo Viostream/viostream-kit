@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.12](https://github.com/Viostream/viostream-kit/compare/player-react-v0.2.11...player-react-v0.2.12) (2026-07-20)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @viostream/viostream-player-core bumped from ^0.2.11 to ^0.2.12
+
 ## [0.2.11](https://github.com/Viostream/viostream-kit/compare/player-react-v0.2.10...player-react-v0.2.11) (2026-07-07)
 
 
