@@ -61,6 +61,7 @@
 		transcriptDownload,
 		useSettingsMenu,
 		forceAspectRatio,
+		previewMode,
 
 		// Event callbacks
 		onplay,
@@ -117,6 +118,7 @@
 		if (startTime !== undefined) opts.startTime = startTime;
 		if (transcriptDownload !== undefined) opts.transcriptDownload = transcriptDownload;
 		if (useSettingsMenu !== undefined) opts.useSettingsMenu = useSettingsMenu;
+		if (previewMode !== undefined) opts.previewMode = previewMode;
 		return opts;
 	}
 

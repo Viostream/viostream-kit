@@ -55,6 +55,12 @@ export interface ViostreamEmbedOptions {
    * When set, `dynamicSizing` is disabled automatically.
    */
   forceAspectRatio?: number;
+  /**
+   * Strip the control bar to a minimal set (play / volume / live-indicator only).
+   * Intended for preview or thumbnail player slots where a full control bar would
+   * be visually distracting. Default: `false`.
+   */
+  previewMode?: boolean;
 }
 
 // ---------------------------------------------------------------------------

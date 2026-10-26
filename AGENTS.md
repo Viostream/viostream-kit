@@ -481,6 +481,7 @@ following are the **only** user-facing embed option properties:
 | `startTime` | `string` | Seek to a specific time (in seconds) before playback begins. |
 | `transcriptDownload` | `boolean` | Allow transcript download. Default: `false`. |
 | `useSettingsMenu` | `boolean` | Enable the settings menu on the control bar. Default: `false`. |
+| `previewMode` | `boolean` | Strip the control bar to play/volume/live-indicator only. For preview/thumbnail player slots. Default: `false`. |
 
 Internal-only API properties (`documentLocation`, `dynamicSizing`, `apiEmbed`)
 are set automatically by the API script and must **never** be exposed as
