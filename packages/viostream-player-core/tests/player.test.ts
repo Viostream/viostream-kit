@@ -326,12 +326,12 @@ describe('wrapRawPlayer', () => {
       expect(targetDiv.innerHTML).toBe('');
     });
 
-    it('sets raw to undefined after destroy', () => {
+    it('sets raw to undefined after destroy', async () => {
       const player = wrapRawPlayer(mockRaw, TARGET_ID);
 
       player.destroy();
       // Player should be in destroyed state — getters reject
-      expect(player.getVolume()).rejects.toThrow('Player has been destroyed');
+      await expect(player.getVolume()).rejects.toThrow('Player has been destroyed');
     });
 
     it('getters reject after destroy', async () => {
