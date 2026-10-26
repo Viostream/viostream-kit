@@ -1,6 +1,6 @@
 {
   "name": "@viostream/viostream-player-react",
-  "version": "0.2.13",
+  "version": "1.0.0",
   "description": "React 18+ SDK for the Viostream video player — embed, control, and listen to player events",
   "license": "MIT",
   "publishConfig": {
@@ -28,7 +28,7 @@
     "!dist/**/*.spec.*"
   ],
   "dependencies": {
-    "@viostream/viostream-player-core": "^0.2.13",
+    "@viostream/viostream-player-core": "^1.0.0",
     "debug": "^4.4.3"
   },
   "peerDependencies": {
@@ -45,8 +45,8 @@
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
     "typescript": "^5.7.0",
-    "vite": "^6.0.0",
-    "vitest": "^4.0.18"
+    "vite": "^6.4.5",
+    "vitest": "^5.0.5"
   },
   "keywords": [
     "react",
