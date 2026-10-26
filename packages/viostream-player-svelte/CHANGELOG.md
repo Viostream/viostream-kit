@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.13](https://github.com/Viostream/viostream-kit/compare/player-svelte-v0.2.12...player-svelte-v0.2.13) (2026-10-26)
+
+
+### Features
+
+* **player-core,player-svelte:** add previewMode embed option ([92e08a6](https://github.com/Viostream/viostream-kit/commit/92e08a678646587993df4e5839d36d83a69e4f35))
+* **player-core,player-svelte:** add previewMode embed option ([5c0aa4f](https://github.com/Viostream/viostream-kit/commit/5c0aa4f7707d22d42030ccf41bfce92131c2631a))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @viostream/viostream-player-core bumped from ^0.2.12 to ^0.2.13
+
 ## [0.2.12](https://github.com/Viostream/viostream-kit/compare/player-svelte-v0.2.11...player-svelte-v0.2.12) (2026-07-20)
 
 
