@@ -37,7 +37,7 @@ jobs:
 
       - name: Publish player-core
         if: ${{ steps.release.outputs['packages/viostream-player-core--release_created'] }}
-        run: npm publish
+        run: npm publish --access public
         working-directory: packages/viostream-player-core
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -49,7 +49,7 @@ jobs:
 
       - name: Publish player-svelte
         if: ${{ steps.release.outputs['packages/viostream-player-svelte--release_created'] }}
-        run: npm publish
+        run: npm publish --access public
         working-directory: packages/viostream-player-svelte
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -61,7 +61,7 @@ jobs:
 
       - name: Publish player-react
         if: ${{ steps.release.outputs['packages/viostream-player-react--release_created'] }}
-        run: npm publish
+        run: npm publish --access public
         working-directory: packages/viostream-player-react
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -73,7 +73,7 @@ jobs:
 
       - name: Publish player-vue
         if: ${{ steps.release.outputs['packages/viostream-player-vue--release_created'] }}
-        run: npm publish
+        run: npm publish --access public
         working-directory: packages/viostream-player-vue
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
