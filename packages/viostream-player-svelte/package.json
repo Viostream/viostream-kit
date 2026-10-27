@@ -1,6 +1,6 @@
 {
   "name": "@viostream/viostream-player-svelte",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Svelte 5 SDK for the Viostream video player — embed, control, and listen to player events",
   "license": "MIT",
   "publishConfig": {
@@ -31,7 +31,7 @@
     "!dist/**/*.spec.*"
   ],
   "dependencies": {
-    "@viostream/viostream-player-core": "^1.0.0",
+    "@viostream/viostream-player-core": "^2.0.0",
     "debug": "^4.4.3"
   },
   "peerDependencies": {

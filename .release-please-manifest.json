@@ -1,7 +1,7 @@
 {
-  "packages/viostream-player-core": "1.0.0",
-  "packages/viostream-player-svelte": "1.0.0",
-  "packages/viostream-player-react": "1.0.0",
-  "packages/viostream-player-vue": "1.0.0",
-  "packages/viostream-player-angular": "1.0.0"
+  "packages/viostream-player-core": "2.0.0",
+  "packages/viostream-player-svelte": "2.0.0",
+  "packages/viostream-player-react": "2.0.0",
+  "packages/viostream-player-vue": "2.0.0",
+  "packages/viostream-player-angular": "2.0.0"
 }

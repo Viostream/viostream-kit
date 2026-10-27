@@ -1,5 +1,38 @@
 # Changelog
 
+## [2.0.0](https://github.com/Viostream/viostream-kit/compare/player-angular-v1.0.0...player-angular-v2.0.0) (2026-10-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* version bump to 1.0.0 across all packages
+
+### Features
+
+* add debug logging across all packages using 'debug' package ([b196883](https://github.com/Viostream/viostream-kit/commit/b1968832b04b52f45d13fc0de8f055e57bbb2fc5))
+* add Viostream Angular SDK with player component and demo application ([228b8d5](https://github.com/Viostream/viostream-kit/commit/228b8d53303dc5c699570106e0559bb1052c03e0))
+* bump all packages to v1.0.0 ([d702718](https://github.com/Viostream/viostream-kit/commit/d702718963708e60a7c7daeda1e38196c99e7547))
+* **player-core:** bundle embed API, move tests outside src, add pack smoke tests ([782947e](https://github.com/Viostream/viostream-kit/commit/782947e9373145e5022cea921691d9bbf5fe399a))
+* **player-core:** bundle embed API, move tests outside src, add pack… ([e2b7e7e](https://github.com/Viostream/viostream-kit/commit/e2b7e7ed66687aad57159ab88a7c322008d03e1c))
+* update npm dependencies, add support for angular 20-22 ([db8487a](https://github.com/Viostream/viostream-kit/commit/db8487a1a367633a67460db2f5d408474f5a975b))
+* update npm dependencies, add support for angular 20-22 ([0330d05](https://github.com/Viostream/viostream-kit/commit/0330d05d072effbd864457aa798c5d4a40eec853))
+
+
+### Bug Fixes
+
+* **player-angular:** use extensionless import for version module ([5a8393f](https://github.com/Viostream/viostream-kit/commit/5a8393fc5bd1fc9f24176407d7af37d2f76a29c1))
+* sync all packages for release ([578dae0](https://github.com/Viostream/viostream-kit/commit/578dae0f251c13a273fa58a26bca1b8c41a4725b))
+* sync all packages for release ([2fa8079](https://github.com/Viostream/viostream-kit/commit/2fa807934db3c72a780a47242c2fe17d4c6948e6))
+* sync all packages for release ([0713af4](https://github.com/Viostream/viostream-kit/commit/0713af428c27dcf12d0c631bdf68b0eb747d5e10))
+* sync all packages for release ([13f26bf](https://github.com/Viostream/viostream-kit/commit/13f26bfcf2549c96be59c77f586ebbe6b039a3bb))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @viostream/viostream-player-core bumped from ^1.0.0 to ^2.0.0
+
 ## [0.1.14](https://github.com/Viostream/viostream-kit/compare/player-angular-v0.1.13...player-angular-v0.1.14) (2026-10-26)
 
 
