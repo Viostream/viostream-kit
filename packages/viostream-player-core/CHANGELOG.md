@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/Viostream/viostream-kit/compare/player-core-v1.2.0...player-core-v1.2.1) (2026-11-03)
+
+
+### Bug Fixes
+
+* **ci:** add precheck and pretest hooks to generate version.ts ([73b7bf1](https://github.com/Viostream/viostream-kit/commit/73b7bf193e8dfb1423bcde0673930304e9b5cecb))
+
 ## [1.2.0](https://github.com/Viostream/viostream-kit/compare/player-core-v1.1.0...player-core-v1.2.0) (2026-11-03)
 
 

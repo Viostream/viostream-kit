@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.0.3](https://github.com/Viostream/viostream-kit/compare/player-vue-v1.0.2...player-vue-v1.0.3) (2026-11-03)
+
+
+### Bug Fixes
+
+* **ci:** add precheck and pretest hooks to generate version.ts ([73b7bf1](https://github.com/Viostream/viostream-kit/commit/73b7bf193e8dfb1423bcde0673930304e9b5cecb))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @viostream/viostream-player-core bumped from ^1.2.0 to ^1.2.1
+
 ## [1.0.2](https://github.com/Viostream/viostream-kit/compare/player-vue-v1.0.1...player-vue-v1.0.2) (2026-11-03)
 
 
