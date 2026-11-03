@@ -3,13 +3,8 @@
 // This file is an unmodified copy of the upstream Viostream embed API ESM
 // bundle. No patches are applied — the `config()` function natively reads
 // `window.playerDomain` for host resolution and defaults to
-// `play.viostream.com`.
-//
-// When updating this file from a new upstream build, replace the content
-// below the `/* eslint-disable */` pragma. No manual patches required.
-
-/* eslint-disable */
-
+// `play.viostream.com`. TypeScript type checking is suppressed because this
+// is a plain JS ESM build, not authored TypeScript.
 const byteToHex = [];
 for (let i = 0; i < 256; ++i) {
   byteToHex.push((i + 256).toString(16).slice(1));
@@ -65,11 +60,11 @@ function getAugmentedNamespace(n) {
     a.prototype = f.prototype;
   } else a = {};
   Object.defineProperty(a, "__esModule", { value: true });
-  Object.keys(n).forEach(function (k) {
+  Object.keys(n).forEach(function(k) {
     var d = Object.getOwnPropertyDescriptor(n, k);
     Object.defineProperty(a, k, d.get ? d : {
       enumerable: true,
-      get: function () {
+      get: function() {
         return n[k];
       }
     });
@@ -136,20 +131,21 @@ const window$1 = /* @__PURE__ */ getDefaultExportFromCjs(windowExports);
 const defaultPLayerDomain = "play.viostream.com";
 function config() {
   return {
-    location: window$1 && window$1.location ? window$1.location.href : null,
-    playerDomain: (window$1 && window$1.playerDomain) ?? defaultPLayerDomain,
-    trackerParamsOverride: window$1 && window$1.trackerParams ? window$1.trackerParams : null,
-    isLocal: window$1 && window$1.location && window$1.location.host && window$1.location.host.indexOf("localhost") !== -1,
-    editorMode: window$1 && window$1.editorMode ? window$1.editorMode : false
+    location: window$1?.location ? window$1.location.href : null,
+    playerDomain: window$1?.playerDomain ?? defaultPLayerDomain,
+    trackerParamsOverride: window$1?.trackerParams ? window$1.trackerParams : null,
+    isLocal: window$1?.location?.host?.includes("localhost"),
+    editorMode: window$1?.editorMode ? window$1.editorMode : false
   };
 }
-const GenerateFrameUrl = (embedKey, playerSettings, embedId) => {
+const GenerateFrameUrl = (embedKey, playerSettings, embedId, domainOverride) => {
   const { playerDomain, trackerParamsOverride } = config();
+  const domain = domainOverride || playerDomain;
   if (trackerParamsOverride) {
     playerSettings.trackerParams = trackerParamsOverride;
   }
   const payload = btoa(JSON.stringify(playerSettings));
-  let frameUrl = `https://${playerDomain}/iframe/${embedKey}?payload=${payload}`;
+  let frameUrl = `https://${domain}/iframe/${embedKey}?payload=${payload}`;
   if (playerSettings.playerKey) {
     frameUrl = `${frameUrl}&playerKey=${playerSettings.playerKey}`;
   }
@@ -170,9 +166,9 @@ const writeInnerTarget = (targetId, aspectRatio, maxHeight) => {
     innerTarget.style.maxWidth = `${maxWidth}px`;
   return innerTarget;
 };
-const frameWriter = (embedKey, targetId, playerSettings, forceAspectRatio = void 0, maxHeight = 0) => {
+const frameWriter = (embedKey, targetId, playerSettings, forceAspectRatio = void 0, maxHeight = 0, domainOverride = void 0) => {
   const embedId = `viostream-player-${embedKey}-${v4()}`.toLocaleLowerCase();
-  const frameUrl = GenerateFrameUrl(embedKey, playerSettings, embedId);
+  const frameUrl = GenerateFrameUrl(embedKey, playerSettings, embedId, domainOverride);
   const aspectRatio = forceAspectRatio || 1.7778;
   let padding = `${Number.isNaN(aspectRatio) ? 56.25 : 1 / aspectRatio * 100}%`;
   if (playerSettings.playerStyle === "audio") {
@@ -681,13 +677,13 @@ var shakeHands = ({
   const handleSynMessage = (message) => {
     log?.(`Received handshake SYN`, message);
     if (message.participantId === remoteParticipantId && // TODO: Used for backward-compatibility. Remove in next major version.
-      remoteParticipantId !== DEPRECATED_PENPAL_PARTICIPANT_ID) {
+    remoteParticipantId !== DEPRECATED_PENPAL_PARTICIPANT_ID) {
       return;
     }
     remoteParticipantId = message.participantId;
     sendSynMessage();
     const isHandshakeLeader = participantId > remoteParticipantId || // TODO: Used for backward-compatibility. Remove in next major version.
-      remoteParticipantId === DEPRECATED_PENPAL_PARTICIPANT_ID;
+    remoteParticipantId === DEPRECATED_PENPAL_PARTICIPANT_ID;
     if (!isHandshakeLeader) {
       return;
     }
@@ -860,9 +856,9 @@ var WindowMessenger = class {
       return;
     }
     if (isAck1Message(message) || // If the child is using a previous version of Penpal, we need to
-      // downgrade the message and send it through the window rather than
-      // the port because older versions of Penpal don't use MessagePorts.
-      this.#isChildUsingDeprecatedProtocol) {
+    // downgrade the message and send it through the window rather than
+    // the port because older versions of Penpal don't use MessagePorts.
+    this.#isChildUsingDeprecatedProtocol) {
       const payload = this.#isChildUsingDeprecatedProtocol ? downgradeMessage(message) : message;
       const originForSending = this.#getOriginForSendingMessage(message);
       this.#remoteWindow.postMessage(payload, {
@@ -965,8 +961,8 @@ var WindowMessenger = class {
       this.#concreteRemoteOrigin = origin;
     }
     if (isAck2Message(data) && // Previous versions of Penpal don't use MessagePorts and do all
-      // communication through the window.
-      !this.#isChildUsingDeprecatedProtocol) {
+    // communication through the window.
+    !this.#isChildUsingDeprecatedProtocol) {
       this.#port = ports[0];
       if (!this.#port) {
         this.#log?.("Ignoring ACK2 because it did not include a MessagePort");
@@ -1010,17 +1006,16 @@ class PlayerCommandApi {
       remoteWindow: frame.el.contentWindow,
       allowedOrigins: [`https://${playerDomain}`]
     });
-    let cachedThis = this;
     this.connection = connect_default({
       messenger,
       channel: frame.embedId,
       log: debugMode ? debug_default("parent") : null,
       // Methods the parent window is exposing to the iframe window.
       methods: {
-        emit(event, data) {
-          if (event in cachedThis.events) {
-            cachedThis.events[event].forEach((callback) => {
-              callback.call(this, data);
+        emit: (event, data) => {
+          if (event in this.events) {
+            this.events[event].forEach((callback) => {
+              callback(data);
             });
           }
         }
@@ -1047,10 +1042,9 @@ class PlayerCommandApi {
     }
   }
   remoteConnect() {
-    let cachedThis = this;
     if (!this.remote) {
       this.connection.promise.then((remote) => {
-        cachedThis.remote = remote;
+        this.remote = remote;
       });
     }
   }
@@ -1154,6 +1148,15 @@ class PlayerCommandApi {
   reload(payload) {
     this._call("reload", payload);
   }
+  /**
+   * Apply setting changes to the running player without reloading.
+   * Only CSS-toggleable settings are applied immediately; unsupported
+   * keys are silently ignored.
+   * @param {Partial<import('../../../players/videojs/lib/optionsMapper').PlayerSettings>} changes
+   */
+  updateSettings(changes) {
+    this._call("updateSettings", changes);
+  }
   /** private api 
    *  Get the current media's duration. 
    * @param {function} callback
@@ -1241,4 +1244,3 @@ function embed(embedKey, targetId, playerSettings = {}, forceAspectRatio = void 
 export {
   embed as default
 };
-
