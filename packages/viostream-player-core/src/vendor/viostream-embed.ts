@@ -26,5 +26,8 @@ import embed from './embed-api.js';
  * @returns A `ViostreamGlobal`-compatible object with an `embed()` method.
  */
 export function createEmbedApi(): ViostreamGlobal {
-  return { embed } as ViostreamGlobal;
+  // Cast via unknown: the vendored embed API is untyped JS and its returned
+  // RawViostreamPlayerInstance is filled out at runtime by playerResponseApi.js
+  // in the Player project. TypeScript cannot verify the full shape statically.
+  return { embed } as unknown as ViostreamGlobal;
 }

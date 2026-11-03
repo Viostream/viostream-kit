@@ -192,6 +192,9 @@ export function wrapRawPlayer(raw: RawViostreamPlayerInstance, targetId: string)
     reload(options?: Record<string, unknown>) {
       raw.reload(options);
     },
+    updateSettings(changes: Partial<ViostreamEmbedOptions>) {
+      raw.updateSettings(changes);
+    },
 
     // -- Promise-based getters --------------------------------------------
     getVolume() {
