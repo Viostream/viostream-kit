@@ -86,6 +86,18 @@ describe('wrapRawPlayer', () => {
       player.reload();
       expect(mockRaw.reload).toHaveBeenCalledWith(undefined);
     });
+
+    it('updateSettings() delegates to raw.updateSettings()', () => {
+      const player = wrapRawPlayer(mockRaw, TARGET_ID);
+      player.updateSettings({ previewMode: true });
+      expect(mockRaw.updateSettings).toHaveBeenCalledWith({ previewMode: true });
+    });
+
+    it('updateSettings() passes arbitrary partial changes', () => {
+      const player = wrapRawPlayer(mockRaw, TARGET_ID);
+      player.updateSettings({ previewMode: false, displayTitle: true });
+      expect(mockRaw.updateSettings).toHaveBeenCalledWith({ previewMode: false, displayTitle: true });
+    });
   });
 
   // -----------------------------------------------------------------------

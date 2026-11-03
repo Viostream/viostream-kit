@@ -149,6 +149,12 @@ export interface RawViostreamPlayerInstance {
   getAspectRatio(cb: (ratio: number) => void): void;
   getHeight(cb: (height: number) => void): void;
   reload(options?: Record<string, unknown>): void;
+  /**
+   * Apply setting changes to the running player without reloading the iframe.
+   * Only CSS-toggleable settings are applied immediately; unsupported keys
+   * are silently ignored.
+   */
+  updateSettings(changes: Partial<ViostreamEmbedOptions>): void;
   on(event: string, handler: ViostreamEventHandler): void;
 }
 
@@ -193,6 +199,13 @@ export interface ViostreamPlayer {
   setCurrentTime(seconds: number, play?: boolean): void;
   /** Reload the player, optionally with new settings. */
   reload(options?: Record<string, unknown>): void;
+  /**
+   * Apply setting changes to the running player without reloading the iframe.
+   * Only CSS-toggleable settings are applied immediately (e.g. `previewMode`);
+   * unsupported keys are silently ignored.
+   * @param changes  Partial settings object — only the keys you want to change.
+   */
+  updateSettings(changes: Partial<ViostreamEmbedOptions>): void;
 
   // -- Getters (promise-based) --------------------------------------------
   /** Get the current volume (0–1). */

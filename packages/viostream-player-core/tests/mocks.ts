@@ -50,6 +50,7 @@ export function createMockRawPlayer(overrides: Partial<RawViostreamPlayerInstanc
     getAspectRatio: makeGetter('getAspectRatio'),
     getHeight: makeGetter('getHeight'),
     reload: vi.fn(),
+    updateSettings: vi.fn(),
     on: vi.fn(),
     ...overrides,
   };
