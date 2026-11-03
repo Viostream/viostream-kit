@@ -40,6 +40,7 @@ function createMockRawPlayer(): RawViostreamPlayerInstance {
     getAspectRatio: vi.fn((cb: (v: number) => void) => cb(1.7778)),
     getHeight: vi.fn((cb: (v: number) => void) => cb(360)),
     reload: vi.fn(),
+    updateSettings: vi.fn(),
     on: vi.fn(),
   };
 }
