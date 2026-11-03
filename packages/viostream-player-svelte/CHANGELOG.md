@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.2.1](https://github.com/Viostream/viostream-kit/compare/player-svelte-v1.2.0...player-svelte-v1.2.1) (2026-11-03)
+
+
+### Bug Fixes
+
+* **ci:** add precheck and pretest hooks to generate version.ts ([73b7bf1](https://github.com/Viostream/viostream-kit/commit/73b7bf193e8dfb1423bcde0673930304e9b5cecb))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @viostream/viostream-player-core bumped from ^1.2.0 to ^1.2.1
+
 ## [1.2.0](https://github.com/Viostream/viostream-kit/compare/player-svelte-v1.1.0...player-svelte-v1.2.0) (2026-11-03)
 
 
