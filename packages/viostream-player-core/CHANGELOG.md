@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.0](https://github.com/Viostream/viostream-kit/compare/player-core-v1.1.0...player-core-v1.2.0) (2026-11-03)
+
+
+### Features
+
+* **player-core:** update vendored embed-api with updateSettings() ([f3a91e8](https://github.com/Viostream/viostream-kit/commit/f3a91e8a6c69ffabc728ff779d4d67306ef4284a))
+* **player-core:** update vendored embed-api with updateSettings() ([f64a86d](https://github.com/Viostream/viostream-kit/commit/f64a86dc5a65a0784b6ec6750724deb38877d8df))
+
 ## [1.1.0](https://github.com/Viostream/viostream-kit/compare/player-core-v1.0.0...player-core-v1.1.0) (2026-11-03)
 
 
