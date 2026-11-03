@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.1.0](https://github.com/Viostream/viostream-kit/compare/player-svelte-v1.0.0...player-svelte-v1.1.0) (2026-11-03)
+
+
+### Features
+
+* **player-core:** add updateSettings() method for live CSS-toggle settings ([6e05364](https://github.com/Viostream/viostream-kit/commit/6e053648d0efb6d1ef6d21e3f647bc7abb68029b))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @viostream/viostream-player-core bumped from ^1.0.0 to ^1.1.0
+
 ## [0.2.13](https://github.com/Viostream/viostream-kit/compare/player-svelte-v0.2.12...player-svelte-v0.2.13) (2026-10-26)
 
 
