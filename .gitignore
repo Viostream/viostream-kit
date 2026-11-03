@@ -33,3 +33,7 @@ npm-debug.log*
 
 # Type checking cache
 *.tsbuildinfo
+
+# Auto-generated version files (written by scripts/sync-version.mjs at build time)
+packages/*/src/version.ts
+packages/*/src/lib/version.ts
