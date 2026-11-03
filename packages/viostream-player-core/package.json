@@ -9,6 +9,8 @@
   "type": "module",
   "scripts": {
     "prebuild": "node ../../scripts/sync-version.mjs",
+    "precheck": "node ../../scripts/sync-version.mjs",
+    "pretest": "node ../../scripts/sync-version.mjs",
     "build": "tsc",
     "check": "tsc --noEmit",
     "test": "vitest run",
