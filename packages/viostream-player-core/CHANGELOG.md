@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/Viostream/viostream-kit/compare/player-core-v1.0.0...player-core-v1.1.0) (2026-11-03)
+
+
+### Features
+
+* **player-core:** add updateSettings() method for live CSS-toggle settings ([6e05364](https://github.com/Viostream/viostream-kit/commit/6e053648d0efb6d1ef6d21e3f647bc7abb68029b))
+
 ## [0.2.13](https://github.com/Viostream/viostream-kit/compare/player-core-v0.2.12...player-core-v0.2.13) (2026-10-26)
 
 
