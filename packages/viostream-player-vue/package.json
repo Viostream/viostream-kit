@@ -9,6 +9,8 @@
   "type": "module",
   "scripts": {
     "prebuild": "node ../../scripts/sync-version.mjs",
+    "precheck": "node ../../scripts/sync-version.mjs",
+    "pretest": "node ../../scripts/sync-version.mjs",
     "build": "vue-tsc -b && vite build",
     "check": "vue-tsc --noEmit",
     "test": "vitest run",
