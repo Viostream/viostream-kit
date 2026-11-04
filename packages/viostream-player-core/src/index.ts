@@ -29,7 +29,7 @@ export { wrapRawPlayer, normalizeForceAspectRatio } from './player.js';
 // Bundled embed API
 export { getViostreamApi } from './api.js';
 
-// Script loader (deprecated — kept for backward compatibility)
+// Script loader
 export { loadViostream } from './loader.js';
 
 // Types — re-export everything so consumers can import types

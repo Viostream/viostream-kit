@@ -403,6 +403,41 @@ Branch: fix/missing-config
 - When adding a new framework wrapper, mirror the structure of `packages/viostream-player-svelte`.
 - **Always** use Conventional Commits with a `Branch:` footer.
 
+## Release Process
+
+Releases are fully automated via [release-please](https://github.com/googleapis/release-please).
+
+### How it works
+
+1. Merge a `feat:` or `fix:` PR to `main` → release-please opens a **"chore: release main"** PR
+   bumping versions and updating CHANGELOGs.
+2. Merge the release PR → release-please creates GitHub tags and releases, then the
+   workflow builds and publishes all packages to npm.
+3. No manual version bumps, no manual `npm publish`.
+
+### Semver rules (post-v1.0.0)
+
+| Commit type | Bump |
+|---|---|
+| `fix:` | patch |
+| `feat:` | minor |
+| `BREAKING CHANGE:` footer or `!` suffix | major |
+
+### npm publishing — trusted publishing (OIDC)
+
+Packages are published via npm's OIDC trusted publishing. **There is no `NPM_TOKEN`.**
+The GitHub Actions runner mints a short-lived OIDC token that npm validates against
+the trusted publisher config on each package's npmjs.com settings page.
+
+Do **not** add `NODE_AUTH_TOKEN` or `NPM_TOKEN` back to the workflow or repo secrets.
+
+### `version.ts` files
+
+Each package has a `src/version.ts` (or `src/lib/version.ts` for Svelte) that is
+**auto-generated at build time** by `scripts/sync-version.mjs`. It is `.gitignore`d
+and must never be committed. The `prebuild`, `precheck`, and `pretest` npm hooks
+generate it automatically — you do not need to run the script manually.
+
 ## Deprecated / Removed APIs
 
 > **Do NOT re-add any of the following.** They were removed because the
@@ -489,4 +524,4 @@ user-facing options in `ViostreamEmbedOptions`.
 
 ---
 
-*Last updated: 2026-04-08. Update this file as the project evolves.*
+*Last updated: 2026-11-04. Update this file as the project evolves.*
